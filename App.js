@@ -14,7 +14,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 const App: () => Node = () => {
   return (
     <ReduxProvider store={store}>
-      <PersistGate loading={<LoadingScreen />} persistor={persistor}>
+      <PersistGate loading={null} persistor={persistor}>
         <SafeAreaView className="min-h-full bg-black">
           {/* <Layout>
         <LoginScreen />

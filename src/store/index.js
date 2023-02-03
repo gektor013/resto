@@ -12,7 +12,7 @@ import {
 } from 'redux-persist';
 import { MMKVLoader } from "react-native-mmkv-storage";
 
-// import { unauthenticatedMiddleware } from './middlewares/unauthenticated';
+import { unauthenticatedMiddleware } from './middlewares/unauthenticated';
 import { authenticationApi } from './api/authenticationApi';
 // // import {bookingsApi} from './api/bookingsApi';
 // import authenticationReducer from './slice/authenticationSlice';
