@@ -1,8 +1,8 @@
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import Config from 'react-native-config';
+import { API_URL } from "@env"
 
 export const baseQuery = fetchBaseQuery({
-  baseUrl: Config.API_URL,
+  baseUrl: API_URL,
   prepareHeaders: (headers, { getState }) => {
     const token = getState().authentication.token;
     if (token) headers.set('x-api-token', token);
