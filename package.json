@@ -20,6 +20,7 @@
     "react-native": "0.70.4",
     "react-native-asset": "^2.0.1",
     "react-native-gesture-handler": "^2.9.0",
+    "react-native-mmkv-storage": "^0.8.0",
     "react-native-phone-number-input": "^2.1.0",
     "react-native-portalize": "^1.0.7",
     "react-native-reanimated": "^2.14.4",
