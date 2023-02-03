@@ -1,11 +1,11 @@
 import React from 'react';
 import type { Node } from 'react';
-// import { Provider as ReduxProvider } from 'react-redux';
-// import store, { persistor } from './src/store';
+import { Provider as ReduxProvider } from 'react-redux';
+import store, { persistor } from './src/store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ActiveBookingStack from './src/navigation';
 // import LoadingScreen from './src/screens/loading';
-// import { PersistGate } from 'redux-persist/integration/react';
+import { PersistGate } from 'redux-persist/integration/react';
 
 // import Layout from './src/components/layout';
 // import LoginScreen from './src/screens/login';
@@ -13,16 +13,16 @@ import ActiveBookingStack from './src/navigation';
 
 const App: () => Node = () => {
   return (
-    // <ReduxProvider store={store}>
-    //   <PersistGate loading={<LoadingScreen />} persistor={persistor}>
-    <SafeAreaView className="min-h-full bg-black">
-      {/* <Layout>
+    <ReduxProvider store={store}>
+      <PersistGate loading={<LoadingScreen />} persistor={persistor}>
+        <SafeAreaView className="min-h-full bg-black">
+          {/* <Layout>
         <LoginScreen />
       </Layout> */}
-      <ActiveBookingStack />
-    </SafeAreaView>
-    //   </PersistGate>
-    // </ReduxProvider>
+          <ActiveBookingStack />
+        </SafeAreaView>
+      </PersistGate>
+    </ReduxProvider>
   );
 };
 

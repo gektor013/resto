@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text, View } from 'react-native'
+import Config from 'react-native-config';
 
 const ActiveBookingsScreen = () => {
   return (
