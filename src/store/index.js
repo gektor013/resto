@@ -27,7 +27,7 @@ const persistConfig = {
   storage,
   whitelist: ['authentication'],
   // whitelist: ['authentication', 'bookings'],
-  // blacklist: ['control'],
+  blacklist: ['control'],
 };
 
 const reducers = combineReducers({

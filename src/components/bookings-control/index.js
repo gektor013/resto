@@ -1,42 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  setSelectedDate,
-  setIsNeedUpdate,
-} from '../../store/slice/controlSlice';
+import { useSelector } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatDate } from '../../utils/dates';
-import moment from 'moment';
+import useBookingControl from '../../hooks/useBookingControl';
 
 const BookingsControl = ({
   isConnected,
-  setCurrentStepModal,
-  createButtonEnabled,
-  setDateModal,
-  onBookingCreateHandler,
   onHandleOpenModals,
 }) => {
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const { date: dateString } = useSelector(state => state.control);
-  console.log(new Date(dateString), 'STATE');
+  const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   // const { isLoading, isUpdateAvailable } = useSelector(state => state.control);
-  const dispatch = useDispatch();
 
-  const onUpdateHandler = () => {
-    dispatch(setIsNeedUpdate(true));
-  };
-
-  const onDatePickerHandler = flag => {
-    setIsDatePickerOpen(flag);
-  };
-
-  const onChange = (_, selectedDate) => {
-    const selectedDateString = selectedDate.toString();
-    setIsDatePickerOpen(false);
-    dispatch(setSelectedDate(selectedDateString));
-  };
 
   return (
     <>
@@ -60,7 +37,7 @@ const BookingsControl = ({
           ) : null} */}
           {isDatePickerOpen && (
             <DateTimePicker
-              // minimumDate={new Date(new Date().toString())}
+              minimumDate={new Date()}
               // value={new Date(new Date().toString())}
               value={new Date(dateString)}
               mode="date"
@@ -72,7 +49,7 @@ const BookingsControl = ({
           <Button
             icon="plus"
             mode="contained"
-            onPress={() => onHandleOpenModals('date')}>
+            onPress={() => console.log('date')}>
             New booking
           </Button>
           {/* ) : null} */}
