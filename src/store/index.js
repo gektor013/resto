@@ -51,7 +51,7 @@ const store = configureStore({
     }).concat(
       unauthenticatedMiddleware,
       authenticationApi.middleware,
-      // bookingsApi.middleware,
+      bookingsApi.middleware,
     ),
 });
 

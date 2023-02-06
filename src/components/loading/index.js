@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import {ActivityIndicator} from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 
-const LoadingScreen = () => (
+const Loading = () => (
   <View style={styles.container}>
     <ActivityIndicator size={100} />
   </View>
@@ -15,4 +15,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoadingScreen;
+export default Loading;

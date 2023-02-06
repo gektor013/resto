@@ -24,7 +24,7 @@ const list = [
   }
 ]
 
-const BookingTable = () => {
+const BookingTable = ({ bookingsData }) => {
   // const [patchBookings] = usePatchBookingsMutation();
   // const { isLoading } = useBookingsData();
 
@@ -58,7 +58,7 @@ const BookingTable = () => {
     );
   };
 
-  return list.length ? (
+  return bookingsData.length ? (
     <DataTable style={styles.mb150}>
       <DataTable.Header>
         <DataTable.Title>Zeit</DataTable.Title>
@@ -72,7 +72,7 @@ const BookingTable = () => {
       </DataTable.Header>
       <SwipeableFlatList
         keyExtractor={item => item.id}
-        data={list}
+        data={bookingsData}
         renderItem={({ item }) => (
           <Row
             item={item}
@@ -141,7 +141,7 @@ const Row = ({ item, disabled, onBookingPressHandler }) => {
         <DataTable.Cell>{name}</DataTable.Cell>
         <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
         <DataTable.Cell>{phone}</DataTable.Cell>
-        <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
+        {/* <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell> */}
         <DataTable.Cell> status{status}</DataTable.Cell>
         <DataTable.Cell>
           {/* <Icon

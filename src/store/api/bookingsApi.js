@@ -7,12 +7,10 @@ export const bookingsApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['Bookings'],
   endpoints: builder => ({
-    getAllBookingByQuery: builder.query({
+    getAllBookingByParams: builder.query({
       query: (query) => ({
         url: `/bookings`,
-        params: {
-
-        }
+        params: query
       }),
       providesTags: result =>
         result?.partialGoods
@@ -62,4 +60,4 @@ export const bookingsApi = createApi({
   }),
 });
 
-export const { } = bookingsApi;
+export const { useGetAllBookingByParamsQuery } = bookingsApi;

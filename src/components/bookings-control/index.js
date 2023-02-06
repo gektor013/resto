@@ -36,7 +36,7 @@ const BookingsControl = ({
           ) : null} */}
         {isDatePickerOpen && (
           <DateTimePicker
-            minimumDate={new Date()}
+            // minimumDate={new Date()}
             // value={new Date(new Date().toString())}
             value={new Date(dateString)}
             mode="date"
@@ -48,7 +48,7 @@ const BookingsControl = ({
         <Button
           icon="plus"
           mode="contained"
-          onPress={() => console.log('date')}>
+          onPress={() => onHandleOpenModals('date')}>
           New booking
         </Button>
         {/* ) : null} */}
