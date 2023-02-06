@@ -14,11 +14,11 @@ import { MMKVLoader } from "react-native-mmkv-storage";
 
 import { unauthenticatedMiddleware } from './middlewares/unauthenticated';
 import { authenticationApi } from './api/authenticationApi';
-// // import {bookingsApi} from './api/bookingsApi';
+import { bookingsApi } from './api/bookingsApi';
 import authenticationReducer from './slice/authenticationSlice';
-// // import bookingsReducer from './slice/bookingsSlice';
+import bookingsReducer from './slice/bookingsSlice';
 import controlSlice from './slice/controlSlice';
-// // import messagesSlice from './slice/messagesSlice';
+// import messagesSlice from './slice/messagesSlice';
 
 const storage = new MMKVLoader().initialize();
 
@@ -32,9 +32,9 @@ const persistConfig = {
 
 const reducers = combineReducers({
   [authenticationApi.reducerPath]: authenticationApi.reducer,
-  // [bookingsApi.reducerPath]: bookingsApi.reducer,
+  [bookingsApi.reducerPath]: bookingsApi.reducer,
   authentication: authenticationReducer,
-  // bookings: bookingsReducer,
+  bookings: bookingsReducer,
   control: controlSlice,
   // messages: messagesSlice,
 });

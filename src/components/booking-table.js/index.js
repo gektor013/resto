@@ -6,24 +6,21 @@ import SwipeableFlatList from 'react-native-swipeable-list';
 
 const list = [
   {
-    id: 276,
-    date: "26 Sep 2022",
-    startTime: "12:30",
-    endTime: "00:00",
+    id: 496,
+    date: "6 Feb 2023",
+    startTime: "13:00",
+    endTime: "14:00",
     prefixName: 0,
-    name: "Dima ",
-    email: "dmir@ostinmail.com",
-    phone: "000000000",
-    numberOfGuests: "2",
-    numberOfGuestsAdult: 0,
-    numberOfGuestsChild: 0,
-    numberOfGuestsBaby: 0,
-    status: 3,
-    commentByGuest: "31.10 22:27",
-    commentByAdminForGuest: "",
+    name: "Igor",
+    phone: "",
+    numberOfGuests: "",
+    numberOfGuestsAdult: 1,
+    numberOfGuestsChild: 1,
+    numberOfGuestsBaby: 1,
+    status: 0,
     commentByAdminForAdmin: "",
-    uuid: "c21555f5-d2bc-412b-9b52-636d2c79b2cf",
-    createdAt: "-0001-11-30T00:00:00+00:00"
+    uuid: "854a2f48-f029-425d-ac11-d85e5b29bc95",
+    createdAt: "2023-02-06T10:48:31+00:00"
   }
 ]
 
