@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native'
 import React from 'react'
 
 const WaitBookingsScreen = () => {
   return (
-    <View>
-      <Text>WaitBookingsScreen</Text>
-    </View>
+    <>
+      <Text>Privacy Policy</Text>
+    </>
   )
 }
 

@@ -15,7 +15,7 @@ import { MMKVLoader } from "react-native-mmkv-storage";
 import { unauthenticatedMiddleware } from './middlewares/unauthenticated';
 import { authenticationApi } from './api/authenticationApi';
 // // import {bookingsApi} from './api/bookingsApi';
-// import authenticationReducer from './slice/authenticationSlice';
+import authenticationReducer from './slice/authenticationSlice';
 // // import bookingsReducer from './slice/bookingsSlice';
 // import MMKVStorage from '../mmkv-storage';
 // // import controlSlice from './slice/controlSlice';
@@ -26,6 +26,7 @@ const storage = new MMKVLoader().initialize();
 const persistConfig = {
   key: 'root',
   storage,
+  whitelist: ['authentication'],
   // whitelist: ['authentication', 'bookings'],
   // blacklist: ['control'],
 };
@@ -33,7 +34,7 @@ const persistConfig = {
 const reducers = combineReducers({
   [authenticationApi.reducerPath]: authenticationApi.reducer,
   // [bookingsApi.reducerPath]: bookingsApi.reducer,
-  // authentication: authenticationReducer,
+  authentication: authenticationReducer,
   // bookings: bookingsReducer,
   // control: controlSlice,
   // messages: messagesSlice,
