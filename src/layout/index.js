@@ -18,7 +18,7 @@ const delay = 1;
 const Layout = () => {
   const [visibleDialog, setDialogVisible] = useState(false);
   const [message, setMessage] = useState(false);
-  const messages = useSelector(state => state.messages);
+  const messages = useSelector(state => state);
   const dispatch = useDispatch();
   // const { isLoading } = useSynchronize();
   // const { isConnected } = useNetInfo();
@@ -32,15 +32,15 @@ const Layout = () => {
     setMessage(false);
   };
 
-  useEffect(() => {
-    if (messages.length && !message) {
-      let _timer = setTimeout(() => setMessage(messages[0]), delay * 1000);
+  // useEffect(() => {
+  //   if (messages.length && !message) {
+  //     let _timer = setTimeout(() => setMessage(messages[0]), delay * 1000);
 
-      return () => {
-        clearTimeout(_timer);
-      };
-    }
-  }, [messages, message]);
+  //     return () => {
+  //       clearTimeout(_timer);
+  //     };
+  //   }
+  // }, [messages, message]);
 
   // useEffect(() => {
   //   if (!isLoading && !isConnected) onDialogHandler(true);
@@ -49,7 +49,7 @@ const Layout = () => {
   return (
     <>
       {/* {isLoading ? <Loading /> : <Navigation />} */}
-      <Portal>
+      {/* <Portal>
         <Dialog
           visible={visibleDialog}
           onDismiss={() => onDialogHandler(false)}>
@@ -63,7 +63,7 @@ const Layout = () => {
         </Dialog>
       </Portal>
       <Snackbar
-        visible={!!message}
+        visible={true}
         onDismiss={onMessageHide}
         duration={5000}
         action={{
@@ -71,7 +71,8 @@ const Layout = () => {
           onPress: onMessageHide,
         }}>
         {message.message}
-      </Snackbar>
+      </Snackbar> */}
+      <Navigation />
     </>
   );
 };

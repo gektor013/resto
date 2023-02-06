@@ -10,7 +10,7 @@ import {
 } from 'react-native-paper';
 import { useDispatch } from 'react-redux';
 import { useSigninUserMutation } from '../../store/api/authenticationApi';
-// import { login } from '../../store/slice/authenticationSlice';
+import { login } from '../../store/slice/authenticationSlice';
 import { useForm, Controller } from 'react-hook-form';
 import { useNetInfo } from '@react-native-community/netinfo';
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { BottomNavigation } from 'react-native-paper';
 import ActiveBookingsStack from './all-booking-stack/index';
-// import WaitingsBookingStack from './waitings-booking-stack';
-// import CanceledBookingStack from './canceled-booking-stack';
+import WaitingsBookingStack from './waitings-booking-stack';
+import CanceledBookingStack from './canceled-booking-stack';
 
 const Navigation = () => {
   const [index, setIndex] = useState(0);
@@ -25,8 +25,8 @@ const Navigation = () => {
   ]);
   const renderScene = BottomNavigation.SceneMap({
     all_bookings: ActiveBookingsStack,
-    // waitings: WaitingsBookingStack,
-    // canceled: CanceledBookingStack,
+    waitings: WaitingsBookingStack,
+    canceled: CanceledBookingStack,
   });
 
   return (
