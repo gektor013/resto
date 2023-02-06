@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { useTheme } from 'react-native-paper';
 import BookingsControl from '../../components/bookings-control';
+import BookingTable from '../../components/booking-table.js';
 
 const ActiveBookingsScreen = () => {
   const { isConnected } = useNetInfo();
@@ -11,7 +12,7 @@ const ActiveBookingsScreen = () => {
 
   return (
     <SafeAreaView>
-      <ScrollView
+      <View
         // horizontal={false}
         // scrollEnabled={false}
         // nestedScrollEnabled={true}
@@ -30,6 +31,7 @@ const ActiveBookingsScreen = () => {
         // onBookingCreateHandler={onBookingCreateHandler}
         // onHandleOpenModals={onHandleOpenModals}
         />
+        <BookingTable />
         {/* <BookingsRender
           list={list}
           isConnected={isConnected}
@@ -57,7 +59,7 @@ const ActiveBookingsScreen = () => {
           name="date"
         />
       )} */}
-      </ScrollView>
+      </View>
       {/* PORTAL */}
       {/* <TimeModal
       errors={errors}

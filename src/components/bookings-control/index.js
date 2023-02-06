@@ -16,17 +16,16 @@ const BookingsControl = ({
 
 
   return (
-    <>
-      <View>
-        <View style={styles.row}>
-          <Button
-            icon="calendar"
-            mode="contained"
-            disabled={!isConnected}
-            onPress={() => onDatePickerHandler(true)}>
-            {formatDate(new Date(dateString))}
-          </Button>
-          {/* {!isLoading && isUpdateAvailable ? (
+    <View>
+      <View style={styles.row}>
+        <Button
+          icon="calendar"
+          mode="contained"
+          disabled={!isConnected}
+          onPress={() => onDatePickerHandler(true)}>
+          {formatDate(new Date(dateString))}
+        </Button>
+        {/* {!isLoading && isUpdateAvailable ? (
             <Button
               icon="update"
               mode="contained"
@@ -35,31 +34,30 @@ const BookingsControl = ({
               Press to get new updates
             </Button>
           ) : null} */}
-          {isDatePickerOpen && (
-            <DateTimePicker
-              minimumDate={new Date()}
-              // value={new Date(new Date().toString())}
-              value={new Date(dateString)}
-              mode="date"
-              onChange={onChange}
-            />
-          )}
+        {isDatePickerOpen && (
+          <DateTimePicker
+            minimumDate={new Date()}
+            // value={new Date(new Date().toString())}
+            value={new Date(dateString)}
+            mode="date"
+            onChange={onChange}
+          />
+        )}
 
-          {/* {createButtonEnabled ? ( */}
-          <Button
-            icon="plus"
-            mode="contained"
-            onPress={() => console.log('date')}>
-            New booking
-          </Button>
-          {/* ) : null} */}
+        {/* {createButtonEnabled ? ( */}
+        <Button
+          icon="plus"
+          mode="contained"
+          onPress={() => console.log('date')}>
+          New booking
+        </Button>
+        {/* ) : null} */}
 
-          {/* <Button icon="plus" mode="contained" onPress={onBookingCreateHandler}>
+        {/* <Button icon="plus" mode="contained" onPress={onBookingCreateHandler}>
             TEST
           </Button> */}
-        </View>
       </View>
-    </>
+    </View>
   );
 };
 
