@@ -17,8 +17,7 @@ import { authenticationApi } from './api/authenticationApi';
 // // import {bookingsApi} from './api/bookingsApi';
 import authenticationReducer from './slice/authenticationSlice';
 // // import bookingsReducer from './slice/bookingsSlice';
-// import MMKVStorage from '../mmkv-storage';
-// // import controlSlice from './slice/controlSlice';
+import controlSlice from './slice/controlSlice';
 // // import messagesSlice from './slice/messagesSlice';
 
 const storage = new MMKVLoader().initialize();
@@ -36,7 +35,7 @@ const reducers = combineReducers({
   // [bookingsApi.reducerPath]: bookingsApi.reducer,
   authentication: authenticationReducer,
   // bookings: bookingsReducer,
-  // control: controlSlice,
+  control: controlSlice,
   // messages: messagesSlice,
 });
 

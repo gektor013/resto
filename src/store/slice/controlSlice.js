@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   date: new Date().toString(),
@@ -13,35 +13,20 @@ export const controlSlice = createSlice({
   initialState,
   reducers: {
     setSelectedDate: (state, action) => {
-      return {
-        ...state,
-        date: action.payload.toString(),
-        isUpdateAvailable: false,
-      };
+      state.date = action.payload.toString();
+      // state.isUpdateAvailable = false;
     },
     setIsNeedUpdate: (state, action) => {
-      return {
-        ...state,
-        isNeedUpdate: action.payload,
-      };
+      state.isNeedUpdate = action.payload;
     },
     setIsNeedCheckUpdates: (state, action) => {
-      return {
-        ...state,
-        isNeedCheckUpdates: action.payload,
-      };
+      state.isNeedCheckUpdates = action.payload;
     },
     setIsChekingsLoading: (state, action) => {
-      return {
-        ...state,
-        isLoading: action.payload,
-      };
+      state.isLoading = action.payload;
     },
     setIsUpdateAvailable: (state, action) => {
-      return {
-        ...state,
-        isUpdateAvailable: action.payload,
-      };
+      state.isUpdateAvailable = action.payload;
     },
   },
 });
