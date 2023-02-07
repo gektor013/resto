@@ -19,8 +19,12 @@ const ModaLayout = ({ children, visible, onCancel, onSave, title }) => {
     if (title === 'Number of guest') {
       setDisabled(false)
     }
+    if (title === 'Enter name') {
+      if (state.name !== '') {
+        setDisabled(false)
+      }
+    }
   }
-
 
   useEffect(() => {
     isDisabled()

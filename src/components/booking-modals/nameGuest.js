@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     minWidth: '100%',
-    // marginBottom: 10,
   },
   inputContainer: {
     flex: 1,
