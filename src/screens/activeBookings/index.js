@@ -18,6 +18,7 @@ import { formatDateParams } from '../../utils/dates'
 import { setOtherDayAllBookings, setTodaysAllBookings } from '../../store/slice/bookingsSlice';
 import { useCreateBookingMutation, useGetAllBookingByParamsQuery } from '../../store/api/bookingsApi';
 import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
+import { setIsChekingsLoading } from '../../store/slice/controlSlice';
 
 
 const useBookingsData = () => {
@@ -183,6 +184,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
         onSave={() => {
           setNameGuestModal(false);
           navigation.navigate('form');
+          // dispatch(setIsChekingsLoading(true));
         }}
       >
         <NameGuest />

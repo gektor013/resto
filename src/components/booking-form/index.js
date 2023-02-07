@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import MaskInput from 'react-native-mask-input';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
@@ -7,6 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { formatDate } from '../../utils/dates';
 import useBookingForm from '../../hooks/useBookingForm';
+import { setIsChekingsLoading } from '../../store/slice/controlSlice';
 
 const MIN_NAME_LENGTH = 1;
 const MAX_NAME_LENGTH = 25;
@@ -45,7 +46,6 @@ const BookingForm = ({ navigation }) => {
     mode: 'onChange',
   });
 
-  console.log(errors)
   return (
     <View style={styles.mb150}>
       <Controller
@@ -123,7 +123,7 @@ const BookingForm = ({ navigation }) => {
         rules={{
           required: { value: true, message: ERROR_MESSAGES.REQUIRED },
           minLength: {
-            value: 5,
+            value: MIN_TIME_LENGTH,
             message: ERROR_MESSAGES.TIME_INVALID,
           },
         }}
@@ -161,7 +161,7 @@ const BookingForm = ({ navigation }) => {
         rules={{
           required: { value: true, message: ERROR_MESSAGES.REQUIRED },
           minLength: {
-            value: 5,
+            value: MIN_TIME_LENGTH,
             message: ERROR_MESSAGES.TIME_INVALID,
           },
         }}

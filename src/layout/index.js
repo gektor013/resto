@@ -12,6 +12,7 @@ import {
 import { useNetInfo } from '@react-native-community/netinfo';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteMessage } from '../store/slice/messagesSlice';
+import { setIsChekingsLoading } from '../store/slice/controlSlice';
 
 const delay = 1;
 
@@ -20,6 +21,8 @@ const Layout = () => {
   const [message, setMessage] = useState(false);
   const messages = useSelector(state => state);
   const dispatch = useDispatch();
+  const { isLoading } = useSelector(state => state.control)
+  console.log(isLoading);
   // const { isLoading } = useSynchronize();
   // const { isConnected } = useNetInfo();
 
@@ -46,9 +49,15 @@ const Layout = () => {
   //   if (!isLoading && !isConnected) onDialogHandler(true);
   // }, [isConnected, isLoading]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch(setIsChekingsLoading(false));
+    }, 1000)
+  }, [])
+
   return (
     <>
-      {/* {isLoading ? <Loading /> : <Navigation />} */}
+      {isLoading ? <Loading /> : <Navigation />}
       {/* <Portal>
         <Dialog
           visible={visibleDialog}
@@ -72,7 +81,7 @@ const Layout = () => {
         }}>
         {message.message}
       </Snackbar> */}
-      <Navigation />
+      {/* <Navigation /> */}
     </>
   );
 };
