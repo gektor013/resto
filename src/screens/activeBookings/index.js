@@ -15,7 +15,8 @@ import TimeModal from '../../components/booking-modals/time';
 import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
 import moment from 'moment';
 import ModaLayout from '../../layout/modal-layout';
-import NumberGuset from '../../components/booking-modals/numberGuset';
+import NumberGuset from '../../components/booking-modals/numberGuest';
+import NameGuest from '../../components/booking-modals/nameGuest';
 
 const useBookingsData = () => {
   const dispatch = useDispatch()
@@ -36,34 +37,17 @@ const useBookingsData = () => {
   }
 }
 
-const initialStateBookingsForm = {
-  date: new Date(),
-  startTime: '',
-  endTime: '',
-  prefixName: 0,
-  name: '',
-  email: null,
-  phone: '',
-  numberOfGuestsAdult: '',
-  numberOfGuestsChild: '',
-  numberOfGuestsBaby: '',
-  status: 0,
-  commentByGuest: '',
-  commentByAdminForGuest: '',
-  commentByAdminForAdmin: '',
-};
-
-
 const ActiveBookingsScreen = () => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
   const { bookingsData, bookingFetch } = useBookingsData()
   const { date: dateString } = useSelector(state => state.control)
 
-  // const [bookingState, setBookingState] = useState(initialStateBookingsForm)
   const [dateModal, setDateModal] = useState(false);
   const [timeModal, setTimeModal] = useState(false);
   const [numberGuestModal, setNumberGuestModal] = useState(false)
+  const [nameGuestModal, setNameGuestModal] = useState(false)
+
   const dispatch = useDispatch()
 
   const onHandleOpenModals = setterType => {
@@ -77,9 +61,9 @@ const ActiveBookingsScreen = () => {
       case 'guest':
         setNumberGuestModal(true);
         break;
-      // case 'name':
-      //   setNameGuestModal(true);
-      //   break;
+      case 'name':
+        setNameGuestModal(true);
+        break;
       default:
         return;
     }
@@ -97,8 +81,8 @@ const ActiveBookingsScreen = () => {
         case 'guest':
           setNumberGuestModal(false);
           break;
-          // case 'name':
-          //   setNameGuestModal(false);
+        case 'name':
+          setNameGuestModal(false);
           break;
         default:
           return;
@@ -107,7 +91,7 @@ const ActiveBookingsScreen = () => {
     },
     [],
   );
-  // console.log(bookingState);
+
   return (
     <>
       <SafeAreaView>
@@ -158,9 +142,22 @@ const ActiveBookingsScreen = () => {
         onCancel={() => cancelModal('guest')}
         disabled={true}
         title={'Number of guest'}
-      // onSave={() => onHandleOpenModals('guest')}
+        onSave={() => {
+          setNumberGuestModal(false)
+          onHandleOpenModals('name');
+        }}
       >
         <NumberGuset />
+      </ModaLayout>
+
+      <ModaLayout
+        visible={nameGuestModal}
+        onCancel={() => cancelModal('name')}
+        disabled={true}
+        title={'Enter name'}
+      // onSave={() => onHandleOpenModals('name')}
+      >
+        <NameGuest />
       </ModaLayout>
     </>
   )

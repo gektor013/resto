@@ -39,10 +39,6 @@ export const bookingDataSlice = createSlice({
           state[key] = null
         }
       }
-      // console.log(typeof state.date, 'state.date');
-      // console.log(typeof state.prefixName, 'state.prefixName');
-      // console.log(typeof state.email, 'state.email');
-
     }
   }
 });
