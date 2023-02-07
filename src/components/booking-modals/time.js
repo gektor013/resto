@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';

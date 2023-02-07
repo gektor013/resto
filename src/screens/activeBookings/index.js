@@ -1,46 +1,69 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNetInfo } from '@react-native-community/netinfo';
-import { useTheme } from 'react-native-paper';
-import BookingsControl from '../../components/bookings-control';
-import BookingTable from '../../components/booking-table.js';
-import { useGetAllBookingByParamsQuery } from '../../store/api/bookingsApi';
-import { useSelector, useDispatch } from 'react-redux';
-import { formatDateParams } from '../../utils/dates'
-import LoadingScreen from '../loading';
-import { setTodaysAllBookings } from '../../store/slice/bookingsSlice';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import TimeModal from '../../components/booking-modals/time';
-import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
 import moment from 'moment';
+import { useTheme } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import LoadingScreen from '../loading';
 import ModaLayout from '../../layout/modal-layout';
-import NumberGuset from '../../components/booking-modals/numberGuest';
+import BookingTable from '../../components/booking-table.js';
+import TimeModal from '../../components/booking-modals/time';
+import BookingsControl from '../../components/bookings-control';
 import NameGuest from '../../components/booking-modals/nameGuest';
+import NumberGuset from '../../components/booking-modals/numberGuest';
+
+import { formatDateParams } from '../../utils/dates'
+import { setOtherDayAllBookings, setTodaysAllBookings } from '../../store/slice/bookingsSlice';
+import { useCreateBookingMutation, useGetAllBookingByParamsQuery } from '../../store/api/bookingsApi';
+import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
+
 
 const useBookingsData = () => {
   const dispatch = useDispatch()
   const status = 'status[]=0&status[]=2&status[]=3&status[]=4'
   const { date: dateString } = useSelector(state => state.control)
   const formatDate = formatDateParams(new Date(dateString))
-  const { data: bookingsData, isFetching: bookingFetch } = useGetAllBookingByParamsQuery({ status, date: formatDate })
+
   const { allBooking } = useSelector(state => state.bookings.todays)
+  const { allOtherDayBooking } = useSelector(state => state.bookings.other)
+
+  const { data: getBookingsData, isFetching: bookingFetch } = useGetAllBookingByParamsQuery({ status, date: formatDate })
+  const [createBooking] = useCreateBookingMutation()
+
+
+  const sendAllOtherDayBookings = async () => {
+    await createBooking(allOtherDayBooking).unwrap()
+      .then(res => {
+        console.log(res, "RES")
+        if (res) {
+          dispatch(setOtherDayAllBookings([]))
+        }
+      }).catch(e => console.log(e, 'sendAllOtherDayBookings'))
+  }
 
   useEffect(() => {
-    if (bookingsData?.length) {
-      dispatch(setTodaysAllBookings(bookingsData))
+    if (allOtherDayBooking !== []) {
+      sendAllOtherDayBookings()
     }
-  }, [bookingsData])
+  }, [allOtherDayBooking])
+
+  useEffect(() => {
+    if (getBookingsData?.length) {
+      dispatch(setTodaysAllBookings(getBookingsData))
+    }
+  }, [getBookingsData])
 
   return {
-    bookingsData, bookingFetch
+    allBooking, bookingFetch
   }
 }
 
 const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
-  const { bookingsData, bookingFetch } = useBookingsData()
+  const { allBooking, bookingFetch } = useBookingsData()
   const { date: dateString } = useSelector(state => state.control)
 
   const [dateModal, setDateModal] = useState(false);
@@ -104,7 +127,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
             // onBookingCreateHandler={onBookingCreateHandler}
             onHandleOpenModals={onHandleOpenModals}
           />
-          {bookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingsData} />}
+          {bookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={allBooking} />}
         </View>
       </SafeAreaView>
 

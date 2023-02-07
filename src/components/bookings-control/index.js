@@ -14,7 +14,6 @@ const BookingsControl = ({
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   // const { isLoading, isUpdateAvailable } = useSelector(state => state.control);
 
-
   return (
     <View>
       <View style={styles.row}>
@@ -36,8 +35,7 @@ const BookingsControl = ({
           ) : null} */}
         {isDatePickerOpen && (
           <DateTimePicker
-            // minimumDate={new Date()}
-            // value={new Date(new Date().toString())}
+            minimumDate={new Date()}
             value={new Date(dateString)}
             mode="date"
             onChange={onChange}

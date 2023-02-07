@@ -1,12 +1,12 @@
-/* eslint-disable prettier/prettier */
-import React, { useMemo, useEffect, useState } from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
-import { TextInput, HelperText, Button, useTheme } from 'react-native-paper';
-import { useForm, Controller } from 'react-hook-form';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { formatDate } from '../../utils/dates';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
 import MaskInput from 'react-native-mask-input';
+import { View, StyleSheet } from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import { TextInput, HelperText, Button, } from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
+import { formatDate } from '../../utils/dates';
+import useBookingForm from '../../hooks/useBookingForm';
 
 const MIN_NAME_LENGTH = 1;
 const MAX_NAME_LENGTH = 25;
@@ -30,25 +30,11 @@ const ERROR_MESSAGES = {
   COMMENT_TOO_LONG: `Comment must be less than ${MAX_COMMENT_LENGTH} characters`,
 };
 
-const BookingForm = ({
-  // modes,
-  // mode,
-  // initialFormValue,
-  // onSubmitPressHandler,
-  // onCancelPressHandler,
-  // onConfirmEditedPressHandler,
-}) => {
-  const { colors } = useTheme();
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const dispatch = useDispatch()
-  const bookingState = useSelector(state => state.bookingData)
-
-  console.log(bookingState, 'BIIK')
+const BookingForm = ({ navigation }) => {
+  const { colors, bookingState, isDatePickerOpen, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(navigation)
   const {
     control,
-    reset,
     handleSubmit,
-    getValues,
     formState: { errors, isValid },
   } = useForm({
     defaultValues: useMemo(() => {
@@ -56,21 +42,6 @@ const BookingForm = ({
     }, [bookingState]),
     mode: 'onChange',
   });
-
-  // console.log(getValues());
-
-  const onSubmitWithMode = (data) => {
-    // if (mode === modes.CREATE) {
-    //   onSubmitPressHandler(data)
-    // }
-    // else {
-    //   onConfirmEditedPressHandler(data)
-    // }
-  }
-
-  // useEffect(() => {
-  //   reset(initialFormValue);
-  // }, [initialFormValue, reset]);
 
   return (
     <View style={styles.mb150}>
@@ -88,23 +59,21 @@ const BookingForm = ({
           //   message: ERROR_MESSAGES.NAME_TOO_LONG,
           // },
         }}
-        render={({ field: { onChange, onBlur, value } }) => {
-          console.log(value, 'VAL')
-          return (
-            <TextInput
-              mode="outlined"
-              label="name"
-              style={styles.mv5p}
-              selectionColor={colors.white}
-              underlineColor={colors.white}
-              activeUnderlineColor={colors.white}
-              value={value}
-              onBlur={onBlur}
-              onChangeText={value => onChange(value)}
-              error={errors.name && true}
-            />
-          )
-        }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextInput
+            mode="outlined"
+            label="name"
+            style={styles.mv5p}
+            selectionColor={colors.white}
+            underlineColor={colors.white}
+            activeUnderlineColor={colors.white}
+            value={value}
+            onBlur={onBlur}
+            onChangeText={value => onChange(value)}
+            error={errors.name && true}
+          />
+        )
+        }
         name="name"
       />
       <HelperText type="error">{errors.name?.message}</HelperText>
@@ -136,7 +105,7 @@ const BookingForm = ({
                 mode="date"
                 onChange={(_, selectedDate) => {
                   setIsDatePickerOpen(false);
-                  onChange(selectedDate);
+                  onChange(moment(selectedDate).format('DD MMM YYYY'));
                 }}
               />
             )}
@@ -434,7 +403,7 @@ const BookingForm = ({
         <Button
           style={styles.mv25p}
           mode="contained"
-        // onPress={onCancelPressHandler}
+          onPress={onCancelPressHandler}
         >
           Cancel
         </Button>

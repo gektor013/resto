@@ -3,16 +3,15 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import BookingForm from '../../components/booking-form';
 
-const BookingFormScreen = () => {
+const BookingFormScreen = ({ navigation }) => {
   const { colors } = useTheme();
-
   return (
     <ScrollView
       style={{
         ...styles.container,
         backgroundColor: colors.background,
       }}>
-      <BookingForm />
+      <BookingForm navigation={navigation} />
     </ScrollView>
   );
 };

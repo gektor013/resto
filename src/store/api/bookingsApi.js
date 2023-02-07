@@ -28,7 +28,7 @@ export const bookingsApi = createApi({
       query: id => ({
         url: `/bookings/${id}`,
       }),
-      providesTags: (result, error, id) => [{ type: 'Goods', id }],
+      providesTags: (result, error, id) => [{ type: 'Bookings', id }],
     }),
     createBooking: builder.mutation({
       query: body => ({
@@ -36,7 +36,7 @@ export const bookingsApi = createApi({
         method: 'post',
         body,
       }),
-      invalidatesTags: [{ type: 'Goods', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }],
     }),
     editBooking: builder.mutation({
       query: body => ({
@@ -44,7 +44,7 @@ export const bookingsApi = createApi({
         method: 'put',
         body,
       }),
-      invalidatesTags: (result, error, body) => [{ type: 'Goods', id: body.id }],
+      invalidatesTags: (result, error, body) => [{ type: 'Bookings', id: body.id }],
     }),
     patchBookings: builder.mutation({
       query: body => ({
@@ -55,9 +55,9 @@ export const bookingsApi = createApi({
           'Content-Type': 'application/merge-patch+json',
         },
       }),
-      invalidatesTags: (result, error, body) => [{ type: 'Goods', id: body.id }],
+      invalidatesTags: (result, error, body) => [{ type: 'Bookings', id: body.id }],
     }),
   }),
 });
 
-export const { useGetAllBookingByParamsQuery } = bookingsApi;
+export const { useGetAllBookingByParamsQuery, useCreateBookingMutation } = bookingsApi;
