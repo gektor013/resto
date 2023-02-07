@@ -18,6 +18,8 @@ import { bookingsApi } from './api/bookingsApi';
 import authenticationReducer from './slice/authenticationSlice';
 import bookingsReducer from './slice/bookingsSlice';
 import controlSlice from './slice/controlSlice';
+import bookingData from './slice/bookingDataSlice';
+
 // import messagesSlice from './slice/messagesSlice';
 
 const storage = new MMKVLoader().initialize();
@@ -25,7 +27,7 @@ const storage = new MMKVLoader().initialize();
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['authentication'],
+  whitelist: ['authentication', 'bookings'],
   // whitelist: ['authentication', 'bookings'],
   blacklist: ['control'],
 };
@@ -36,6 +38,7 @@ const reducers = combineReducers({
   authentication: authenticationReducer,
   bookings: bookingsReducer,
   control: controlSlice,
+  bookingData,
   // messages: messagesSlice,
 });
 

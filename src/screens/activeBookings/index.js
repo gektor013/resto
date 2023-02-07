@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Text, View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { useTheme, Button } from 'react-native-paper';
+import { useTheme } from 'react-native-paper';
 import BookingsControl from '../../components/bookings-control';
 import BookingTable from '../../components/booking-table.js';
 import { useGetAllBookingByParamsQuery } from '../../store/api/bookingsApi';
@@ -12,6 +12,9 @@ import LoadingScreen from '../loading';
 import { setTodaysAllBookings } from '../../store/slice/bookingsSlice';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import TimeModal from '../../components/booking-modals/time';
+import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
+import moment from 'moment';
+import ModaLayout from '../../layout/modal-layout';
 
 const useBookingsData = () => {
   const dispatch = useDispatch()
@@ -53,12 +56,14 @@ const initialStateBookingsForm = {
 const ActiveBookingsScreen = () => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
-  // const { bookingsData, bookingFetch } = useBookingsData()
+  const { bookingsData, bookingFetch } = useBookingsData()
   const { date: dateString } = useSelector(state => state.control)
 
-  const [bookingState, setBookingState] = useState(initialStateBookingsForm)
+  // const [bookingState, setBookingState] = useState(initialStateBookingsForm)
   const [dateModal, setDateModal] = useState(false);
   const [timeModal, setTimeModal] = useState(false);
+  const [numberGuestModal, setNumberGuestModal] = useState(false)
+  const dispatch = useDispatch()
 
   const onHandleOpenModals = setterType => {
     switch (setterType) {
@@ -68,9 +73,9 @@ const ActiveBookingsScreen = () => {
       case 'time':
         setTimeModal(true);
         break;
-      // case 'guest':
-      //   setNumberGuestModal(true);
-      //   break;
+      case 'guest':
+        setNumberGuestModal(true);
+        break;
       // case 'name':
       //   setNameGuestModal(true);
       //   break;
@@ -97,13 +102,12 @@ const ActiveBookingsScreen = () => {
         default:
           return;
       }
-      setBookingState(initialStateBookingsForm);
+      dispatch(resetBookingData())
     },
     [],
   );
-  console.log('RENDER');
-
   // console.log(bookingState);
+  console.log('RENDER');
   return (
     <>
       <SafeAreaView>
@@ -116,7 +120,7 @@ const ActiveBookingsScreen = () => {
             // onBookingCreateHandler={onBookingCreateHandler}
             onHandleOpenModals={onHandleOpenModals}
           />
-          {/* {bookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingsData} />} */}
+          {bookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingsData} />}
         </View>
       </SafeAreaView>
 
@@ -130,17 +134,21 @@ const ActiveBookingsScreen = () => {
             if (e.type === 'dismissed') {
               return cancelModal('date');
             }
-            setBookingState(prev => ({ ...prev, date: selectedDate }));
+            dispatch(setBookingData({ id: 'date', data: moment(selectedDate).format('DD MMM YYYY') }))
             setDateModal(false);
             onHandleOpenModals('time');
           }}
         />
       )}
-      <TimeModal
+      <ModaLayout
         visible={timeModal}
-        setVisible={cancelModal}
-        bookingState={bookingState}
-        setBookingState={setBookingState} />
+        onCancel={() => cancelModal('time')}
+        disabled={true}
+        title={'Time'}
+      // onSave={ }
+      >
+        <TimeModal />
+      </ModaLayout>
     </>
   )
 }

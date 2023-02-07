@@ -39,17 +39,17 @@ const BookingTable = ({ bookingsData }) => {
       <View style={styles.quickActionContainer}>
         <View style={styles.actionsContainer}>
           <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
-            <Pressable onPress={() => handleChancheBookingStatus(booking, 4)}>
+            <Pressable onPress={() => console.log(booking, 4)}>
               <Text>Arrived</Text>
             </Pressable>
           </View>
           <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
-            <Pressable onPress={() => handleChancheBookingStatus(booking, 5)}>
+            <Pressable onPress={() => console.log(booking, 5)}>
               <Text>Delete</Text>
             </Pressable>
           </View>
           <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
-            <Pressable onPress={() => handleChancheBookingStatus(booking, 1)}>
+            <Pressable onPress={() => console.log(booking, 1)}>
               <Text>Cancel</Text>
             </Pressable>
           </View>
@@ -58,7 +58,7 @@ const BookingTable = ({ bookingsData }) => {
     );
   };
 
-  return bookingsData.length ? (
+  return bookingsData?.length ? (
     <DataTable style={styles.mb150}>
       <DataTable.Header>
         <DataTable.Title>Zeit</DataTable.Title>

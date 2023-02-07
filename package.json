@@ -24,6 +24,7 @@
     "react-native-asset": "^2.0.1",
     "react-native-dotenv": "^3.4.7",
     "react-native-gesture-handler": "^2.9.0",
+    "react-native-mask-input": "^1.2.3",
     "react-native-mmkv-storage": "^0.8.0",
     "react-native-paper": "^5.1.4",
     "react-native-phone-number-input": "^2.1.0",
