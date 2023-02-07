@@ -13,6 +13,7 @@ const MAX_NAME_LENGTH = 25;
 const PHONE_MIN_LENGTH = 10;
 const PHONE_MAX_LENGTH = 12;
 const MAX_COMMENT_LENGTH = 250;
+const MIN_TIME_LENGTH = 5
 
 const REGEX = {
   name: /^[a-zA-Z]+(?:[\s.]+[a-zA-Z]+)*$/,
@@ -28,6 +29,7 @@ const ERROR_MESSAGES = {
   EMAIL_INVALID: 'Invalid email',
   PHONE_INVALID: 'The phone number is incorrect',
   COMMENT_TOO_LONG: `Comment must be less than ${MAX_COMMENT_LENGTH} characters`,
+  TIME_INVALID: 'Invalid time'
 };
 
 const BookingForm = ({ navigation }) => {
@@ -43,6 +45,7 @@ const BookingForm = ({ navigation }) => {
     mode: 'onChange',
   });
 
+  console.log(errors)
   return (
     <View style={styles.mb150}>
       <Controller
@@ -117,6 +120,13 @@ const BookingForm = ({ navigation }) => {
 
       <Controller
         control={control}
+        rules={{
+          required: { value: true, message: ERROR_MESSAGES.REQUIRED },
+          minLength: {
+            value: 5,
+            message: ERROR_MESSAGES.TIME_INVALID,
+          },
+        }}
         render={({ field: { onChange, onBlur, value } }) => {
           return (
             <>
@@ -131,7 +141,7 @@ const BookingForm = ({ navigation }) => {
                 onBlur={onBlur}
                 // keyboardType="numeric"
                 onChangeText={value => onChange(value)}
-                error={errors.time && true}
+                error={errors.startTime && true}
                 render={props => (
                   <MaskInput
                     {...props}
@@ -148,6 +158,13 @@ const BookingForm = ({ navigation }) => {
 
       <Controller
         control={control}
+        rules={{
+          required: { value: true, message: ERROR_MESSAGES.REQUIRED },
+          minLength: {
+            value: 5,
+            message: ERROR_MESSAGES.TIME_INVALID,
+          },
+        }}
         render={({ field: { onChange, onBlur, value } }) => (
           <>
             <TextInput
@@ -161,7 +178,7 @@ const BookingForm = ({ navigation }) => {
               onBlur={onBlur}
               // keyboardType="numeric"
               onChangeText={value => onChange(value)}
-              error={errors.time && true}
+              error={errors.endTime && true}
               render={props => (
                 <MaskInput
                   {...props}

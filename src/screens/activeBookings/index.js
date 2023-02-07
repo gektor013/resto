@@ -22,6 +22,7 @@ import { resetBookingData, setBookingData } from '../../store/slice/bookingDataS
 
 const useBookingsData = () => {
   const dispatch = useDispatch()
+  const { isConnected } = useNetInfo();
   const status = 'status[]=0&status[]=2&status[]=3&status[]=4'
   const { date: dateString } = useSelector(state => state.control)
   const formatDate = formatDateParams(new Date(dateString))
@@ -32,7 +33,7 @@ const useBookingsData = () => {
   const { data: getBookingsData, isFetching: bookingFetch } = useGetAllBookingByParamsQuery({ status, date: formatDate })
   const [createBooking] = useCreateBookingMutation()
 
-
+  //send when there is internet
   const sendAllOtherDayBookings = async () => {
     await createBooking(allOtherDayBooking).unwrap()
       .then(res => {
@@ -44,10 +45,11 @@ const useBookingsData = () => {
   }
 
   useEffect(() => {
-    if (allOtherDayBooking !== []) {
-      sendAllOtherDayBookings()
+    if (allOtherDayBooking !== [] && isConnected) {
+      // sendAllOtherDayBookings()
+      console.log(allOtherDayBooking, 'allOtherDayBooking');
     }
-  }, [allOtherDayBooking])
+  }, [allOtherDayBooking, isConnected])
 
   useEffect(() => {
     if (getBookingsData?.length) {
