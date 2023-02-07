@@ -37,7 +37,7 @@ const useBookingsData = () => {
   }
 }
 
-const ActiveBookingsScreen = () => {
+const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
   const { bookingsData, bookingFetch } = useBookingsData()
@@ -143,7 +143,7 @@ const ActiveBookingsScreen = () => {
         disabled={true}
         title={'Number of guest'}
         onSave={() => {
-          setNumberGuestModal(false)
+          setNumberGuestModal(false);
           onHandleOpenModals('name');
         }}
       >
@@ -155,7 +155,10 @@ const ActiveBookingsScreen = () => {
         onCancel={() => cancelModal('name')}
         disabled={true}
         title={'Enter name'}
-      // onSave={() => onHandleOpenModals('name')}
+        onSave={() => {
+          setNameGuestModal(false);
+          navigation.navigate('form');
+        }}
       >
         <NameGuest />
       </ModaLayout>
