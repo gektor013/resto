@@ -21,6 +21,7 @@ const TimeModal = ({ }) => {
           mode="outlined"
           label="Start time"
           value={startTime}
+          // keyboardType="number-pad"
           onChangeText={e => dispatch(setBookingData({ id: 'startTime', data: e }))}
           // error={errors?.startTime && true}
           render={props => (
@@ -44,6 +45,7 @@ const TimeModal = ({ }) => {
           mode="outlined"
           label="End time"
           value={endTime}
+          // keyboardType="number-pad"
           onChangeText={e => dispatch(setBookingData({ id: 'endTime', data: e }))}
           // error={errors?.endTime && true}
           render={props => (

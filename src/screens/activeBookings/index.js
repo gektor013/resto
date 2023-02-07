@@ -15,6 +15,7 @@ import TimeModal from '../../components/booking-modals/time';
 import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
 import moment from 'moment';
 import ModaLayout from '../../layout/modal-layout';
+import NumberGuset from '../../components/booking-modals/numberGuset';
 
 const useBookingsData = () => {
   const dispatch = useDispatch()
@@ -96,8 +97,8 @@ const ActiveBookingsScreen = () => {
         case 'guest':
           setNumberGuestModal(false);
           break;
-        case 'name':
-          setNameGuestModal(false);
+          // case 'name':
+          //   setNameGuestModal(false);
           break;
         default:
           return;
@@ -107,7 +108,6 @@ const ActiveBookingsScreen = () => {
     [],
   );
   // console.log(bookingState);
-  console.log('RENDER');
   return (
     <>
       <SafeAreaView>
@@ -145,9 +145,22 @@ const ActiveBookingsScreen = () => {
         onCancel={() => cancelModal('time')}
         disabled={true}
         title={'Time'}
-      // onSave={ }
+        onSave={() => {
+          setTimeModal(false);
+          onHandleOpenModals('guest');
+        }}
       >
         <TimeModal />
+      </ModaLayout>
+
+      <ModaLayout
+        visible={numberGuestModal}
+        onCancel={() => cancelModal('guest')}
+        disabled={true}
+        title={'Number of guest'}
+      // onSave={() => onHandleOpenModals('guest')}
+      >
+        <NumberGuset />
       </ModaLayout>
     </>
   )
