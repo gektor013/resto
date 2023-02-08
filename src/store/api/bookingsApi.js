@@ -44,7 +44,7 @@ export const bookingsApi = createApi({
         method: 'put',
         body,
       }),
-      invalidatesTags: (result, error, body) => [{ type: 'Bookings', id: body.id }],
+      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }],
     }),
     patchBookings: builder.mutation({
       query: body => ({
@@ -60,4 +60,4 @@ export const bookingsApi = createApi({
   }),
 });
 
-export const { useGetAllBookingByParamsQuery, useCreateBookingMutation } = bookingsApi;
+export const { useGetAllBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation } = bookingsApi;

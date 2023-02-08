@@ -22,7 +22,7 @@ const Layout = () => {
   const messages = useSelector(state => state);
   const dispatch = useDispatch();
   const { isLoading } = useSelector(state => state.control)
-  console.log(isLoading);
+
   // const { isLoading } = useSynchronize();
   // const { isConnected } = useNetInfo();
 

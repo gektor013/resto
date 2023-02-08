@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import BookingForm from '../../components/booking-form';
 
-const BookingFormScreen = ({ navigation }) => {
+const BookingFormScreen = ({ route }) => {
   const { colors } = useTheme();
   return (
     <ScrollView
@@ -11,7 +11,7 @@ const BookingFormScreen = ({ navigation }) => {
         ...styles.container,
         backgroundColor: colors.background,
       }}>
-      <BookingForm navigation={navigation} />
+      <BookingForm route={route} />
     </ScrollView>
   );
 };
@@ -19,6 +19,7 @@ const BookingFormScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     minHeight: '100%',
+    paddingHorizontal: '5%'
   },
 });
 

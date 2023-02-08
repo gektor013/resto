@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import moment from 'moment';
 import { useTheme } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
@@ -14,66 +14,19 @@ import BookingsControl from '../../components/bookings-control';
 import NameGuest from '../../components/booking-modals/nameGuest';
 import NumberGuset from '../../components/booking-modals/numberGuest';
 
-import { formatDateParams } from '../../utils/dates'
-import { setOtherDayAllBookings, setTodaysAllBookings } from '../../store/slice/bookingsSlice';
-import { useCreateBookingMutation, useGetAllBookingByParamsQuery } from '../../store/api/bookingsApi';
 import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
-import { setIsChekingsLoading } from '../../store/slice/controlSlice';
-
-
-const useBookingsData = () => {
-  const dispatch = useDispatch()
-  const { isConnected } = useNetInfo();
-  const status = 'status[]=0&status[]=2&status[]=3&status[]=4'
-  const { date: dateString } = useSelector(state => state.control)
-  const formatDate = formatDateParams(new Date(dateString))
-
-  const { allBooking } = useSelector(state => state.bookings.todays)
-  const { allOtherDayBooking } = useSelector(state => state.bookings.other)
-
-  const { data: getBookingsData, isFetching: bookingFetch } = useGetAllBookingByParamsQuery({ status, date: formatDate })
-  const [createBooking] = useCreateBookingMutation()
-
-  //send when there is internet
-  const sendAllOtherDayBookings = async () => {
-    await createBooking(allOtherDayBooking).unwrap()
-      .then(res => {
-        console.log(res, "RES")
-        if (res) {
-          dispatch(setOtherDayAllBookings([]))
-        }
-      }).catch(e => console.log(e, 'sendAllOtherDayBookings'))
-  }
-
-  useEffect(() => {
-    if (allOtherDayBooking !== [] && isConnected) {
-      // sendAllOtherDayBookings()
-      console.log(allOtherDayBooking, 'allOtherDayBooking');
-    }
-  }, [allOtherDayBooking, isConnected])
-
-  useEffect(() => {
-    if (getBookingsData?.length) {
-      dispatch(setTodaysAllBookings(getBookingsData))
-    }
-  }, [getBookingsData])
-
-  return {
-    allBooking, bookingFetch
-  }
-}
+import useBookingsData from '../../hooks/useBookingsData';
 
 const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
-  const { allBooking, bookingFetch } = useBookingsData()
+  const { todayAllBookings, bookingFetch } = useBookingsData()
   const { date: dateString } = useSelector(state => state.control)
 
   const [dateModal, setDateModal] = useState(false);
   const [timeModal, setTimeModal] = useState(false);
   const [numberGuestModal, setNumberGuestModal] = useState(false)
   const [nameGuestModal, setNameGuestModal] = useState(false)
-
   const dispatch = useDispatch()
 
   const onHandleOpenModals = setterType => {
@@ -130,7 +83,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
             // onBookingCreateHandler={onBookingCreateHandler}
             onHandleOpenModals={onHandleOpenModals}
           />
-          {bookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={allBooking} />}
+          {bookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={todayAllBookings} />}
         </View>
       </SafeAreaView>
 

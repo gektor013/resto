@@ -3,28 +3,10 @@ import React from 'react'
 import { StyleSheet, View, Pressable } from 'react-native'
 import { DataTable, Text, useTheme } from 'react-native-paper';
 import SwipeableFlatList from 'react-native-swipeable-list';
+import { useNavigation } from '@react-navigation/native';
 
-const list = [
-  {
-    id: 496,
-    date: "6 Feb 2023",
-    startTime: "13:00",
-    endTime: "14:00",
-    prefixName: 0,
-    name: "Igor",
-    phone: "",
-    numberOfGuests: "",
-    numberOfGuestsAdult: 1,
-    numberOfGuestsChild: 1,
-    numberOfGuestsBaby: 1,
-    status: 0,
-    commentByAdminForAdmin: "",
-    uuid: "854a2f48-f029-425d-ac11-d85e5b29bc95",
-    createdAt: "2023-02-06T10:48:31+00:00"
-  }
-]
 
-const BookingTable = ({ bookingsData }) => {
+const BookingTable = ({ bookingsData, navigation }) => {
   // const [patchBookings] = usePatchBookingsMutation();
   // const { isLoading } = useBookingsData();
 
@@ -78,7 +60,6 @@ const BookingTable = ({ bookingsData }) => {
             item={item}
             key={item.id}
           // disabled={isLoading}
-          // onBookingPressHandler={onBookingPressHandler}
           />
         )}
         maxSwipeDistance={300}
@@ -96,7 +77,7 @@ const BookingTable = ({ bookingsData }) => {
     );
 }
 
-const Row = ({ item, disabled, onBookingPressHandler }) => {
+const Row = ({ item, disabled }) => {
   const {
     id,
     name,
@@ -112,6 +93,7 @@ const Row = ({ item, disabled, onBookingPressHandler }) => {
     commentByAdminForAdmin,
   } = item;
   const { colors } = useTheme();
+  const navigation = useNavigation();
 
 
   const getRowColorByStatus = (status) => {
@@ -124,6 +106,10 @@ const Row = ({ item, disabled, onBookingPressHandler }) => {
         return '#0d976a'
       default: break
     }
+  }
+
+  const onBookingPressHandler = (item) => {
+    navigation.navigate('form', item)
   }
 
   return (
@@ -141,8 +127,8 @@ const Row = ({ item, disabled, onBookingPressHandler }) => {
         <DataTable.Cell>{name}</DataTable.Cell>
         <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
         <DataTable.Cell>{phone}</DataTable.Cell>
-        {/* <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell> */}
-        <DataTable.Cell> status{status}</DataTable.Cell>
+        <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
+        <DataTable.Cell>status {status}</DataTable.Cell>
         <DataTable.Cell>
           {/* <Icon
             name={getIconName(status)}

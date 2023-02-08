@@ -2,22 +2,29 @@ import { useEffect, useState } from 'react'
 import { useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { resetBookingData } from '../store/slice/bookingDataSlice';
-import { setOtherDayAllBookings, setUnsynchronizedBookings } from '../store/slice/bookingsSlice';
+import { resetBookingData, } from '../store/slice/bookingDataSlice';
+import { setAllEditedBookings, setOtherDayAllBookings, setUnsynchronizedBookings } from '../store/slice/bookingsSlice';
+import { useNavigation } from '@react-navigation/native';
 
-const useBookingForm = (navigation) => {
+const useBookingForm = (route) => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch()
   const { colors } = useTheme();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const dispatch = useDispatch()
   const bookingState = useSelector(state => state.bookingData)
   const { isConnected } = useNetInfo();
 
   const onSubmitWithMode = (data) => {
-    if (isConnected) {
+    if (isConnected && !route?.params) {
       dispatch(setOtherDayAllBookings(data))
-    } else {
-      dispatch(setUnsynchronizedBookings(data))
     }
+
+    if (isConnected && route?.params) {
+      dispatch(setAllEditedBookings(data))
+    }
+    // else {
+    //   dispatch(setUnsynchronizedBookings(data))
+    // }
     navigation.navigate('list')
   }
 
@@ -25,6 +32,7 @@ const useBookingForm = (navigation) => {
     dispatch(resetBookingData())
     navigation.navigate('list')
   }
+
 
   return {
     colors,

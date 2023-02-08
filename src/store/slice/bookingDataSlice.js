@@ -23,11 +23,9 @@ export const bookingDataSlice = createSlice({
   reducers: {
     setBookingData: (state, action) => {
       state[action.payload.id] = action.payload.data
-      // console.log(state);
     },
 
     resetBookingData: (state) => {
-      // state = initialState
       for (const key in state) {
         if (typeof state[key] === 'string') {
           state[key] = ''
@@ -45,7 +43,7 @@ export const bookingDataSlice = createSlice({
 
 export const {
   setBookingData,
-  resetBookingData
+  resetBookingData,
 } = bookingDataSlice.actions;
 
 export default bookingDataSlice.reducer;

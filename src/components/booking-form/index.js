@@ -33,15 +33,16 @@ const ERROR_MESSAGES = {
   TIME_INVALID: 'Invalid time'
 };
 
-const BookingForm = ({ navigation }) => {
-  const { colors, bookingState, isDatePickerOpen, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(navigation)
+const BookingForm = ({ route }) => {
+  const { colors, bookingState, isDatePickerOpen, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
+  // const state = 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
   } = useForm({
     defaultValues: useMemo(() => {
-      return { ...bookingState };
+      return route?.params ? { ...route.params } : { ...bookingState }
     }, [bookingState]),
     mode: 'onChange',
   });
@@ -307,7 +308,7 @@ const BookingForm = ({ navigation }) => {
             selectionColor={colors.white}
             underlineColor={colors.white}
             activeUnderlineColor={colors.white}
-            value={value.toString()}
+            value={value?.toString()}
             onBlur={onBlur}
             keyboardType="numeric"
             onChangeText={value => onChange(Number(value))}
@@ -414,7 +415,7 @@ const BookingForm = ({ navigation }) => {
           onPress={handleSubmit(onSubmitWithMode)}
           disabled={!isValid}>
           {/* {mode === modes.CREATE ? 'Save' : 'Edit'} */}
-          Save
+          {route?.params ? 'Edit' : 'Save'}
         </Button>
 
         <Button
