@@ -6,6 +6,7 @@ export const bookingsApi = createApi({
   reducerPath: 'bookingsApi',
   baseQuery: baseQuery,
   tagTypes: ['Bookings'],
+  refetchOnReconnect: true,
   endpoints: builder => ({
     getAllBookingByParams: builder.query({
       query: (query) => ({

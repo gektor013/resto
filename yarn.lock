@@ -5852,6 +5852,11 @@ react-native-swipeable-list@^0.1.2:
   resolved "https://registry.yarnpkg.com/react-native-swipeable-list/-/react-native-swipeable-list-0.1.2.tgz#829b89fb08e978c47383395d315f102be855e7da"
   integrity sha512-FDeFLByUep3m3xuwS/ZkktxL7Xzg90XnKoo+KLTF04jiddyVZQMnXTHG8O4pyiEtg/swcBlT6XUktV+/KTVNXQ==
 
+react-native-uuid@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"
+  integrity sha512-cptnoIbL53GTCrWlb/+jrDC6tvb7ypIyzbXNJcpR3Vab0mkeaaVd5qnB3f0whXYzS+SMoSQLcUUB0gEWqkPC0g==
+
 react-native-vector-icons@^9.2.0:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.2.0.tgz#3c0c82e95defd274d56363cbe8fead8d53167ebd"

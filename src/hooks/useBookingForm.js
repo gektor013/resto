@@ -5,6 +5,7 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import { resetBookingData, } from '../store/slice/bookingDataSlice';
 import { setUnsynchronizedCreateBookings, setUnsynchronizedEditedBookings } from '../store/slice/bookingsSlice';
 import { useNavigation } from '@react-navigation/native';
+import uuid from 'react-native-uuid';
 
 const useBookingForm = (route) => {
   const navigation = useNavigation();
@@ -16,15 +17,11 @@ const useBookingForm = (route) => {
 
   const onSubmitWithMode = (data) => {
     if (!route?.params) {
-      dispatch(setUnsynchronizedCreateBookings(data))
+      dispatch(setUnsynchronizedCreateBookings({ ...data, internalID: uuid.v4(), unsync: true }))
     }
-
     if (route?.params) {
       dispatch(setUnsynchronizedEditedBookings(data))
     }
-    // else {
-    //   dispatch(setUnsynchronizedCreateBookings(data))
-    // }
     navigation.navigate('list')
   }
 

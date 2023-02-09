@@ -113,7 +113,7 @@ const Row = ({ item, disabled }) => {
   }
 
   return (
-    <View key={id} style={{ backgroundColor: colors.surface }}>
+    <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
       <DataTable.Row
         disabled={disabled}
         onPress={() => onBookingPressHandler(item)}

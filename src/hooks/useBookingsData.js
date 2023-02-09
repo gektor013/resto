@@ -9,30 +9,31 @@ import { currentDate, statusForActivePage } from '../constants';
 
 const useBookingsData = () => {
   const [bookingData, setBookingsData] = useState([])
-
   const dispatch = useDispatch()
   const { isConnected } = useNetInfo();
-  const { date: dateString } = useSelector(state => state.control)
-  const formatDate = formatDateParams(new Date(dateString))
 
+  const { date: dateString } = useSelector(state => state.control)
   const { allBooking: todayAllBookings } = useSelector(state => state.bookings.todays)
   const { created: createdUnsyncBooking, edit: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
-  // const { allEditedBookings } = useSelector(state => state.bookings.other)
+  const formatDate = formatDateParams(new Date(dateString))
+
+  const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
+  const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
 
   // get only todays booking, it is necessary for the missing internet
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery({ statusForActivePage, date: currentDate }, {
     skip: !isConnected,
-    refetchOnReconnect: true
+    refetchOnReconnect: true,
+    pollingInterval: 600000
   })
-
   // get all booking by date and query params
   const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery({ statusForActivePage, date: formatDate }, {
     skip: !isConnected,
-    refetchOnReconnect: true
+    refetchOnReconnect: true,
+    pollingInterval: 60000
   })
 
-  const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
-  const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
+  console.log(createdUnsyncBooking, createdUnsyncBooking?.length, 'createdUnsyncBooking');
 
   // edit bookings
   const onEditBookings = () => {
@@ -85,16 +86,15 @@ const useBookingsData = () => {
 
   useEffect(() => {
     if (isConnected === true && getOtherDayBookingsData) {
-      // console.log('ISIISIS');
       setBookingsData(getOtherDayBookingsData)
     } else if (isConnected === false) {
-      setBookingsData(todayAllBookings)
+      setBookingsData([...todayAllBookings, ...createdUnsyncBooking])
     }
-  }, [isConnected, getOtherDayBookingsData, todayAllBookings])
+  }, [isConnected, getOtherDayBookingsData, todayAllBookings, createdUnsyncBooking])
 
   // console.log(todayAllBookings, todayAllBookings?.length, 'DATA');
 
-  // console.log(bookingData, bookingData?.length, 'DATA');
+  console.log(bookingData, bookingData?.length, 'DATA');
   return {
     bookingData,
     otherDayBookingFetch
