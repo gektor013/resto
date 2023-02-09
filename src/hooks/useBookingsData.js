@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { formatDateParams } from '../utils/dates'
-import { clearAllEditBookings, clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
+import { clearAllEditBookings, clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
 import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -14,7 +14,7 @@ const useBookingsData = () => {
 
   const { date: dateString } = useSelector(state => state.control)
   const { allBooking: todayAllBookings } = useSelector(state => state.bookings.todays)
-  const { created: createdUnsyncBooking, edit: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
+  const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
   const formatDate = formatDateParams(new Date(dateString))
 
   const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
@@ -32,8 +32,6 @@ const useBookingsData = () => {
     refetchOnReconnect: true,
     pollingInterval: 60000
   })
-
-  console.log(createdUnsyncBooking, createdUnsyncBooking?.length, 'createdUnsyncBooking');
 
   // edit bookings
   const onEditBookings = () => {
@@ -66,7 +64,7 @@ const useBookingsData = () => {
     if (editUnsyncBookings?.length && isConnected) {
       onEditBookings()
     }
-  }, [editUnsyncBookings])
+  }, [editUnsyncBookings, isConnected])
 
   // send other day when there is internet
   useEffect(() => {
@@ -92,9 +90,6 @@ const useBookingsData = () => {
     }
   }, [isConnected, getOtherDayBookingsData, todayAllBookings, createdUnsyncBooking])
 
-  // console.log(todayAllBookings, todayAllBookings?.length, 'DATA');
-
-  console.log(bookingData, bookingData?.length, 'DATA');
   return {
     bookingData,
     otherDayBookingFetch

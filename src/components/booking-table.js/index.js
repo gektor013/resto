@@ -1,37 +1,37 @@
-import moment from 'moment';
 import React from 'react'
+import moment from 'moment';
 import { StyleSheet, View, Pressable } from 'react-native'
 import { DataTable, Text, useTheme } from 'react-native-paper';
 import SwipeableFlatList from 'react-native-swipeable-list';
 import { useNavigation } from '@react-navigation/native';
-
+import { usePatchBookingsMutation } from '../../store/api/bookingsApi';
 
 const BookingTable = ({ bookingsData, navigation }) => {
-  // const [patchBookings] = usePatchBookingsMutation();
+  const [patchBookings] = usePatchBookingsMutation();
   // const { isLoading } = useBookingsData();
 
-  // const handleChancheBookingStatus = async (booking, status) => {
-  //   await patchBookings({ ...booking, status }).unwrap()
-  //     .then(res => console.log(res, 'Result handleChancheBookingStatus'))
-  //     .catch(err => console.log(err, 'handleChancheBookingStatus'));
-  // };
+  const handleChancheBookingStatus = async (booking, status) => {
+    await patchBookings({ ...booking, status }).unwrap()
+      .then(res => console.log(res, 'Result handleChancheBookingStatus'))
+      .catch(err => console.log(err, 'handleChancheBookingStatus'));
+  };
 
   const QuickActions = (_, booking) => {
     return (
       <View style={styles.quickActionContainer}>
         <View style={styles.actionsContainer}>
           <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
-            <Pressable onPress={() => console.log(booking, 4)}>
+            <Pressable onPress={() => handleChancheBookingStatus(booking, 4)}>
               <Text>Arrived</Text>
             </Pressable>
           </View>
           <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
-            <Pressable onPress={() => console.log(booking, 5)}>
+            <Pressable onPress={() => handleChancheBookingStatus(booking, 5)}>
               <Text>Delete</Text>
             </Pressable>
           </View>
           <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
-            <Pressable onPress={() => console.log(booking, 1)}>
+            <Pressable onPress={() => handleChancheBookingStatus(booking, 1)}>
               <Text>Cancel</Text>
             </Pressable>
           </View>
@@ -49,19 +49,20 @@ const BookingTable = ({ bookingsData, navigation }) => {
         <DataTable.Title>Notizen</DataTable.Title>
         <DataTable.Title>Telefon</DataTable.Title>
         <DataTable.Title>Erstellt</DataTable.Title>
-        <DataTable.Title>SSSSSSS</DataTable.Title>
         <DataTable.Title>Status</DataTable.Title>
       </DataTable.Header>
       <SwipeableFlatList
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id ? item.id : item.internalID}
         data={bookingsData}
-        renderItem={({ item }) => (
-          <Row
-            item={item}
-            key={item.id}
-          // disabled={isLoading}
-          />
-        )}
+        renderItem={({ item }) => {
+          return (
+            <Row
+              item={item}
+              key={item.id}
+            // disabled={isLoading}
+            />
+          )
+        }}
         maxSwipeDistance={300}
         renderQuickActions={({ index, item }) => QuickActions(index, item)}
         contentContainerStyle={styles.swipeContainer}
@@ -109,6 +110,7 @@ const Row = ({ item, disabled }) => {
   }
 
   const onBookingPressHandler = (item) => {
+    console.log(item);
     navigation.navigate('form', item)
   }
 
@@ -129,13 +131,6 @@ const Row = ({ item, disabled }) => {
         <DataTable.Cell>{phone}</DataTable.Cell>
         <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
         <DataTable.Cell>status {status}</DataTable.Cell>
-        <DataTable.Cell>
-          {/* <Icon
-            name={getIconName(status)}
-            color={colors[operation ? 'error' : 'primary']}
-            size={24}
-          /> */}
-        </DataTable.Cell>
       </DataTable.Row>
     </View>
   );

@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import BookingForm from '../../components/booking-form';
 
-const BookingFormScreen = ({ route }) => {
+const BookingFormScreen = ({ route, navigation }) => {
   const { colors } = useTheme();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      title: 'Form',
+      headerBackTitle: '',
+      headerStyle: {
+        backgroundColor: colors.background,
+      },
+      headerTitleStyle: {
+        color: colors.onBackground,
+      },
+    });
+  }, [navigation]);
   return (
     <ScrollView
       style={{

@@ -38,9 +38,23 @@ export const bookingsSlice = createSlice({
     clearUnsynchronizedCreateBookings: (state) => {
       state.unsynchronized.created = []
     },
+
     setUnsynchronizedEditedBookings: (state, action) => {
-      state.unsynchronized.edited = [...state.unsynchronized.edited, action.payload]
+      const index = state.unsynchronized.created.findIndex(
+        booking => booking.internalID === action.payload.internalID,
+      );
+
+      if (index === -1) {
+        state.unsynchronized.edited = [
+          ...state.unsynchronized.edited,
+          action.payload,
+        ];
+      } else {
+        state.unsynchronized.created[index] = action.payload
+      }
+
     },
+
     clearUnsynchronizedEditedBookings: (state) => {
       state.unsynchronized.edited = []
     },
@@ -49,19 +63,13 @@ export const bookingsSlice = createSlice({
     setOtherDayAllBookings: (state, action) => {
       state.other.allOtherDayBooking = action.payload
     },
-    setAllEditedBookings: (state, action) => {
-      state.other.allEditedBookings = [...state.other.allEditedBookings, action.payload]
-    },
-    clearAllEditBookings: (state) => {
-      state.other.allEditedBookings = []
-    },
   }
 });
 
 export const {
   //today reducers
   setTodaysAllBookings,
-  setOtherDayAllBookings,
+
 
   // unsynchronized reducers
   setUnsynchronizedCreateBookings,
@@ -70,8 +78,7 @@ export const {
   clearUnsynchronizedEditedBookings,
 
   // ohter day reducers
-  setAllEditedBookings,
-  clearAllEditBookings,
+  setOtherDayAllBookings,
 } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

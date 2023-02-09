@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   date: '',
-  startTime: '13:00',
-  endTime: '13:30',
+  startTime: '',
+  endTime: '',
   prefixName: 0,
   name: '',
   email: null,

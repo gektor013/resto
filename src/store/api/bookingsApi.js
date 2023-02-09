@@ -5,7 +5,7 @@ import { baseQuery } from './config';
 export const bookingsApi = createApi({
   reducerPath: 'bookingsApi',
   baseQuery: baseQuery,
-  tagTypes: ['Bookings'],
+  tagTypes: ['Bookings', 'TodayBookings'],
   refetchOnReconnect: true,
   endpoints: builder => ({
     getAllBookingByParams: builder.query({
@@ -30,6 +30,7 @@ export const bookingsApi = createApi({
         url: `/bookings`,
         params: query
       }),
+      providesTags: ['TodayBookings']
     }),
     getBookingById: builder.query({
       query: id => ({
@@ -43,7 +44,7 @@ export const bookingsApi = createApi({
         method: 'post',
         body,
       }),
-      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }],
     }),
     editBooking: builder.mutation({
       query: body => ({
@@ -51,7 +52,7 @@ export const bookingsApi = createApi({
         method: 'put',
         body,
       }),
-      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }],
+      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }],
     }),
     patchBookings: builder.mutation({
       query: body => ({
@@ -62,9 +63,9 @@ export const bookingsApi = createApi({
           'Content-Type': 'application/merge-patch+json',
         },
       }),
-      invalidatesTags: (result, error, body) => [{ type: 'Bookings', id: body.id }],
+      invalidatesTags: (result, error, body) => [{ type: 'Bookings', id: 'LIST' }],
     }),
   }),
 });
 
-export const { useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation } = bookingsApi;
+export const { useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation, usePatchBookingsMutation } = bookingsApi;

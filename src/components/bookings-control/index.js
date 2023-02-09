@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatDate } from '../../utils/dates';
 import useBookingControl from '../../hooks/useBookingControl';
+import { logout } from '../../store/slice/authenticationSlice';
 
 const BookingsControl = ({
   isConnected,
@@ -13,7 +14,7 @@ const BookingsControl = ({
   const { date: dateString } = useSelector(state => state.control);
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   // const { isLoading, isUpdateAvailable } = useSelector(state => state.control);
-
+  const dispatch = useDispatch()
   return (
     <View>
       <View style={styles.row}>
@@ -48,6 +49,12 @@ const BookingsControl = ({
           mode="contained"
           onPress={() => onHandleOpenModals('date')}>
           New booking
+        </Button>
+        <Button
+          icon="plus"
+          mode="contained"
+          onPress={() => dispatch(logout())}>
+          logout
         </Button>
         {/* ) : null} */}
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import moment from 'moment';
 import { useTheme } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
@@ -70,6 +70,20 @@ const ActiveBookingsScreen = ({ navigation }) => {
     },
     [],
   );
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      title: 'All bookings',
+      headerBackTitle: '',
+      headerStyle: {
+        backgroundColor: colors.background,
+      },
+      headerTitleStyle: {
+        color: colors.onBackground,
+      },
+    });
+  }, [navigation]);
 
   return (
     <>

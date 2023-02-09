@@ -20,7 +20,7 @@ const useBookingForm = (route) => {
       dispatch(setUnsynchronizedCreateBookings({ ...data, internalID: uuid.v4(), unsync: true }))
     }
     if (route?.params) {
-      dispatch(setUnsynchronizedEditedBookings(data))
+      dispatch(setUnsynchronizedEditedBookings({ ...data, unsync: true }))
     }
     navigation.navigate('list')
   }
