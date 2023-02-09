@@ -3,7 +3,7 @@ import Navigation from '../navigation';
 import Loading from '../components/loading';
 import {
   Button,
-  Snackbar,
+  // Snackbar,
   Paragraph,
   Dialog,
   Portal,
@@ -11,43 +11,24 @@ import {
 // import { useSynchronize } from '../hooks/useSynchronize';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteMessage } from '../store/slice/messagesSlice';
+// import { deleteMessage } from '../store/slice/messagesSlice';
 import { setIsChekingsLoading } from '../store/slice/controlSlice';
 
-const delay = 1;
+// const delay = 1;
 
 const Layout = () => {
   const [visibleDialog, setDialogVisible] = useState(false);
-  const [message, setMessage] = useState(false);
-  const messages = useSelector(state => state);
   const dispatch = useDispatch();
   const { isLoading } = useSelector(state => state.control)
-
-  // const { isLoading } = useSynchronize();
-  // const { isConnected } = useNetInfo();
+  const { isConnected } = useNetInfo();
 
   const onDialogHandler = flag => {
     setDialogVisible(flag);
   };
 
-  const onMessageHide = () => {
-    dispatch(deleteMessage(message));
-    setMessage(false);
-  };
-
-  // useEffect(() => {
-  //   if (messages.length && !message) {
-  //     let _timer = setTimeout(() => setMessage(messages[0]), delay * 1000);
-
-  //     return () => {
-  //       clearTimeout(_timer);
-  //     };
-  //   }
-  // }, [messages, message]);
-
-  // useEffect(() => {
-  //   if (!isLoading && !isConnected) onDialogHandler(true);
-  // }, [isConnected, isLoading]);
+  useEffect(() => {
+    if (isConnected === false) onDialogHandler(true);
+  }, [isConnected]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -58,7 +39,7 @@ const Layout = () => {
   return (
     <>
       {isLoading ? <Loading /> : <Navigation />}
-      {/* <Portal>
+      <Portal>
         <Dialog
           visible={visibleDialog}
           onDismiss={() => onDialogHandler(false)}>
@@ -71,7 +52,7 @@ const Layout = () => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <Snackbar
+      {/* <Snackbar
         visible={true}
         onDismiss={onMessageHide}
         duration={5000}
@@ -81,7 +62,6 @@ const Layout = () => {
         }}>
         {message.message}
       </Snackbar> */}
-      {/* <Navigation /> */}
     </>
   );
 };

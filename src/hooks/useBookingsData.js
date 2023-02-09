@@ -1,35 +1,46 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { formatDateParams } from '../utils/dates'
-import { clearAllEditBookings, setAllEditedBookings, setOtherDayAllBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
-import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery } from '../store/api/bookingsApi';
+import { clearAllEditBookings, clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
+import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { currentDate, statusForActivePage } from '../constants';
+
 
 const useBookingsData = () => {
+  const [bookingData, setBookingsData] = useState([])
+
   const dispatch = useDispatch()
   const { isConnected } = useNetInfo();
-  const status = 'status[]=0&status[]=2&status[]=3&status[]=4'
   const { date: dateString } = useSelector(state => state.control)
   const formatDate = formatDateParams(new Date(dateString))
 
   const { allBooking: todayAllBookings } = useSelector(state => state.bookings.todays)
-  const { allOtherDayBooking } = useSelector(state => state.bookings.other)
-  const { allEditedBookings } = useSelector(state => state.bookings.other)
+  const { created: createdUnsyncBooking, edit: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
+  // const { allEditedBookings } = useSelector(state => state.bookings.other)
 
-  const { data: getBookingsData, isFetching: bookingFetch } = useGetAllBookingByParamsQuery({ status, date: formatDate }, {
+  // get only todays booking, it is necessary for the missing internet
+  const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery({ statusForActivePage, date: currentDate }, {
     skip: !isConnected,
+    refetchOnReconnect: true
   })
 
-  const [createBooking] = useCreateBookingMutation()
+  // get all booking by date and query params
+  const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery({ statusForActivePage, date: formatDate }, {
+    skip: !isConnected,
+    refetchOnReconnect: true
+  })
+
+  const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
   const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
 
   // edit bookings
   const onEditBookings = () => {
-    Array.from(allEditedBookings, (elem) => {
+    Array.from(editUnsyncBookings, (elem) => {
       editBookings(elem).unwrap()
         .then(res => {
           if (res) {
-            dispatch(clearAllEditBookings([]))
+            dispatch(clearUnsynchronizedEditedBookings())
           }
         })
         .catch(e => console.log(e, 'onEditBookings error'))
@@ -37,37 +48,56 @@ const useBookingsData = () => {
   }
 
   // send when there is internet
-  const sendAllOtherDayBookings = async () => {
-    await createBooking(allOtherDayBooking).unwrap()
-      .then(res => {
-        if (res) {
-          dispatch(setOtherDayAllBookings([]))
-        }
-      }).catch(e => console.log(e, 'sendAllOtherDayBookings'))
+  const sendUnsyncCreadetBookings = async () => {
+    Array.from(createdUnsyncBooking, (booking) => {
+      createBooking(booking).unwrap()
+        .then(res => {
+          if (res) {
+            dispatch(clearUnsynchronizedCreateBookings())
+          }
+        })
+        .catch(e => console.log('sendAllOtherDayBookings ERROR'))
+    })
   }
 
+  // send when there is internet
   useEffect(() => {
-    if (allEditedBookings?.length && isConnected) {
+    if (editUnsyncBookings?.length && isConnected) {
       onEditBookings()
     }
-  }, [allEditedBookings])
+  }, [editUnsyncBookings])
+
+  // send other day when there is internet
+  useEffect(() => {
+    if (createdUnsyncBooking?.length && isConnected) {
+      sendUnsyncCreadetBookings()
+    }
+  }, [createdUnsyncBooking, isConnected])
 
   useEffect(() => {
-    if (allOtherDayBooking !== [] && isConnected) {
-      sendAllOtherDayBookings()
+    if (getTodayBookingsData?.length) {
+      dispatch(setTodaysAllBookings(getTodayBookingsData))
     }
-  }, [allOtherDayBooking, isConnected])
+    // else if (isConnected) {
+    //   dispatch(setTodaysAllBookings([]))
+    // }
+  }, [getTodayBookingsData, isConnected])
 
   useEffect(() => {
-    if (getBookingsData?.length) {
-      dispatch(setTodaysAllBookings(getBookingsData))
-    } else {
-      dispatch(setTodaysAllBookings([]))
+    if (isConnected === true && getOtherDayBookingsData) {
+      // console.log('ISIISIS');
+      setBookingsData(getOtherDayBookingsData)
+    } else if (isConnected === false) {
+      setBookingsData(todayAllBookings)
     }
-  }, [getBookingsData])
+  }, [isConnected, getOtherDayBookingsData, todayAllBookings])
 
+  // console.log(todayAllBookings, todayAllBookings?.length, 'DATA');
+
+  // console.log(bookingData, bookingData?.length, 'DATA');
   return {
-    todayAllBookings, bookingFetch
+    bookingData,
+    otherDayBookingFetch
   }
 }
 

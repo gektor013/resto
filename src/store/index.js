@@ -15,6 +15,7 @@ import { MMKVLoader } from "react-native-mmkv-storage";
 import { unauthenticatedMiddleware } from './middlewares/unauthenticated';
 import { authenticationApi } from './api/authenticationApi';
 import { bookingsApi } from './api/bookingsApi';
+import { roomsApi } from './api/roomsApi';
 import authenticationReducer from './slice/authenticationSlice';
 import bookingsReducer from './slice/bookingsSlice';
 import controlSlice from './slice/controlSlice';
@@ -35,6 +36,7 @@ const persistConfig = {
 const reducers = combineReducers({
   [authenticationApi.reducerPath]: authenticationApi.reducer,
   [bookingsApi.reducerPath]: bookingsApi.reducer,
+  [roomsApi.reducerPath]: roomsApi.reducer,
   authentication: authenticationReducer,
   bookings: bookingsReducer,
   control: controlSlice,
@@ -55,6 +57,7 @@ const store = configureStore({
       unauthenticatedMiddleware,
       authenticationApi.middleware,
       bookingsApi.middleware,
+      roomsApi.middleware,
     ),
 });
 

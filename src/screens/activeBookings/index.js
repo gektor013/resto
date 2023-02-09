@@ -20,7 +20,7 @@ import useBookingsData from '../../hooks/useBookingsData';
 const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
-  const { todayAllBookings, bookingFetch } = useBookingsData()
+  const { bookingData, otherDayBookingFetch } = useBookingsData()
   const { date: dateString } = useSelector(state => state.control)
 
   const [dateModal, setDateModal] = useState(false);
@@ -83,7 +83,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
             // onBookingCreateHandler={onBookingCreateHandler}
             onHandleOpenModals={onHandleOpenModals}
           />
-          {bookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={todayAllBookings} />}
+          {otherDayBookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingData} />}
         </View>
       </SafeAreaView>
 

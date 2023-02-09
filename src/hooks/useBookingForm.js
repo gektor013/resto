@@ -3,7 +3,7 @@ import { useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { resetBookingData, } from '../store/slice/bookingDataSlice';
-import { setAllEditedBookings, setOtherDayAllBookings, setUnsynchronizedBookings } from '../store/slice/bookingsSlice';
+import { setUnsynchronizedCreateBookings, setUnsynchronizedEditedBookings } from '../store/slice/bookingsSlice';
 import { useNavigation } from '@react-navigation/native';
 
 const useBookingForm = (route) => {
@@ -15,15 +15,15 @@ const useBookingForm = (route) => {
   const { isConnected } = useNetInfo();
 
   const onSubmitWithMode = (data) => {
-    if (isConnected && !route?.params) {
-      dispatch(setOtherDayAllBookings(data))
+    if (!route?.params) {
+      dispatch(setUnsynchronizedCreateBookings(data))
     }
 
-    if (isConnected && route?.params) {
-      dispatch(setAllEditedBookings(data))
+    if (route?.params) {
+      dispatch(setUnsynchronizedEditedBookings(data))
     }
     // else {
-    //   dispatch(setUnsynchronizedBookings(data))
+    //   dispatch(setUnsynchronizedCreateBookings(data))
     // }
     navigation.navigate('list')
   }

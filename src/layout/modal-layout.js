@@ -24,6 +24,10 @@ const ModaLayout = ({ children, visible, onCancel, onSave, title }) => {
         setDisabled(false)
       }
     }
+
+    if (title === 'Select desk') {
+      setDisabled(false)
+    }
   }
 
   useEffect(() => {

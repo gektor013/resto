@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import MaskInput from 'react-native-mask-input';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
@@ -7,7 +7,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { formatDate } from '../../utils/dates';
 import useBookingForm from '../../hooks/useBookingForm';
-import { setIsChekingsLoading } from '../../store/slice/controlSlice';
+import ModaLayout from '../../layout/modal-layout';
+import Tables from '../tables';
 
 const MIN_NAME_LENGTH = 1;
 const MAX_NAME_LENGTH = 25;
@@ -34,6 +35,7 @@ const ERROR_MESSAGES = {
 };
 
 const BookingForm = ({ route }) => {
+  const [isOpenTableModal, setIsOpenTableModal] = useState(false)
   const { colors, bookingState, isDatePickerOpen, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
   // const state = 
   const {
@@ -192,6 +194,36 @@ const BookingForm = ({ route }) => {
         name="endTime"
       />
       <HelperText type="error">{errors.endTime?.message}</HelperText>
+
+      {/* TABLE MODAL */}
+
+      <TextInput
+        autoCorrect={false}
+        mode="outlined"
+        label="tables"
+        style={styles.mv5p}
+        value={'first Hall'}
+        onTouchStart={() => {
+          setIsOpenTableModal(true);
+        }}
+        showSoftInputOnFocus={false}
+        focusable={false}
+        caretHidden={true}
+      />
+
+      <ModaLayout
+        visible={isOpenTableModal}
+        onCancel={() => setIsOpenTableModal(false)}
+        // disabled={true}
+        title={'Select desk'}
+        onSave={() => console.log('first')}
+      >
+        <Tables />
+      </ModaLayout>
+
+      <HelperText type="error"></HelperText>
+
+      {/* TABLE MODAL */}
 
       <Controller
         control={control}

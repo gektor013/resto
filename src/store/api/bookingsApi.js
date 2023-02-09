@@ -24,6 +24,12 @@ export const bookingsApi = createApi({
             { type: 'Bookings', id: 'PARTIAL-BOOKINGS' },
           ],
     }),
+    getTodayBookingByParams: builder.query({
+      query: (query) => ({
+        url: `/bookings`,
+        params: query
+      }),
+    }),
     getBookingById: builder.query({
       query: id => ({
         url: `/bookings/${id}`,
@@ -60,4 +66,4 @@ export const bookingsApi = createApi({
   }),
 });
 
-export const { useGetAllBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation } = bookingsApi;
+export const { useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation } = bookingsApi;
