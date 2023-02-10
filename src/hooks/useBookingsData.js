@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { formatDateParams } from '../utils/dates'
-import { clearAllEditBookings, clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
+import { clearAllEditBookings, clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
 import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -14,6 +14,7 @@ const useBookingsData = () => {
 
   const { date: dateString } = useSelector(state => state.control)
   const { allBooking: todayAllBookings } = useSelector(state => state.bookings.todays)
+  const { allOtherDayBooking: otherDayBookings } = useSelector(state => state.bookings.other)
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
   const formatDate = formatDateParams(new Date(dateString))
 
@@ -27,7 +28,7 @@ const useBookingsData = () => {
     pollingInterval: 600000
   })
   // get all booking by date and query params
-  const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery({ statusForActivePage, date: formatDate }, {
+  const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
     skip: !isConnected,
     refetchOnReconnect: true,
     pollingInterval: 60000
@@ -77,18 +78,21 @@ const useBookingsData = () => {
     if (getTodayBookingsData?.length) {
       dispatch(setTodaysAllBookings(getTodayBookingsData))
     }
-    // else if (isConnected) {
-    //   dispatch(setTodaysAllBookings([]))
-    // }
   }, [getTodayBookingsData, isConnected])
 
   useEffect(() => {
-    if (isConnected === true && getOtherDayBookingsData) {
-      setBookingsData(getOtherDayBookingsData)
-    } else if (isConnected === false) {
-      setBookingsData([...todayAllBookings, ...createdUnsyncBooking])
+    if (getOtherDayBookingsData) {
+      dispatch(setOtherDayAllBookings(getOtherDayBookingsData))
     }
-  }, [isConnected, getOtherDayBookingsData, todayAllBookings, createdUnsyncBooking])
+  }, [getOtherDayBookingsData, isConnected])
+
+  useEffect(() => {
+    if (isConnected === true && otherDayBookings) {
+      setBookingsData(otherDayBookings)
+    } else if (isConnected === false) {
+      setBookingsData([...createdUnsyncBooking, ...todayAllBookings])
+    }
+  }, [isConnected, otherDayBookings, todayAllBookings, createdUnsyncBooking])
 
   return {
     bookingData,

@@ -8,7 +8,7 @@ import { useGetAllBookingByParamsQuery } from '../store/api/bookingsApi';
 const useWaitBookingsData = () => {
   const { isConnected } = useNetInfo();
 
-  const { data: waitPageData, isFetching: waitIsFetch } = useGetAllBookingByParamsQuery({ status: statusForWaitPage, }, {
+  const { data: waitPageData, isFetching: waitIsFetch } = useGetAllBookingByParamsQuery(statusForWaitPage, {
     skip: !isConnected,
   })
 

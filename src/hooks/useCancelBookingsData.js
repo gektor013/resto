@@ -6,7 +6,7 @@ import { useGetAllBookingByParamsQuery } from '../store/api/bookingsApi';
 const useCancelBookingsData = () => {
   const { isConnected } = useNetInfo();
 
-  const { data: deletedPageData, isFetching: deletedIsFetch } = useGetAllBookingByParamsQuery({ status: statusForDeletedPage }, {
+  const { data: deletedPageData, isFetching: deletedIsFetch } = useGetAllBookingByParamsQuery(statusForDeletedPage, {
     skip: !isConnected,
   })
   console.log(deletedPageData);

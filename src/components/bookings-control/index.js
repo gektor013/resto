@@ -43,18 +43,18 @@ const BookingsControl = ({
           />
         )}
 
+        <Button
+          icon="plus"
+          mode="contained"
+          onPress={() => dispatch(logout())}>
+          logout
+        </Button>
         {/* {createButtonEnabled ? ( */}
         <Button
           icon="plus"
           mode="contained"
           onPress={() => onHandleOpenModals('date')}>
           New booking
-        </Button>
-        <Button
-          icon="plus"
-          mode="contained"
-          onPress={() => dispatch(logout())}>
-          logout
         </Button>
         {/* ) : null} */}
 
