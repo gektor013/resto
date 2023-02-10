@@ -7,6 +7,7 @@ export const bookingsApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['Bookings', 'TodayBookings'],
   refetchOnReconnect: true,
+  refetchOnFocus: true,
   endpoints: builder => ({
     getAllBookingByParams: builder.query({
       query: (query) => ({

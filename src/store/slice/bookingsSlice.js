@@ -17,9 +17,8 @@ const initialState = {
   // bookings of other days
   other: {
     allOtherDayBooking: [],
-    allEditedBookings: []
-    // waitingBooking: [],
-    // cancelBookings: []
+    allOtherDayWaitingBooking: [],
+    allOtherDayCancelBookings: []
   },
 };
 
@@ -63,6 +62,16 @@ export const bookingsSlice = createSlice({
     setOtherDayAllBookings: (state, action) => {
       state.other.allOtherDayBooking = action.payload
     },
+
+    setOtherDayWaitBookings: (state, action) => {
+      state.other.allOtherDayWaitingBooking = action.payload
+    },
+
+    setOtherDayCancelBookings: (state, action) => {
+      state.other.allOtherDayCancelBookings = action.payload
+    },
+
+
   }
 });
 
@@ -79,6 +88,8 @@ export const {
 
   // ohter day reducers
   setOtherDayAllBookings,
+  setOtherDayWaitBookings,
+  setOtherDayCancelBookings
 } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

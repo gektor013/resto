@@ -8,7 +8,7 @@ import useWaitBookingsData from '../../hooks/useWaitBookingsData';
 
 const WaitBookingsScreen = ({ navigation }) => {
   const { colors } = useTheme();
-  const { waitPageData, waitIsFetch } = useWaitBookingsData()
+  const { waitData, waitIsFetch } = useWaitBookingsData()
 
   useEffect(() => {
     navigation.setOptions({
@@ -29,7 +29,7 @@ const WaitBookingsScreen = ({ navigation }) => {
       <View
         style={{ ...styles.container, backgroundColor: colors.background }}
       >
-        {waitIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={waitPageData} />}
+        {waitIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={waitData} />}
       </View>
     </SafeAreaView>
   )

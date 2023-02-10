@@ -1,19 +1,36 @@
+import { useEffect, useState } from 'react'
 import { useNetInfo } from '@react-native-community/netinfo';
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
 import { statusForWaitPage } from '../constants';
 import { useGetAllBookingByParamsQuery } from '../store/api/bookingsApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { setOtherDayWaitBookings } from '../store/slice/bookingsSlice';
 
 
 const useWaitBookingsData = () => {
+  const [waitData, setWaitData] = useState([])
   const { isConnected } = useNetInfo();
+  const dispatch = useDispatch()
+
+  const { allOtherDayWaitingBooking } = useSelector(state => state.bookings.other)
 
   const { data: waitPageData, isFetching: waitIsFetch } = useGetAllBookingByParamsQuery(statusForWaitPage, {
     skip: !isConnected,
   })
 
+  useEffect(() => {
+    if (waitPageData && !waitIsFetch) {
+      dispatch(setOtherDayWaitBookings(waitPageData))
+    }
+  }, [waitPageData])
+
+  useEffect(() => {
+    if (allOtherDayWaitingBooking) {
+      setWaitData(allOtherDayWaitingBooking)
+    }
+  }, [allOtherDayWaitingBooking])
+
   return {
-    waitPageData, waitIsFetch
+    waitData, waitIsFetch
   }
 }
 

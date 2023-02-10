@@ -1,4 +1,5 @@
 {
   "name": "yme",
-  "displayName": "yme"
+  "displayName": "yme",
+  "orientation": "horizontal"
 }

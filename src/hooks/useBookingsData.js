@@ -25,13 +25,13 @@ const useBookingsData = () => {
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery({ statusForActivePage, date: currentDate }, {
     skip: !isConnected,
     refetchOnReconnect: true,
-    pollingInterval: 600000
+    pollingInterval: 300000
   })
   // get all booking by date and query params
   const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
     skip: !isConnected,
     refetchOnReconnect: true,
-    pollingInterval: 60000
+    pollingInterval: 300000
   })
 
   // edit bookings
@@ -87,7 +87,7 @@ const useBookingsData = () => {
   }, [getOtherDayBookingsData, isConnected])
 
   useEffect(() => {
-    if (isConnected === true && otherDayBookings) {
+    if (isConnected === true && getOtherDayBookingsData && otherDayBookings) {
       setBookingsData(otherDayBookings)
     } else if (isConnected === false) {
       setBookingsData([...createdUnsyncBooking, ...todayAllBookings])

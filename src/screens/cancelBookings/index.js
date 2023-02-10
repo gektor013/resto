@@ -4,7 +4,6 @@ import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LoadingScreen from '../loading';
 import BookingTable from '../../components/booking-table.js';
-import useWaitBookingsData from '../../hooks/useWaitBookingsData';
 import useCancelBookingsData from '../../hooks/useCancelBookingsData';
 
 const DeletedBookingsScreen = ({ navigation }) => {
