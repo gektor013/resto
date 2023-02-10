@@ -97,7 +97,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
             // onBookingCreateHandler={onBookingCreateHandler}
             onHandleOpenModals={onHandleOpenModals}
           />
-          {otherDayBookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingData} />}
+          {otherDayBookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingData} cancel={false} />}
         </View>
       </SafeAreaView>
 

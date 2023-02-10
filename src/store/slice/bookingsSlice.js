@@ -46,10 +46,10 @@ export const bookingsSlice = createSlice({
       if (index === -1) {
         state.unsynchronized.edited = [
           ...state.unsynchronized.edited,
-          action.payload,
+          { ...action.payload, status: 0 },
         ];
       } else {
-        state.unsynchronized.created[index] = action.payload
+        state.unsynchronized.created[index] = { ...action.payload, status: 0 }
       }
 
     },
@@ -60,7 +60,8 @@ export const bookingsSlice = createSlice({
 
     // other bookings reducers
     setOtherDayAllBookings: (state, action) => {
-      state.other.allOtherDayBooking = action.payload
+      const filterBooking = action.payload?.filter(booking => booking.status !== 5)
+      state.other.allOtherDayBooking = filterBooking
     },
 
     setOtherDayWaitBookings: (state, action) => {

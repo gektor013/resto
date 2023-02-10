@@ -6,35 +6,45 @@ import SwipeableFlatList from 'react-native-swipeable-list';
 import { useNavigation } from '@react-navigation/native';
 import { usePatchBookingsMutation } from '../../store/api/bookingsApi';
 
-const BookingTable = ({ bookingsData, navigation }) => {
+const BookingTable = ({ bookingsData, navigation, cancel }) => {
   const [patchBookings] = usePatchBookingsMutation();
   // const { isLoading } = useBookingsData();
 
   const handleChancheBookingStatus = async (booking, status) => {
     await patchBookings({ ...booking, status }).unwrap()
-      .then(res => console.log(res, 'Result handleChancheBookingStatus'))
+      // .then(res => console.log(res, 'Result handleChancheBookingStatus'))
       .catch(err => console.log(err, 'handleChancheBookingStatus'));
   };
 
   const QuickActions = (_, booking) => {
     return (
       <View style={styles.quickActionContainer}>
-        <View style={styles.actionsContainer}>
-          <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
-            <Pressable onPress={() => handleChancheBookingStatus(booking, 4)}>
-              <Text>Arrived</Text>
-            </Pressable>
-          </View>
-          <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
-            <Pressable onPress={() => handleChancheBookingStatus(booking, 5)}>
-              <Text>Delete</Text>
-            </Pressable>
-          </View>
-          <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
-            <Pressable onPress={() => handleChancheBookingStatus(booking, 1)}>
-              <Text>Cancel</Text>
-            </Pressable>
-          </View>
+        <View style={{ ...styles.actionsContainer, width: !cancel ? 300 : 100 }}>
+          {!cancel ? (
+            <>
+              <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
+                <Pressable onPress={() => handleChancheBookingStatus(booking, 4)}>
+                  <Text>Arrived</Text>
+                </Pressable>
+              </View>
+              <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
+                <Pressable onPress={() => handleChancheBookingStatus(booking, 5)}>
+                  <Text>Delete</Text>
+                </Pressable>
+              </View>
+              <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
+                <Pressable onPress={() => handleChancheBookingStatus(booking, 1)}>
+                  <Text>Cancel</Text>
+                </Pressable>
+              </View>
+            </>
+          ) : (
+            <View style={{ ...styles.action, flex: 2, backgroundColor: '#94a3b8' }}>
+              <Pressable onPress={() => handleChancheBookingStatus(booking, 0)}>
+                <Text>Restore</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
       </View>
     );
@@ -63,7 +73,7 @@ const BookingTable = ({ bookingsData, navigation }) => {
             />
           )
         }}
-        maxSwipeDistance={300}
+        maxSwipeDistance={!cancel ? 300 : 100}
         renderQuickActions={({ index, item }) => QuickActions(index, item)}
         contentContainerStyle={styles.swipeContainer}
         shouldBounceOnMount={false}

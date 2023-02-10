@@ -29,7 +29,7 @@ const WaitBookingsScreen = ({ navigation }) => {
       <View
         style={{ ...styles.container, backgroundColor: colors.background }}
       >
-        {waitIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={waitData} />}
+        {waitIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={waitData} cancel={false} />}
       </View>
     </SafeAreaView>
   )
