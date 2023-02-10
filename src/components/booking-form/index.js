@@ -37,11 +37,14 @@ const ERROR_MESSAGES = {
 const BookingForm = ({ route }) => {
   const [isOpenTableModal, setIsOpenTableModal] = useState(false)
   const { colors, bookingState, isDatePickerOpen, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
-  // const state = 
+  const [tableId, setTableId] = useState(0)
+
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
+    getValues,
+
   } = useForm({
     defaultValues: useMemo(() => {
       return route?.params ? { ...route.params } : { ...bookingState }
@@ -49,6 +52,7 @@ const BookingForm = ({ route }) => {
     mode: 'onChange',
   });
 
+  console.log(isValid, errors);
   return (
     <View style={styles.mb150}>
       <Controller
@@ -197,29 +201,50 @@ const BookingForm = ({ route }) => {
 
       {/* TABLE MODAL */}
 
-      <TextInput
-        autoCorrect={false}
-        mode="outlined"
-        label="tables"
-        style={styles.mv5p}
-        value={'first Hall'}
-        onTouchStart={() => {
-          setIsOpenTableModal(true);
+      <Controller
+        control={control}
+        rules={{
+          required: { value: true },
+          validate: (value) => {
+            console.log(value[0], "VAL");
+            return (
+              value[0] !== ""
+            )
+          }
         }}
-        showSoftInputOnFocus={false}
-        focusable={false}
-        caretHidden={true}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <>
+            <TextInput
+              autoCorrect={false}
+              mode="outlined"
+              label="tables"
+              style={styles.mv5p}
+              value={value[0]}
+              onTouchStart={() => {
+                setIsOpenTableModal(true);
+              }}
+              showSoftInputOnFocus={false}
+              focusable={false}
+              caretHidden={true}
+            />
+
+            <ModaLayout
+              visible={isOpenTableModal}
+              onCancel={() => setIsOpenTableModal(false)}
+              // disabled={true}
+              title={'Select desk'}
+              onSave={() => {
+                onChange([`/api/tables/${tableId}`])
+                setIsOpenTableModal(false)
+              }}
+            >
+              <Tables tableId={tableId} setTableId={setTableId} />
+            </ModaLayout>
+          </>
+        )}
+        name="tables"
       />
 
-      <ModaLayout
-        visible={isOpenTableModal}
-        onCancel={() => setIsOpenTableModal(false)}
-        // disabled={true}
-        title={'Select desk'}
-        onSave={() => console.log('first')}
-      >
-        <Tables />
-      </ModaLayout>
 
       <HelperText type="error"></HelperText>
 

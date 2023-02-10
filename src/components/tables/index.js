@@ -1,44 +1,44 @@
-import { useNetInfo } from '@react-native-community/netinfo'
 import React, { useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { SegmentedButtons, Surface } from 'react-native-paper'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { SegmentedButtons, Surface, useTheme } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import LoadingScreen from '../../screens/loading'
-import { useGetAllRoomsQuery } from '../../store/api/roomsApi'
+import { useSelector } from 'react-redux'
 
-const Tables = () => {
-  const { isConnected } = useNetInfo();
+const Tables = ({ tableId, setTableId }) => {
   const [value, setValue] = useState(1);
-  const { data: roomsData, isFetching: roomsFetching } = useGetAllRoomsQuery('', { skip: isConnected === false })
+  const { rooms: roomsData } = useSelector(state => state.rooms)
+  const { colors } = useTheme();
 
   return (
     <SafeAreaView style={styles.container}>
       {
-        roomsFetching ? <LoadingScreen /> :
-          <>
-            <SegmentedButtons
-              value={value}
-              onValueChange={setValue}
-              buttons={
-                roomsData ? roomsData?.map(item => ({
-                  value: item.id,
-                  label: item.name,
-                })) : []
-              }
-            />
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
-              {
-                roomsData?.find(arr => arr.id === value).tables.map(item => (
-                  <Pressable key={item} onPress={() => console.log('Press')}>
-                    <Surface style={styles.surface} elevation={4}>
-                      <Text>Name</Text>
-                      <Text>8 seats</Text>
+        <>
+          <SegmentedButtons
+            value={value}
+            onValueChange={setValue}
+            buttons={
+              roomsData ? roomsData?.map(item => ({
+                value: item.id,
+                label: item.name,
+              })) : []
+            }
+          />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
+            {
+              roomsData?.find(arr => arr.id === value).tables.map((item, idx) => {
+                // console.log(typeof item.id);
+                return (
+                  <TouchableOpacity key={item.createdAt + idx} onPress={() => setTableId(item.id)}>
+                    <Surface style={{ ...styles.surface, backgroundColor: tableId === item.id ? colors.primary : '#3fab1a' }} elevation={4}>
+                      <Text>{item.name}</Text>
+                      <Text>{item.seatQuantity} seats</Text>
                     </Surface>
-                  </Pressable>
-                ))
-              }
-            </View>
-          </>
+                  </TouchableOpacity>
+                )
+              })
+            }
+          </View>
+        </>
       }
 
 

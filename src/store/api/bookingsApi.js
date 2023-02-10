@@ -10,7 +10,7 @@ export const bookingsApi = createApi({
   refetchOnFocus: true,
   endpoints: builder => ({
     getAllBookingByParams: builder.query({
-      query: (query) => ({
+      query: (query) => (console.log('getAllBookingByParams'), {
         url: `/bookings${query}`,
       }),
       providesTags: result =>
@@ -27,8 +27,7 @@ export const bookingsApi = createApi({
     }),
     getTodayBookingByParams: builder.query({
       query: (query) => ({
-        url: `/bookings`,
-        params: query
+        url: `/bookings${query}`,
       }),
       providesTags: ['TodayBookings']
     }),
@@ -39,7 +38,7 @@ export const bookingsApi = createApi({
       providesTags: (result, error, id) => [{ type: 'Bookings', id }],
     }),
     createBooking: builder.mutation({
-      query: body => ({
+      query: body => (console.log('createBooking'), {
         url: '/bookings',
         method: 'post',
         body,

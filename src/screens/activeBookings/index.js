@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import moment from 'moment';
-import { useTheme } from 'react-native-paper';
+import { Button, useTheme } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -16,6 +16,7 @@ import NumberGuset from '../../components/booking-modals/numberGuest';
 
 import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
 import useBookingsData from '../../hooks/useBookingsData';
+import { logout } from '../../store/slice/authenticationSlice';
 
 const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
@@ -76,6 +77,14 @@ const ActiveBookingsScreen = ({ navigation }) => {
       headerShown: true,
       title: 'All bookings',
       headerBackTitle: '',
+      headerRight: () => (
+        <Button
+          // icon="plus"
+          mode="contained"
+          onPress={() => dispatch(logout())}>
+          logout
+        </Button>
+      ),
       headerStyle: {
         backgroundColor: colors.background,
       },

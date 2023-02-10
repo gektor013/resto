@@ -14,7 +14,6 @@ export const controlSlice = createSlice({
   reducers: {
     setSelectedDate: (state, action) => {
       state.date = action.payload.toString();
-      // state.isUpdateAvailable = false;
     },
     setIsNeedUpdate: (state, action) => {
       state.isNeedUpdate = action.payload;

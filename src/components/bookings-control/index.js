@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { formatDate } from '../../utils/dates';
 import useBookingControl from '../../hooks/useBookingControl';
 import { logout } from '../../store/slice/authenticationSlice';
+import moment from 'moment';
+import { setSelectedDate } from '../../store/slice/controlSlice';
 
 const BookingsControl = ({
   isConnected,
@@ -13,18 +15,53 @@ const BookingsControl = ({
 }) => {
   const { date: dateString } = useSelector(state => state.control);
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
-  // const { isLoading, isUpdateAvailable } = useSelector(state => state.control);
   const dispatch = useDispatch()
+
+  const dayPlus = (type) => {
+    const day = new Date(dateString);
+    const plusDay = moment(new Date(dateString).setDate(new Date(dateString).getDate() + 1)).toString()
+    const minusDay = moment(new Date(dateString).setDate(new Date(dateString).getDate() - 1)).toString()
+
+    switch (type) {
+      case 'minus':
+        dispatch(setSelectedDate(minusDay))
+        break;
+
+      case 'plus':
+        dispatch(setSelectedDate(plusDay))
+        break;
+      default:
+        break;
+    }
+  };
+
+
   return (
     <View>
       <View style={styles.row}>
-        <Button
-          icon="calendar"
-          mode="contained"
-          disabled={!isConnected}
-          onPress={() => onDatePickerHandler(true)}>
-          {formatDate(new Date(dateString))}
-        </Button>
+        <View style={{ flexDirection: 'row' }}>
+          <Button
+            icon="minus"
+            mode="contained"
+            disabled={!isConnected}
+            style={{ marginRight: 5 }}
+            onPress={() => dayPlus('minus')}>
+          </Button>
+          <Button
+            icon="calendar"
+            mode="contained"
+            disabled={!isConnected}
+            onPress={() => onDatePickerHandler(true)}>
+            {formatDate(new Date(dateString))}
+          </Button>
+          <Button
+            icon="plus"
+            mode="contained"
+            disabled={!isConnected}
+            style={{ marginLeft: 5 }}
+            onPress={() => dayPlus('plus')}>
+          </Button>
+        </View>
         {/* {!isLoading && isUpdateAvailable ? (
             <Button
               icon="update"
@@ -37,18 +74,12 @@ const BookingsControl = ({
         {isDatePickerOpen && (
           <DateTimePicker
             // minimumDate={new Date()}
-            value={new Date(dateString)}
+            value={date}
             mode="date"
             onChange={onChange}
           />
         )}
 
-        <Button
-          icon="plus"
-          mode="contained"
-          onPress={() => dispatch(logout())}>
-          logout
-        </Button>
         {/* {createButtonEnabled ? ( */}
         <Button
           icon="plus"

@@ -15,6 +15,8 @@ const useWaitBookingsData = () => {
 
   const { data: waitPageData, isFetching: waitIsFetch } = useGetAllBookingByParamsQuery(statusForWaitPage, {
     skip: !isConnected,
+    refetchOnFocus: true,
+    pollingInterval: 3000000
   })
 
   useEffect(() => {

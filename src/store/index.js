@@ -20,6 +20,7 @@ import authenticationReducer from './slice/authenticationSlice';
 import bookingsReducer from './slice/bookingsSlice';
 import controlSlice from './slice/controlSlice';
 import bookingData from './slice/bookingDataSlice';
+import roomsSlice from './slice/roomsSlice';
 
 // import messagesSlice from './slice/messagesSlice';
 
@@ -29,7 +30,7 @@ const persistConfig = {
   key: 'root',
   storage,
   whitelist: ['authentication'],
-  // whitelist: ['authentication', 'bookings'],
+  // whitelist: ['authentication', 'bookings', 'rooms'],
   blacklist: ['control'],
 };
 
@@ -40,6 +41,7 @@ const reducers = combineReducers({
   authentication: authenticationReducer,
   bookings: bookingsReducer,
   control: controlSlice,
+  rooms: roomsSlice,
   bookingData,
   // messages: messagesSlice,
 });

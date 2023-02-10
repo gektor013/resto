@@ -5,6 +5,9 @@ import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByPar
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { currentDate, statusForActivePage } from '../constants';
+import { useGetAllRoomsQuery } from '../store/api/roomsApi';
+import { setAllRoomsData } from '../store/slice/roomsSlice';
+import { resetBookingData } from '../store/slice/bookingDataSlice';
 
 
 const useBookingsData = () => {
@@ -22,16 +25,22 @@ const useBookingsData = () => {
   const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
 
   // get only todays booking, it is necessary for the missing internet
-  const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery({ statusForActivePage, date: currentDate }, {
+  const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
     skip: !isConnected,
     refetchOnReconnect: true,
     pollingInterval: 300000
   })
+
   // get all booking by date and query params
   const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
     skip: !isConnected,
     refetchOnReconnect: true,
     pollingInterval: 300000
+  })
+
+  // get all rooms data in first render
+  const { data: roomsData } = useGetAllRoomsQuery('', {
+    skip: !isConnected,
   })
 
   // edit bookings
@@ -57,8 +66,15 @@ const useBookingsData = () => {
           }
         })
         .catch(e => console.log('sendAllOtherDayBookings ERROR'))
+        .finally(() => dispatch(resetBookingData()))
     })
   }
+
+  useEffect(() => {
+    if (roomsData) {
+      dispatch(setAllRoomsData(roomsData))
+    }
+  }, [roomsData])
 
   // send when there is internet
   useEffect(() => {

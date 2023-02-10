@@ -1,6 +1,6 @@
 import React from 'react'
 import moment from 'moment';
-import { StyleSheet, View, Pressable } from 'react-native'
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { DataTable, Text, useTheme } from 'react-native-paper';
 import SwipeableFlatList from 'react-native-swipeable-list';
 import { useNavigation } from '@react-navigation/native';
@@ -23,26 +23,26 @@ const BookingTable = ({ bookingsData, navigation, cancel }) => {
           {!cancel ? (
             <>
               <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
-                <Pressable onPress={() => handleChancheBookingStatus(booking, 4)}>
+                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 4)}>
                   <Text>Arrived</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
               <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
-                <Pressable onPress={() => handleChancheBookingStatus(booking, 5)}>
+                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 5)}>
                   <Text>Delete</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
               <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
-                <Pressable onPress={() => handleChancheBookingStatus(booking, 1)}>
+                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 1)}>
                   <Text>Cancel</Text>
-                </Pressable>
+                </TouchableOpacity>
               </View>
             </>
           ) : (
             <View style={{ ...styles.action, flex: 2, backgroundColor: '#94a3b8' }}>
-              <Pressable onPress={() => handleChancheBookingStatus(booking, 0)}>
+              <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 0)}>
                 <Text>Restore</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           )}
         </View>

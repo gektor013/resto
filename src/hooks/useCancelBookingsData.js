@@ -10,7 +10,8 @@ const useCancelBookingsData = () => {
 
   const { data: deletedPageData, isFetching: deletedIsFetch } = useGetAllBookingByParamsQuery(statusForDeletedPage, {
     skip: !isConnected,
-    refetchOnFocus: true
+    refetchOnFocus: true,
+    pollingInterval: 3000000
   })
 
 
