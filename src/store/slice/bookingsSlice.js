@@ -3,9 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   // these bookings show if there is no internet
   todays: {
-    allBooking: [],
-    waitingBooking: [],
-    cancelBookings: []
+    allBooking: []
   },
 
   // created bookings when there is no internet
@@ -60,8 +58,7 @@ export const bookingsSlice = createSlice({
 
     // other bookings reducers
     setOtherDayAllBookings: (state, action) => {
-      const filterBooking = action.payload?.filter(booking => booking.status !== 5)
-      state.other.allOtherDayBooking = filterBooking
+      state.other.allOtherDayBooking = action.payload
     },
 
     setOtherDayWaitBookings: (state, action) => {
