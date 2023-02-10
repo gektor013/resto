@@ -4,7 +4,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 platform :ios, '16.0'
 install! 'cocoapods', :deterministic_uuids => false
 
-target 'yme' do
+target 'Resto' do
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -19,7 +19,7 @@ target 'yme' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'ymeTests' do
+  target 'RestoTests' do
     inherit! :complete
     # Pods for testing
   end

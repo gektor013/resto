@@ -1,4 +1,4 @@
-package com.yme.newarchitecture;
+package com.Resto.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.yme.BuildConfig;
-import com.yme.newarchitecture.components.MainComponentsRegistry;
-import com.yme.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.Resto.BuildConfig;
+import com.Resto.newarchitecture.components.MainComponentsRegistry;
+import com.Resto.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
