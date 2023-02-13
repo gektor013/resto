@@ -37,4 +37,4 @@ export const roomsApi = createApi({
   }),
 });
 
-export const { useGetAllRoomsQuery, useCreateRoomMutation } = roomsApi;
+export const { useGetAllRoomsQuery, useLazyGetAllRoomsQuery, useCreateRoomMutation } = roomsApi;

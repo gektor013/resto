@@ -3,7 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ActiveBookingScreen from '../../screens/activeBookings';
 import FormScreen from '../../screens/bookingForm';
-import RoomForm from '../../screens/roomForm';
+import RoomFormScreen from '../../screens/roomForm';
+import TableFormScreen from '../../screens/tableForm';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,15 +31,15 @@ const ActiveBookingStack = () => {
             title: 'New room',
           })}
           name="roomForm"
-          component={RoomForm}
+          component={RoomFormScreen}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           options={() => ({
             title: 'New table',
           })}
-          name="form"
-          component={FormScreen}
-        /> */}
+          name="tableForm"
+          component={TableFormScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

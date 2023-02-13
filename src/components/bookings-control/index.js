@@ -93,7 +93,7 @@ const BookingsControl = ({
         <Button
           icon="plus"
           mode="contained"
-          onPress={() => console.log('date')}>
+          onPress={() => navigation.navigate('tableForm')}>
           New table
         </Button>
         <Button
