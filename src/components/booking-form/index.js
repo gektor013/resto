@@ -52,7 +52,6 @@ const BookingForm = ({ route }) => {
     mode: 'onChange',
   });
 
-  console.log(isValid, errors);
   return (
     <View style={styles.mb150}>
       <Controller

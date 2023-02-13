@@ -16,6 +16,8 @@ import { unauthenticatedMiddleware } from './middlewares/unauthenticated';
 import { authenticationApi } from './api/authenticationApi';
 import { bookingsApi } from './api/bookingsApi';
 import { roomsApi } from './api/roomsApi';
+import { tablesApi } from './api/tablesApi';
+
 import authenticationReducer from './slice/authenticationSlice';
 import bookingsReducer from './slice/bookingsSlice';
 import controlSlice from './slice/controlSlice';
@@ -38,6 +40,8 @@ const reducers = combineReducers({
   [authenticationApi.reducerPath]: authenticationApi.reducer,
   [bookingsApi.reducerPath]: bookingsApi.reducer,
   [roomsApi.reducerPath]: roomsApi.reducer,
+  [tablesApi.reducerPath]: tablesApi.reducer,
+
   authentication: authenticationReducer,
   bookings: bookingsReducer,
   control: controlSlice,
@@ -60,6 +64,7 @@ const store = configureStore({
       authenticationApi.middleware,
       bookingsApi.middleware,
       roomsApi.middleware,
+      tablesApi.middleware,
     ),
 });
 

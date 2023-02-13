@@ -8,6 +8,8 @@ import useBookingControl from '../../hooks/useBookingControl';
 import { logout } from '../../store/slice/authenticationSlice';
 import moment from 'moment';
 import { setSelectedDate } from '../../store/slice/controlSlice';
+import { useNavigation } from '@react-navigation/native';
+
 
 const BookingsControl = ({
   isConnected,
@@ -16,9 +18,9 @@ const BookingsControl = ({
   const { date: dateString } = useSelector(state => state.control);
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   const dispatch = useDispatch()
+  const navigation = useNavigation()
 
   const dayPlus = (type) => {
-    const day = new Date(dateString);
     const plusDay = moment(new Date(dateString).setDate(new Date(dateString).getDate() + 1)).toString()
     const minusDay = moment(new Date(dateString).setDate(new Date(dateString).getDate() - 1)).toString()
 
@@ -41,8 +43,9 @@ const BookingsControl = ({
       <View style={styles.row}>
         <View style={{ flexDirection: 'row' }}>
           <Button
-            icon="minus"
+            icon="chevron-left"
             mode="contained"
+            compact={true}
             disabled={!isConnected}
             style={{ marginRight: 5 }}
             onPress={() => dayPlus('minus')}>
@@ -55,8 +58,9 @@ const BookingsControl = ({
             {formatDate(new Date(dateString))}
           </Button>
           <Button
-            icon="plus"
+            icon="chevron-right"
             mode="contained"
+            compact={true}
             disabled={!isConnected}
             style={{ marginLeft: 5 }}
             onPress={() => dayPlus('plus')}>
@@ -80,18 +84,24 @@ const BookingsControl = ({
           />
         )}
 
-        {/* {createButtonEnabled ? ( */}
+        <Button
+          icon="plus"
+          mode="contained"
+          onPress={() => navigation.navigate('roomForm')}>
+          New room
+        </Button>
+        <Button
+          icon="plus"
+          mode="contained"
+          onPress={() => console.log('date')}>
+          New table
+        </Button>
         <Button
           icon="plus"
           mode="contained"
           onPress={() => onHandleOpenModals('date')}>
           New booking
         </Button>
-        {/* ) : null} */}
-
-        {/* <Button icon="plus" mode="contained" onPress={onBookingCreateHandler}>
-            TEST
-          </Button> */}
       </View>
     </View>
   );

@@ -10,7 +10,7 @@ export const bookingsApi = createApi({
   refetchOnFocus: true,
   endpoints: builder => ({
     getAllBookingByParams: builder.query({
-      query: (query) => (console.log('getAllBookingByParams'), {
+      query: (query) => ({
         url: `/bookings${query}`,
       }),
       providesTags: result =>
