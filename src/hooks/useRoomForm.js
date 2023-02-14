@@ -1,11 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import { useCreateRoomMutation, useDeleteRoomMutation, usePatchRoomDataMutation } from '../store/api/roomsApi';
+import { useDispatch } from 'react-redux';
+import { createRoomSlice, patchRoomSlice } from '../store/slice/roomsSlice';
 
 const useRoomForm = (route) => {
   const [createRoom, { isLoading: createRoomLoading }] = useCreateRoomMutation();
   const [patchRoomData, { isLoading: patchLoading }] = usePatchRoomDataMutation()
   const [deleteRoom, { isLoading: deleteLoading }] = useDeleteRoomMutation()
   const navigate = useNavigation()
+  const dispatch = useDispatch()
 
   const handleCreateRoom = async (data) => {
     {
@@ -13,6 +16,7 @@ const useRoomForm = (route) => {
         await patchRoomData(data).unwrap()
           .then((res) => {
             if (res) {
+              dispatch(patchRoomSlice(res))
               navigate.goBack()
             }
           })
@@ -22,6 +26,7 @@ const useRoomForm = (route) => {
           .unwrap()
           .then((res) => {
             if (res) {
+              dispatch(createRoomSlice(res))
               navigate.goBack()
             }
           })

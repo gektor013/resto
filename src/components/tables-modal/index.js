@@ -26,7 +26,6 @@ const Tables = ({ tableId, setTableId }) => {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
             {
               roomsData?.find(arr => arr.id === value).tables.map((item, idx) => {
-                // console.log(typeof item.id);
                 return (
                   <TouchableOpacity key={item.createdAt + idx} onPress={() => setTableId(item.id)}>
                     <Surface style={{ ...styles.surface, backgroundColor: tableId === item.id ? colors.primary : '#3fab1a' }} elevation={4}>

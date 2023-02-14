@@ -7,12 +7,13 @@ import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { useGetAllRoomsQuery } from '../../store/api/roomsApi';
+import { useNetInfo } from '@react-native-community/netinfo';
+import LoadingScreen from '../loading';
 
 const TableGroup = () => {
   const [value, setValue] = useState(1);
   const [lastPressed, setLastPressed] = useState(0);
-  // const { rooms: roomsData } = useSelector(state => state.rooms)
-  const { data: roomsData } = useGetAllRoomsQuery()
+  const { data: roomsData, isLoading: roomsDataLoading } = useGetAllRoomsQuery()
   const { colors } = useTheme();
   const navigation = useNavigation()
 
@@ -32,40 +33,44 @@ const TableGroup = () => {
 
   return (
     <>
-      <SegmentedButtons
-        value={value}
-        onValueChange={setValue}
-        buttons={
-          roomsData ? roomsData?.map(item => ({
-            value: item.id,
-            label: item.name,
-            accessibilityLabel: 'qweq',
-            onPress: () => handlePress(item),
-          })) : []
-        }
-      />
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
-        {
-          oneRoom?.tables.map((item, idx) => {
-            return (
-              <TouchableOpacity key={item.createdAt + idx}
-                onPress={() => navigation.navigate('tableForm', { ...item, room: oneRoom })}
-              >
-                <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
-                  <Text>{item.name}</Text>
-                  <Text>{item.seatQuantity} seats</Text>
-                </Surface>
-              </TouchableOpacity>
-            )
-          })
-        }
-      </View>
+      {roomsDataLoading ? (<LoadingScreen />) : (
+        <>
+          <SegmentedButtons
+            value={value}
+            onValueChange={setValue}
+            buttons={
+              roomsData ? roomsData?.map(item => ({
+                value: item.id,
+                label: item.name,
+                accessibilityLabel: 'qweq',
+                onPress: () => handlePress(item),
+              })) : []
+            }
+          />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
+            {
+              oneRoom?.tables.map((item, idx) => {
+                return (
+                  <TouchableOpacity key={item.createdAt + idx}
+                    onPress={() => navigation.navigate('tableForm', { ...item, room: oneRoom })}
+                  >
+                    <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
+                      <Text>{item.name}</Text>
+                      <Text>{item.seatQuantity} seats</Text>
+                    </Surface>
+                  </TouchableOpacity>
+                )
+              })
+            }
+          </View>
+        </>)}
     </>
   )
 }
 
 const TableScreen = ({ navigation }) => {
   const { colors } = useTheme();
+  const { isConnected } = useNetInfo();
 
   useEffect(() => {
     navigation.setOptions({
@@ -75,12 +80,14 @@ const TableScreen = ({ navigation }) => {
             icon="plus"
             style={{ marginRight: 10 }}
             mode="contained"
+            disabled={isConnected === false}
             onPress={() => navigation.navigate('roomForm')}>
             New room
           </Button>
           <Button
             icon="plus"
             mode="contained"
+            disabled={isConnected === false}
             onPress={() => navigation.navigate('tableForm')}>
             New table
           </Button>

@@ -205,7 +205,6 @@ const BookingForm = ({ route }) => {
         rules={{
           required: { value: true },
           validate: (value) => {
-            console.log(value[0], "VAL");
             return (
               value[0] !== ""
             )

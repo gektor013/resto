@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useGetAllRoomsQuery, useLazyGetAllRoomsQuery } from "../store/api/roomsApi";
 import { useCreateTableMutation, useDeleteTableMutation, useGetTableByIdQuery, usePatchTableDataMutation } from "../store/api/tablesApi";
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch } from "react-redux";
+import { setAllRoomsData } from "../store/slice/roomsSlice";
 
 
 
@@ -14,6 +16,16 @@ const useTableForm = (id) => {
   const [expanded, setExpanded] = useState(false);
   const handleOpenTableSelect = () => setExpanded(!expanded);
   const navigation = useNavigation();
+  const dispatch = useDispatch()
+
+  const requestNewAllRoomData = async () => {
+    await getAllRooms().unwrap()
+      .then(res => {
+        if (res) {
+          dispatch(setAllRoomsData(res))
+        }
+      }).catch((e) => console.log(e, 'requestNewAllRoomData ERROR'))
+  }
 
   const handleCreateTable = async (data) => {
     const newData = { ...data, room: `/api/rooms/${data.room.id}` };
@@ -23,7 +35,7 @@ const useTableForm = (id) => {
         await patchTableData(newData).unwrap()
           .then((res) => {
             if (res) {
-              getAllRooms()
+              requestNewAllRoomData()
               navigation.goBack()
             }
           })
@@ -34,7 +46,7 @@ const useTableForm = (id) => {
           .unwrap()
           .then((res) => {
             if (res) {
-              getAllRooms()
+              requestNewAllRoomData()
               navigation.goBack()
             }
           })

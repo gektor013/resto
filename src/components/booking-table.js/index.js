@@ -120,7 +120,6 @@ const Row = ({ item, disabled }) => {
   }
 
   const onBookingPressHandler = (item) => {
-    console.log(item);
     navigation.navigate('form', item)
   }
 

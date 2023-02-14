@@ -39,8 +39,6 @@ const RoomForm = () => {
     mode: 'onChange',
   });
 
-  console.log(route?.params?.tables?.length);
-
   return (
     <View style={styles.mb150}>
       <Controller

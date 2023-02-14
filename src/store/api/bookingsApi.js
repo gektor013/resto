@@ -38,7 +38,7 @@ export const bookingsApi = createApi({
       providesTags: (result, error, id) => [{ type: 'Bookings', id }],
     }),
     createBooking: builder.mutation({
-      query: body => (console.log('createBooking'), {
+      query: body => ({
         url: '/bookings',
         method: 'post',
         body,
