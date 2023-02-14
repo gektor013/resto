@@ -33,8 +33,32 @@ export const tablesApi = createApi({
         }
       }),
       invalidatesTags: [{ type: 'Tables', id: 'LIST' }],
-    })
+    }),
+    getTableById: builder.query({
+      query: (id) => ({
+        url: `/tables/${id}`,
+      }),
+      providesTags: (result, error, id) => [{ type: 'Tables', id }],
+    }),
+    patchTableData: builder.mutation({
+      query: (body) => ({
+        url: `/tables/${body.id}`,
+        method: 'PATCH',
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/merge-patch+json"
+        }
+      }),
+      invalidatesTags: ['Tables'],
+    }),
+    deleteTable: builder.mutation({
+      query: (id) => ({
+        url: `/tables/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: [{ type: 'Tables', id: 'PARTIAL-TABLES' }],
+    }),
   }),
 });
 
-export const { useGetAllTablesQuery, useCreateTableMutation } = tablesApi;
+export const { useGetAllTablesQuery, useCreateTableMutation, useGetTableByIdQuery, usePatchTableDataMutation, useDeleteTableMutation } = tablesApi;

@@ -1,69 +1,35 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
 
 import { List } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import useRoomForm from '../../hooks/useRoomForm';
-import { useGetAllRoomsQuery, useLazyGetAllRoomsQuery } from '../../store/api/roomsApi';
-import { useCreateTableMutation } from '../../store/api/tablesApi';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import useTableForm from '../../hooks/useTableForm';
+import Loading from '../loading';
+import { ActivityIndicator } from 'react-native-paper';
 
 const MIN_NAME_LENGTH = 1;
-const MAX_COMMENT_LENGTH = 250;
 
 const ERROR_MESSAGES = {
   REQUIRED: 'This field is required',
   NAME_INVALID: 'Invalid name',
-  NAME_TOO_LONG: 'The name is too long',
-  EMAIL_INVALID: 'Invalid email',
-  PHONE_INVALID: 'The phone number is incorrect',
-  COMMENT_TOO_LONG: `Comment must be less than ${MAX_COMMENT_LENGTH} characters`,
-  TIME_INVALID: 'Invalid time'
 };
 
 const initialRoomState = {
   name: "",
   seatQuantity: "",
-  room: ""
+  room: {}
 };
-
-
-const useTableForm = () => {
-  const { data: roomsData } = useGetAllRoomsQuery();
-  const [createTable, { isLoading: createTableLoading }] = useCreateTableMutation();
-  const [getAllRooms] = useLazyGetAllRoomsQuery()
-  const [expanded, setExpanded] = useState(false);
-  const handleOpenTableSelect = () => setExpanded(!expanded);
-
-  const navigation = useNavigation();
-
-  const handleCreateTable = async (data) => {
-    const newData = { ...data, room: `/api/rooms/${data.room.id}` };
-
-    await createTable(newData)
-      .unwrap()
-      .then((res) => {
-        if (res) {
-          getAllRooms()
-          navigation.goBack()
-        }
-      })
-      .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
-  };
-
-
-
-  return {
-    roomsData, expanded, createTableLoading, handleOpenTableSelect, handleCreateTable
-  }
-}
 
 const TableForm = () => {
   const { colors } = useTheme();
+  const route = useRoute()
   const navigate = useNavigation()
-  const { roomsData, expanded, createTableLoading, handleOpenTableSelect, handleCreateTable
-  } = useTableForm()
+  // const { id, name, room, seatQuantity } = route?.params
+
+  const { roomsData, expanded, createTableLoading, patchTableLoading, daleteTableLoading, handleOpenTableSelect, handleCreateTable, handleTableDelete
+  } = useTableForm(route?.params?.id)
 
   const {
     control,
@@ -73,14 +39,10 @@ const TableForm = () => {
     setValue,
   } = useForm({
     defaultValues: useMemo(() => {
-      return { ...initialRoomState }
+      return route?.params ? { id: route?.params.id, name: route?.params.name, room: route?.params.room, seatQuantity: route?.params.seatQuantity } : { ...initialRoomState }
     }, [initialRoomState]),
     mode: 'onChange',
   });
-
-  useEffect(() => {
-    roomsData && setValue('room', roomsData[0]);
-  }, [roomsData]);
 
   return (
     <View style={styles.mb150}>
@@ -140,8 +102,9 @@ const TableForm = () => {
       <List.Section style={{ borderWidth: 1, borderRadius: 3, borderColor: colors.outline }}>
         <List.Accordion
           expanded={expanded}
-          title={getValues().room?.name || (roomsData && roomsData[0].name)}
+          title={getValues().room.name || (roomsData && roomsData[0].name)}
 
+          // title={getValues().room}
           onPress={handleOpenTableSelect}>
           {roomsData?.map(room => (
             <List.Item key={room.id} title={room.name} onPress={() => {
@@ -158,7 +121,7 @@ const TableForm = () => {
         <Button
           style={styles.mv25p}
           mode="contained"
-          loading={createTableLoading}
+          loading={createTableLoading || patchTableLoading}
           onPress={handleSubmit(handleCreateTable)}
           disabled={!isValid}>
           Save
@@ -171,8 +134,20 @@ const TableForm = () => {
         >
           Cancel
         </Button>
+
+        {route?.params && (
+          <Button
+            style={styles.mv25p}
+            mode="contained"
+            loading={daleteTableLoading}
+            onPress={handleTableDelete}
+          >
+            Delete
+          </Button>
+        )}
       </View>
     </View>
+
   );
 };
 

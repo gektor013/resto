@@ -8,13 +8,10 @@ import {
   Dialog,
   Portal,
 } from 'react-native-paper';
-// import { useSynchronize } from '../hooks/useSynchronize';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { useDispatch, useSelector } from 'react-redux';
-// import { deleteMessage } from '../store/slice/messagesSlice';
 import { setIsChekingsLoading } from '../store/slice/controlSlice';
 
-// const delay = 1;
 
 const Layout = () => {
   const [visibleDialog, setDialogVisible] = useState(false);

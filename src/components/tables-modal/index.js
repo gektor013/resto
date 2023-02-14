@@ -40,8 +40,6 @@ const Tables = ({ tableId, setTableId }) => {
           </View>
         </>
       }
-
-
     </SafeAreaView>
   )
 }

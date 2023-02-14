@@ -2,50 +2,44 @@ import React, { useEffect, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
+import { useRoute } from '@react-navigation/native';
 
-import { List } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import useRoomForm from '../../hooks/useRoomForm';
 
 const MIN_NAME_LENGTH = 1;
-const MAX_COMMENT_LENGTH = 250;
 
 const ERROR_MESSAGES = {
   REQUIRED: 'This field is required',
   NAME_INVALID: 'Invalid name',
-  NAME_TOO_LONG: 'The name is too long',
-  EMAIL_INVALID: 'Invalid email',
-  PHONE_INVALID: 'The phone number is incorrect',
-  COMMENT_TOO_LONG: `Comment must be less than ${MAX_COMMENT_LENGTH} characters`,
-  TIME_INVALID: 'Invalid time'
 };
 
 const initialRoomState = {
   name: '',
-  tables: {},
+  tables: [],
 };
 
 const RoomForm = () => {
   const { colors } = useTheme();
   const navigate = useNavigation()
-  const { tablesData, expanded, createRoomLoading, handleOpenTableSelect, handleCreateRoom } = useRoomForm()
+  const route = useRoute()
+  const { createRoomLoading, patchLoading, deleteLoading, handleDeleteRoom, handleCreateRoom } = useRoomForm(route)
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    getValues,
-    setValue,
+    getValues
   } = useForm({
     defaultValues: useMemo(() => {
-      return { ...initialRoomState }
-    }, [initialRoomState]),
+      // return route.params ? {   route?.params } : { ...initialRoomState }
+
+      return route.params ? { name: route?.params?.name, id: route?.params?.id } : { ...initialRoomState }
+    }, [initialRoomState, route.params]),
     mode: 'onChange',
   });
 
-  useEffect(() => {
-    tablesData && setValue('tables', tablesData[0]);
-  }, [tablesData]);
+  console.log(route?.params?.tables?.length);
 
   return (
     <View style={styles.mb150}>
@@ -78,28 +72,11 @@ const RoomForm = () => {
       />
       <HelperText type="error">{errors.name?.message}</HelperText>
 
-      <List.Section style={{ borderWidth: 1, borderRadius: 3, borderColor: colors.outline }}>
-        <List.Accordion
-          expanded={expanded}
-          title={getValues().tables.name || (tablesData && tablesData[0].name)}
-
-          onPress={handleOpenTableSelect}>
-          {tablesData?.map(table => (
-            <List.Item key={table.id} title={table.name} onPress={() => {
-              setValue('tables', table)
-              handleOpenTableSelect()
-            }} />
-          ))}
-        </List.Accordion>
-      </List.Section>
-
-      <HelperText type="error">{errors.tables?.message}</HelperText>
-
       <View>
         <Button
           style={styles.mv25p}
           mode="contained"
-          loading={createRoomLoading}
+          loading={createRoomLoading || patchLoading}
           onPress={handleSubmit(handleCreateRoom)}
           disabled={!isValid}>
           Save
@@ -112,6 +89,18 @@ const RoomForm = () => {
         >
           Cancel
         </Button>
+
+        {route.params && (
+          <Button
+            style={styles.mv25p}
+            mode="contained"
+            loading={deleteLoading}
+            disabled={route?.params?.tables?.length !== 0}
+            onPress={handleDeleteRoom}
+          >
+            Delete
+          </Button>
+        )}
       </View>
     </View>
   );

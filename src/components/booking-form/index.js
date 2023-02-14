@@ -8,7 +8,7 @@ import moment from 'moment';
 import { formatDate } from '../../utils/dates';
 import useBookingForm from '../../hooks/useBookingForm';
 import ModaLayout from '../../layout/modal-layout';
-import Tables from '../tables';
+import Tables from '../tables-modal';
 
 const MIN_NAME_LENGTH = 1;
 const MAX_NAME_LENGTH = 25;

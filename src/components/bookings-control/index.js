@@ -83,22 +83,9 @@ const BookingsControl = ({
             onChange={onChange}
           />
         )}
-
         <Button
           icon="plus"
-          mode="contained"
-          onPress={() => navigation.navigate('roomForm')}>
-          New room
-        </Button>
-        <Button
-          icon="plus"
-          mode="contained"
-          onPress={() => navigation.navigate('tableForm')}>
-          New table
-        </Button>
-        <Button
-          icon="plus"
-          mode="contained"
+          mode="contained" tableForm
           onPress={() => onHandleOpenModals('date')}>
           New booking
         </Button>

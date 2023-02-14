@@ -3,6 +3,7 @@ import { BottomNavigation } from 'react-native-paper';
 import ActiveBookingsStack from './all-booking-stack/index';
 import WaitingsBookingStack from './waitings-booking-stack';
 import CanceledBookingStack from './canceled-booking-stack';
+import TableStack from './tables-stack';
 
 const Navigation = () => {
   const [index, setIndex] = useState(0);
@@ -22,11 +23,17 @@ const Navigation = () => {
       title: 'Trash',
       focusedIcon: 'book-cancel-outline',
     },
+    {
+      key: 'table',
+      title: 'Table',
+      focusedIcon: 'table-furniture',
+    },
   ]);
   const renderScene = BottomNavigation.SceneMap({
     all_bookings: ActiveBookingsStack,
     waitings: WaitingsBookingStack,
     canceled: CanceledBookingStack,
+    table: TableStack,
   });
 
   return (

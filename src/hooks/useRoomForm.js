@@ -1,31 +1,43 @@
-import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useCreateRoomMutation } from '../store/api/roomsApi';
-import { useGetAllTablesQuery } from '../store/api/tablesApi';
+import { useCreateRoomMutation, useDeleteRoomMutation, usePatchRoomDataMutation } from '../store/api/roomsApi';
 
-
-
-const useRoomForm = () => {
-  const { data: tablesData } = useGetAllTablesQuery();
+const useRoomForm = (route) => {
   const [createRoom, { isLoading: createRoomLoading }] = useCreateRoomMutation();
-  const [expanded, setExpanded] = useState(false);
-  const handleOpenTableSelect = () => setExpanded(!expanded);
+  const [patchRoomData, { isLoading: patchLoading }] = usePatchRoomDataMutation()
+  const [deleteRoom, { isLoading: deleteLoading }] = useDeleteRoomMutation()
   const navigate = useNavigation()
 
   const handleCreateRoom = async (data) => {
-    const newData = { ...data, tables: [`/api/tables/${data.tables.id}`] };
-
-    await createRoom(newData)
-      .unwrap()
-      .then((res) => {
-        if (res) {
-          navigate.goBack()
-        }
-      })
-      .catch((e) => console.log(e, 'handleCreateRoom ERROR'));
+    {
+      route.params ? (
+        await patchRoomData(data).unwrap()
+          .then((res) => {
+            if (res) {
+              navigate.goBack()
+            }
+          })
+          .catch((e) => console.log(e, 'patchRoomData ERROR'))
+      ) : (
+        await createRoom(data)
+          .unwrap()
+          .then((res) => {
+            if (res) {
+              navigate.goBack()
+            }
+          })
+          .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
+      )
+    }
   };
 
-  return { tablesData, expanded, createRoomLoading, handleOpenTableSelect, handleCreateRoom };
+  const handleDeleteRoom = async () => {
+    const id = route?.params?.id
+    await deleteRoom(id).unwrap()
+      .catch((e) => console.log(e, 'handleDeleteRoom ERROR'))
+      .finally(() => navigate.goBack())
+  }
+
+  return { createRoomLoading, patchLoading, deleteLoading, handleDeleteRoom, handleCreateRoom };
 };
 
 export default useRoomForm;

@@ -32,9 +32,27 @@ export const roomsApi = createApi({
         }
       }),
       invalidatesTags: [{ type: 'Rooms', id: 'LIST' }],
-    })
-
+    }),
+    patchRoomData: builder.mutation({
+      query: (body) => ({
+        url: `/rooms/${body.id}`,
+        method: 'PATCH',
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/merge-patch+json"
+        }
+      }),
+      // invalidatesTags: ['Rooms'],
+      invalidatesTags: (result, error, body) => [{ type: 'Rooms', id: 'LIST' }],
+    }),
+    deleteRoom: builder.mutation({
+      query: (id) => ({
+        url: `/rooms/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (result, error, body) => [{ type: 'Rooms', id: 'LIST' }],
+    }),
   }),
 });
 
-export const { useGetAllRoomsQuery, useLazyGetAllRoomsQuery, useCreateRoomMutation } = roomsApi;
+export const { useGetAllRoomsQuery, useLazyGetAllRoomsQuery, useCreateRoomMutation, usePatchRoomDataMutation, useDeleteRoomMutation } = roomsApi;
