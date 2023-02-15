@@ -4,16 +4,39 @@ import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { DataTable, Text, useTheme } from 'react-native-paper';
 import SwipeableFlatList from 'react-native-swipeable-list';
 import { useNavigation } from '@react-navigation/native';
-import { usePatchBookingsMutation } from '../../store/api/bookingsApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUnsynchronizedEditedBookings, removeUnsynchronizedEditedBookingsById, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
+import uuid from 'react-native-uuid';
 
-const BookingTable = ({ bookingsData, navigation, cancel }) => {
-  const [patchBookings] = usePatchBookingsMutation();
-  // const { isLoading } = useBookingsData();
+const BookingTable = ({ bookingsData, cancel }) => {
+  const dispatch = useDispatch()
+  const { allOtherDayDeletedBookings } = useSelector(state => state.bookings.other)
+  // const navigation = useNavigation()
 
-  const handleChancheBookingStatus = async (booking, status) => {
-    await patchBookings({ ...booking, status }).unwrap()
-      // .then(res => console.log(res, 'Result handleChancheBookingStatus'))
-      .catch(err => console.log(err, 'handleChancheBookingStatus'));
+  const handleChancheBookingStatus = (booking, status) => {
+    const updateBooking = {
+      ...booking,
+      status,
+      internalID: booking?.internalID ? booking?.internalID : uuid.v4(),
+      unsync: true
+    }
+
+    if (booking.status === 5) {
+      if (booking.id) {
+        const isSyncDeleted = allOtherDayDeletedBookings.some(elem => elem.id === booking.id)
+        if (isSyncDeleted) {
+          dispatch(setUnsynchronizedEditedBookings(updateBooking))
+        } else {
+          dispatch(removeUnsynchronizedEditedBookingsById(booking.id))
+        }
+      } else {
+        dispatch(setUnsynchronizedCreateBookings(updateBooking))
+      }
+    } else {
+
+      dispatch(setUnsynchronizedEditedBookings(updateBooking))
+    }
+
   };
 
   const QuickActions = (_, booking) => {

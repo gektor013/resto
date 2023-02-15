@@ -37,7 +37,8 @@ const ERROR_MESSAGES = {
 const BookingForm = ({ route }) => {
   const [isOpenTableModal, setIsOpenTableModal] = useState(false)
   const { colors, bookingState, isDatePickerOpen, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
-  const [tableId, setTableId] = useState(0)
+  const [selectedTable, setSelectedTable] = useState({})
+  console.log(selectedTable, 'SELEC');
 
   const {
     control,
@@ -229,14 +230,13 @@ const BookingForm = ({ route }) => {
             <ModaLayout
               visible={isOpenTableModal}
               onCancel={() => setIsOpenTableModal(false)}
-              // disabled={true}
               title={'Select desk'}
               onSave={() => {
-                onChange([`/api/tables/${tableId}`])
+                onChange(selectedTable)
                 setIsOpenTableModal(false)
               }}
             >
-              <Tables tableId={tableId} setTableId={setTableId} />
+              <Tables selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
             </ModaLayout>
           </>
         )}

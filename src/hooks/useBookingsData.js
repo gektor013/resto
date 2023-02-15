@@ -43,10 +43,15 @@ const useBookingsData = () => {
     skip: !isConnected,
   })
 
+
   // edit bookings
   const onEditBookings = () => {
     Array.from(editUnsyncBookings, (elem) => {
-      editBookings(elem).unwrap()
+      const tables = elem.tables ? [`/api/tables/${elem?.tables?.id}`] : []
+
+      // console.log(elem, "ELEMENT");
+      // console.log(tables, 'tables');
+      editBookings({ ...elem, tables }).unwrap()
         .then(res => {
           if (res) {
             dispatch(clearUnsynchronizedEditedBookings())
@@ -94,21 +99,36 @@ const useBookingsData = () => {
     if (getTodayBookingsData?.length) {
       dispatch(setTodaysAllBookings(getTodayBookingsData))
     }
-  }, [getTodayBookingsData, isConnected])
+  }, [getTodayBookingsData])
 
   useEffect(() => {
     if (getOtherDayBookingsData) {
       dispatch(setOtherDayAllBookings(getOtherDayBookingsData))
     }
-  }, [getOtherDayBookingsData, isConnected])
+  }, [getOtherDayBookingsData])
 
   useEffect(() => {
-    if (isConnected === true && getOtherDayBookingsData && otherDayBookings) {
+    //data redux
+    if (isConnected === true) {
       setBookingsData(otherDayBookings)
     } else if (isConnected === false) {
-      setBookingsData([...createdUnsyncBooking, ...todayAllBookings])
+      const unsyncCreated = createdUnsyncBooking.filter(elem => elem.status !== 5)
+      const unsyncEdited = editUnsyncBookings.filter(elem => elem.status !== 5)
+
+      const syncTodayAllBooking = todayAllBookings?.map(syncToday => {
+        const unsyncEditedIndex = editUnsyncBookings.findIndex(
+          unsyncEl => unsyncEl.id === syncToday.id
+        );
+
+        if (unsyncEditedIndex === -1) {
+          return syncToday;
+        }
+      }).filter(elem => elem !== undefined)
+
+
+      setBookingsData([...unsyncCreated, ...unsyncEdited, ...syncTodayAllBooking])
     }
-  }, [isConnected, otherDayBookings, todayAllBookings, createdUnsyncBooking])
+  }, [isConnected, createdUnsyncBooking, editUnsyncBookings, otherDayBookings, todayAllBookings])
 
   return {
     bookingData,

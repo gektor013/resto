@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, } from 'react-native'
+import { StyleSheet, Text, View, } from 'react-native'
 import React, { useEffect } from 'react'
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,8 +8,9 @@ import useCancelBookingsData from '../../hooks/useCancelBookingsData';
 
 const DeletedBookingsScreen = ({ navigation }) => {
   const { colors } = useTheme();
-  const { deletedPageData, deletedIsFetch } = useCancelBookingsData()
+  const { deletedData, deletedIsFetch } = useCancelBookingsData()
 
+  // console.log(navigation.isFocused());
   useEffect(() => {
     navigation.setOptions({
       headerShown: true,
@@ -29,7 +30,7 @@ const DeletedBookingsScreen = ({ navigation }) => {
       <View
         style={{ ...styles.container, backgroundColor: colors.background }}
       >
-        {deletedIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={deletedPageData} cancel={true} />}
+        {deletedIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={deletedData} cancel={true} />}
       </View>
     </SafeAreaView>
   )
