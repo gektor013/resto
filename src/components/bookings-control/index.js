@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { formatDate } from '../../utils/dates';
+import { useDispatch, useSelector } from 'react-redux';
 import useBookingControl from '../../hooks/useBookingControl';
-import { logout } from '../../store/slice/authenticationSlice';
-import moment from 'moment';
 import { setSelectedDate } from '../../store/slice/controlSlice';
-import { useNavigation } from '@react-navigation/native';
-
+import moment from 'moment';
+import { formatDate } from '../../utils/dates';
 
 const BookingsControl = ({
   isConnected,
@@ -18,7 +15,6 @@ const BookingsControl = ({
   const { date: dateString } = useSelector(state => state.control);
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   const dispatch = useDispatch()
-  const navigation = useNavigation()
 
   const dayPlus = (type) => {
     const plusDay = moment(new Date(dateString).setDate(new Date(dateString).getDate() + 1)).toString()

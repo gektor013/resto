@@ -12,7 +12,7 @@ const initialState = {
   numberOfGuestsChild: 0,
   numberOfGuestsBaby: 0,
   status: 2,
-  tables: [''],
+  table: {},
   commentByGuest: '',
   commentByAdminForGuest: '',
   commentByAdminForAdmin: '',
@@ -23,30 +23,9 @@ export const bookingDataSlice = createSlice({
   initialState,
   reducers: {
     setBookingData: (state, action) => {
-      if (action.payload.id === 'tables') {
-        state.tables = [action.payload.data]
-      } else {
-        state[action.payload.id] = action.payload.data
-      }
+      state[action.payload.id] = action.payload.data
     },
-
-    resetBookingData: (state) => {
-      for (const key in state) {
-        if (typeof state[key] === 'string') {
-          state[key] = ''
-        }
-        if (typeof state[key] === 'object') {
-          state[key] = []
-        }
-        if (typeof state[key] === 'number') {
-          state[key] = 0
-        }
-        if (state[key] === null) {
-          state[key] = null
-        }
-
-      }
-    }
+    resetBookingData: () => initialState,
   }
 });
 

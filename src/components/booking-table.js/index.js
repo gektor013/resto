@@ -1,17 +1,17 @@
 import React from 'react'
 import moment from 'moment';
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
-import { DataTable, Text, useTheme } from 'react-native-paper';
-import SwipeableFlatList from 'react-native-swipeable-list';
+import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
+import SwipeableFlatList from 'react-native-swipeable-list';
+import { DataTable, Text, useTheme } from 'react-native-paper';
+import { StyleSheet, View, TouchableOpacity } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { setUnsynchronizedEditedBookings, removeUnsynchronizedEditedBookingsById, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
-import uuid from 'react-native-uuid';
+import { definitionPrefixName, getRowColorByStatus } from '../../utils/helpers';
 
 const BookingTable = ({ bookingsData, cancel }) => {
   const dispatch = useDispatch()
   const { allOtherDayDeletedBookings } = useSelector(state => state.bookings.other)
-  // const navigation = useNavigation()
 
   const handleChancheBookingStatus = (booking, status) => {
     const updateBooking = {
@@ -79,6 +79,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
         <DataTable.Title>Zeit</DataTable.Title>
         <DataTable.Title>Pax</DataTable.Title>
         <DataTable.Title>Name</DataTable.Title>
+        <DataTable.Title>Tischs</DataTable.Title>
         <DataTable.Title>Notizen</DataTable.Title>
         <DataTable.Title>Telefon</DataTable.Title>
         <DataTable.Title>Erstellt</DataTable.Title>
@@ -92,7 +93,6 @@ const BookingTable = ({ bookingsData, cancel }) => {
             <Row
               item={item}
               key={item.id}
-            // disabled={isLoading}
             />
           )
         }}
@@ -100,7 +100,6 @@ const BookingTable = ({ bookingsData, cancel }) => {
         renderQuickActions={({ index, item }) => QuickActions(index, item)}
         contentContainerStyle={styles.swipeContainer}
         shouldBounceOnMount={false}
-      // ItemSeparatorComponent={renderItemSeparator}
       />
     </DataTable>
   )
@@ -116,9 +115,10 @@ const Row = ({ item, disabled }) => {
     id,
     name,
     phone,
+    table,
     status,
     endTime,
-    operation,
+    prefixName,
     createdAt,
     startTime,
     numberOfGuestsBaby,
@@ -129,19 +129,6 @@ const Row = ({ item, disabled }) => {
   const { colors } = useTheme();
   const navigation = useNavigation();
 
-
-  const getRowColorByStatus = (status) => {
-    switch (status) {
-      case (1):
-        return '#b91e1d'
-      case (3):
-        return '#323082'
-      case (4):
-        return '#0d976a'
-      default: break
-    }
-  }
-
   const onBookingPressHandler = (item) => {
     navigation.navigate('form', item)
   }
@@ -151,14 +138,12 @@ const Row = ({ item, disabled }) => {
       <DataTable.Row
         disabled={disabled}
         onPress={() => onBookingPressHandler(item)}
-        style={{
-          // backgroundColor: operation ? colors.tertiaryContainer : null 
-          backgroundColor: getRowColorByStatus(status)
-        }}
+        style={{ backgroundColor: getRowColorByStatus(status) }}
       >
         <DataTable.Cell>{startTime}-{endTime}</DataTable.Cell>
         <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
-        <DataTable.Cell>{name}</DataTable.Cell>
+        <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
+        <DataTable.Cell>{`${table?.room?.name}, ${table?.name}`}</DataTable.Cell>
         <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
         <DataTable.Cell>{phone}</DataTable.Cell>
         <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>

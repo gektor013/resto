@@ -13,7 +13,12 @@ const useBookingForm = (route) => {
   const { colors } = useTheme();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const bookingState = useSelector(state => state.bookingData)
-  const { isConnected } = useNetInfo();
+
+  const { rooms: roomsData } = useSelector(state => state.rooms)
+
+  const findRoom = (tableId) => {
+    return roomsData?.find(item => item.tables.some((table) => table.id === tableId))?.name
+  }
 
   const onSubmitWithMode = (data) => {
     if (!route?.params) {
@@ -37,6 +42,7 @@ const useBookingForm = (route) => {
     colors,
     bookingState,
     isDatePickerOpen,
+    findRoom,
     onSubmitWithMode,
     setIsDatePickerOpen,
     onCancelPressHandler,

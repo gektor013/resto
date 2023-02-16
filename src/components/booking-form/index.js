@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import MaskInput from 'react-native-mask-input';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
@@ -9,9 +9,9 @@ import { formatDate } from '../../utils/dates';
 import useBookingForm from '../../hooks/useBookingForm';
 import ModaLayout from '../../layout/modal-layout';
 import Tables from '../tables-modal';
+import { useSelector } from 'react-redux';
 
 const MIN_NAME_LENGTH = 1;
-const MAX_NAME_LENGTH = 25;
 const PHONE_MIN_LENGTH = 10;
 const PHONE_MAX_LENGTH = 12;
 const MAX_COMMENT_LENGTH = 250;
@@ -36,9 +36,9 @@ const ERROR_MESSAGES = {
 
 const BookingForm = ({ route }) => {
   const [isOpenTableModal, setIsOpenTableModal] = useState(false)
-  const { colors, bookingState, isDatePickerOpen, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
+  const { colors, bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
   const [selectedTable, setSelectedTable] = useState({})
-  console.log(selectedTable, 'SELEC');
+
 
   const {
     control,
@@ -52,6 +52,10 @@ const BookingForm = ({ route }) => {
     }, [bookingState]),
     mode: 'onChange',
   });
+
+  useEffect(() => {
+    setSelectedTable(getValues().table)
+  }, [getValues])
 
   return (
     <View style={styles.mb150}>
@@ -211,36 +215,40 @@ const BookingForm = ({ route }) => {
             )
           }
         }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <>
-            <TextInput
-              autoCorrect={false}
-              mode="outlined"
-              label="tables"
-              style={styles.mv5p}
-              value={value[0]}
-              onTouchStart={() => {
-                setIsOpenTableModal(true);
-              }}
-              showSoftInputOnFocus={false}
-              focusable={false}
-              caretHidden={true}
-            />
+        render={({ field: { onChange, onBlur, value } }) => {
+          const roomName = findRoom(value.id)
+          const newValue = value?.name ? `${roomName} ${value?.name}` : ""
+          return (
+            <>
+              <TextInput
+                autoCorrect={false}
+                mode="outlined"
+                label="tables"
+                style={styles.mv5p}
+                value={newValue}
+                onTouchStart={() => {
+                  setIsOpenTableModal(true);
+                }}
+                showSoftInputOnFocus={false}
+                focusable={false}
+                caretHidden={true}
+              />
 
-            <ModaLayout
-              visible={isOpenTableModal}
-              onCancel={() => setIsOpenTableModal(false)}
-              title={'Select desk'}
-              onSave={() => {
-                onChange(selectedTable)
-                setIsOpenTableModal(false)
-              }}
-            >
-              <Tables selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
-            </ModaLayout>
-          </>
-        )}
-        name="tables"
+              <ModaLayout
+                visible={isOpenTableModal}
+                onCancel={() => setIsOpenTableModal(false)}
+                title={'Select desk'}
+                onSave={() => {
+                  onChange(selectedTable)
+                  setIsOpenTableModal(false)
+                }}
+              >
+                <Tables selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
+              </ModaLayout>
+            </>
+          )
+        }}
+        name="table"
       />
 
 
