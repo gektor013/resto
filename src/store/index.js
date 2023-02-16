@@ -17,6 +17,8 @@ import { authenticationApi } from './api/authenticationApi';
 import { bookingsApi } from './api/bookingsApi';
 import { roomsApi } from './api/roomsApi';
 import { tablesApi } from './api/tablesApi';
+import { userApi } from './api/usersApi';
+
 
 import authenticationReducer from './slice/authenticationSlice';
 import bookingsReducer from './slice/bookingsSlice';
@@ -41,6 +43,7 @@ const reducers = combineReducers({
   [bookingsApi.reducerPath]: bookingsApi.reducer,
   [roomsApi.reducerPath]: roomsApi.reducer,
   [tablesApi.reducerPath]: tablesApi.reducer,
+  [userApi.reducerPath]: userApi.reducer,
 
   authentication: authenticationReducer,
   bookings: bookingsReducer,
@@ -65,6 +68,7 @@ const store = configureStore({
       bookingsApi.middleware,
       roomsApi.middleware,
       tablesApi.middleware,
+      userApi.middleware,
     ),
 });
 

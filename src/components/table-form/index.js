@@ -6,8 +6,6 @@ import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
 import { List } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import useTableForm from '../../hooks/useTableForm';
-import Loading from '../loading';
-import { ActivityIndicator } from 'react-native-paper';
 
 const MIN_NAME_LENGTH = 1;
 

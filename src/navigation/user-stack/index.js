@@ -5,10 +5,12 @@ import TableScreen from '../../screens/table';
 import { useTheme } from 'react-native-paper';
 import RoomFormScreen from '../../screens/roomForm';
 import TableFormScreen from '../../screens/tableForm';
+import UsersScreen from '../../screens/users/index';
+import UserFormScreen from '../../screens/userForm/index';
 
 const Stack = createNativeStackNavigator();
 
-const TablesStack = () => {
+const UserStack = () => {
   const { colors } = useTheme();
 
   return (
@@ -27,25 +29,16 @@ const TablesStack = () => {
             },
           })}
           name="list"
-          component={TableScreen}
+          component={UsersScreen}
         />
+
         <Stack.Screen
-          options={() => ({
-            title: 'New room',
-          })}
-          name="roomForm"
-          component={RoomFormScreen}
-        />
-        <Stack.Screen
-          options={() => ({
-            title: 'New table',
-          })}
-          name="tableForm"
-          component={TableFormScreen}
+          name="userForm"
+          component={UserFormScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-export default TablesStack;
+export default UserStack;

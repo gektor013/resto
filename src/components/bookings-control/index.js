@@ -73,8 +73,8 @@ const BookingsControl = ({
           ) : null} */}
         {isDatePickerOpen && (
           <DateTimePicker
-            // minimumDate={new Date()}
-            value={date}
+            minimumDate={new Date()}
+            value={new Date()}
             mode="date"
             onChange={onChange}
           />
