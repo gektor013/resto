@@ -5,9 +5,11 @@ export const roomsApi = createApi({
   reducerPath: 'roomsApi',
   baseQuery: baseQuery,
   tagTypes: ['Rooms'],
+  refetchOnReconnect: true,
+  keepUnusedDataFor: 1,
   endpoints: builder => ({
     getAllRooms: builder.query({
-      query: () => ({
+      query: () => (console.log('getAllRooms'), {
         url: `/rooms`,
       }),
       providesTags: result =>
@@ -42,8 +44,9 @@ export const roomsApi = createApi({
           "Content-Type": "application/merge-patch+json"
         }
       }),
-      // invalidatesTags: ['Rooms'],
-      invalidatesTags: (result, error, body) => [{ type: 'Rooms', id: 'LIST' }],
+      invalidatesTags: ['Rooms'],
+      // invalidatesTags: [{ type: 'Rooms' }],
+      // invalidatesTags: (result, error, body) => [{ type: 'Rooms', id: 'LIST' }],
     }),
     deleteRoom: builder.mutation({
       query: (id) => ({

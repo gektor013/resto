@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetAllRoomsQuery, useLazyGetAllRoomsQuery } from "../store/api/roomsApi";
 import { useCreateTableMutation, useDeleteTableMutation, useGetTableByIdQuery, usePatchTableDataMutation } from "../store/api/tablesApi";
 import { useNavigation } from '@react-navigation/native';
@@ -61,6 +61,8 @@ const useTableForm = (id) => {
       .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
       .finally(() => navigation.goBack())
   }
+
+
 
   return {
     roomsData, expanded, createTableLoading, patchTableLoading, daleteTableLoading, handleOpenTableSelect, handleCreateTable, handleTableDelete

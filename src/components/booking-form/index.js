@@ -9,7 +9,6 @@ import { formatDate } from '../../utils/dates';
 import useBookingForm from '../../hooks/useBookingForm';
 import ModaLayout from '../../layout/modal-layout';
 import Tables from '../tables-modal';
-import { useSelector } from 'react-redux';
 
 const MIN_NAME_LENGTH = 1;
 const PHONE_MIN_LENGTH = 10;
@@ -27,8 +26,6 @@ const REGEX = {
 const ERROR_MESSAGES = {
   REQUIRED: 'This field is required',
   NAME_INVALID: 'Invalid name',
-  NAME_TOO_LONG: 'The name is too long',
-  EMAIL_INVALID: 'Invalid email',
   PHONE_INVALID: 'The phone number is incorrect',
   COMMENT_TOO_LONG: `Comment must be less than ${MAX_COMMENT_LENGTH} characters`,
   TIME_INVALID: 'Invalid time'
@@ -476,6 +473,8 @@ const BookingForm = ({ route }) => {
           style={styles.mv25p}
           mode="contained"
           onPress={handleSubmit(onSubmitWithMode)}
+          loading={true}
+
           disabled={!isValid}>
           {/* {mode === modes.CREATE ? 'Save' : 'Edit'} */}
           {route?.params ? 'Edit' : 'Save'}

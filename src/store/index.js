@@ -31,8 +31,8 @@ const storage = new MMKVLoader().initialize();
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['authentication'],
-  // whitelist: ['authentication', 'bookings', 'rooms'],
+  // whitelist: ['authentication'],
+  whitelist: ['authentication', 'bookings', 'rooms'],
   blacklist: ['control'],
 };
 

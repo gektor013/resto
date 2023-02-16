@@ -29,11 +29,8 @@ const RoomForm = () => {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    getValues
   } = useForm({
     defaultValues: useMemo(() => {
-      // return route.params ? {   route?.params } : { ...initialRoomState }
-
       return route.params ? { name: route?.params?.name, id: route?.params?.id } : { ...initialRoomState }
     }, [initialRoomState, route.params]),
     mode: 'onChange',

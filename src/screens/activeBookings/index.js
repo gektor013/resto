@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import moment from 'moment';
 import { Button, useTheme } from 'react-native-paper';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -97,13 +97,10 @@ const ActiveBookingsScreen = ({ navigation }) => {
   return (
     <>
       <SafeAreaView>
-        <View
-          style={{ ...styles.container, backgroundColor: colors.background }}
+        <View style={{ ...styles.container, backgroundColor: colors.background }}
         >
           <BookingsControl
             isConnected={isConnected}
-            // createButtonEnabled={createButtonEnabled}
-            // onBookingCreateHandler={onBookingCreateHandler}
             onHandleOpenModals={onHandleOpenModals}
           />
           {otherDayBookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingData} cancel={false} />}

@@ -11,7 +11,8 @@ import { definitionPrefixName, getRowColorByStatus } from '../../utils/helpers';
 
 const BookingTable = ({ bookingsData, cancel }) => {
   const dispatch = useDispatch()
-  const { allOtherDayDeletedBookings } = useSelector(state => state.bookings.other)
+  // const { allOtherDayDeletedBookings } = useSelector(state => state.bookings.other)
+  // const { allBooking } = useSelector(state => state.bookings.todays)
 
   const handleChancheBookingStatus = (booking, status) => {
     const updateBooking = {
@@ -21,22 +22,58 @@ const BookingTable = ({ bookingsData, cancel }) => {
       unsync: true
     }
 
-    if (booking.status === 5) {
-      if (booking.id) {
-        const isSyncDeleted = allOtherDayDeletedBookings.some(elem => elem.id === booking.id)
-        if (isSyncDeleted) {
-          dispatch(setUnsynchronizedEditedBookings(updateBooking))
-        } else {
-          dispatch(removeUnsynchronizedEditedBookingsById(booking.id))
-        }
-      } else {
-        dispatch(setUnsynchronizedCreateBookings(updateBooking))
-      }
-    } else {
+    // if (booking.status === 5) {
+    if (booking.id) {
+      // const isSyncDeleted = allOtherDayDeletedBookings.some(elem => elem.id === booking.id)
+      // const isSyncDeleted = allOtherDayDeletedBookings.some(elem => elem.id === booking.id)
 
       dispatch(setUnsynchronizedEditedBookings(updateBooking))
+    } else {
+      // if have intenalID
+      dispatch(setUnsynchronizedCreateBookings(updateBooking))
     }
 
+    // if (booking.id) {
+    //   const syncDeleted = allOtherDayDeletedBookings.find(elem => elem.id === booking.id)
+    //   const syncToday = allBooking.find(elem => elem.id === booking.id)
+
+    //   const copyUpdateBooking = JSON.parse(JSON.stringify(updateBooking))
+    //   delete copyUpdateBooking.internalID
+    //   delete copyUpdateBooking.unsync
+
+    //   console.log(copyUpdateBooking, 'copyUpdateBooking');
+
+    //   if (syncDeleted) {
+    //     const stringSyncDeleted = JSON.stringify(syncDeleted)
+    //     const stringUpdateBooking = JSON.stringify(copyUpdateBooking)
+
+    //     if (stringSyncDeleted === stringUpdateBooking) {
+    //       console.log('REMOVE SYNC DELTED');
+
+    //       dispatch(removeUnsynchronizedEditedBookingsById(booking.id))
+    //     } else {
+    //       dispatch(setUnsynchronizedEditedBookings(updateBooking))
+    //     }
+    //   }
+
+    //   else if (syncToday) {
+    //     const stringSyncToday = JSON.stringify(syncToday)
+    //     const stringUpdateBooking = JSON.stringify(copyUpdateBooking)
+
+    //     console.log(stringSyncToday, 'stringSyncToday', stringUpdateBooking, 'stringUpdateBooking');
+    //     if (stringSyncToday === stringUpdateBooking) {
+    //       console.log('REMOVE SYNC TODAY');
+    //       dispatch(removeUnsynchronizedEditedBookingsById(booking.id))
+    //     } else {
+    //       console.log('ELSE');
+    //       dispatch(setUnsynchronizedEditedBookings(updateBooking))
+    //     }
+    //   }
+
+    // } else {
+    //   // if have intenalID
+    //   dispatch(setUnsynchronizedCreateBookings(updateBooking))
+    // }
   };
 
   const QuickActions = (_, booking) => {

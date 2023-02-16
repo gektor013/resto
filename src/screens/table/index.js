@@ -11,14 +11,20 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import LoadingScreen from '../loading';
 
 const TableGroup = () => {
+  // const [oneRoom, setOneRoom] = useState(null)
   const [value, setValue] = useState(1);
   const [lastPressed, setLastPressed] = useState(0);
-  const { data: roomsData, isLoading: roomsDataLoading } = useGetAllRoomsQuery()
+  const { isConnected } = useNetInfo();
+
+  const { data: roomsData, isLoading: roomsDataLoading } = useGetAllRoomsQuery('', {
+    skip: isConnected === false,
+    refetchOnReconnect: true,
+  })
   const { colors } = useTheme();
   const navigation = useNavigation()
 
   const oneRoom = roomsData?.find(arr => arr.id === value)
-
+  console.log(oneRoom, 'ONEROOM');
   const handlePress = useCallback((item) => {
     const time = new Date().getTime();
     const delta = time - lastPressed;
@@ -30,6 +36,12 @@ const TableGroup = () => {
       }
     }
   }, [lastPressed]);
+
+  // useEffect(() => {
+  //   const findRoom = roomsData?.find(arr => arr.id === value)
+
+  //   setOneRoom(findRoom)
+  // }, [roomsData])
 
   return (
     <>
@@ -72,6 +84,7 @@ const TableScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const { isConnected } = useNetInfo();
 
+  // console.log(isConnected, 'isConnected');
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -94,7 +107,7 @@ const TableScreen = ({ navigation }) => {
         </>
       ),
     });
-  }, [navigation]);
+  }, [navigation, isConnected]);
 
   return (
     <SafeAreaView>

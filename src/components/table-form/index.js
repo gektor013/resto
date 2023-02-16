@@ -43,6 +43,13 @@ const TableForm = () => {
     }, [initialRoomState]),
     mode: 'onChange',
   });
+  // console.log(getValues());
+
+  useEffect(() => {
+    roomsData && setValue('room', roomsData[0])
+    // ||
+    // oneTableData && setTableData({ ...oneTableData, room: oneTableData.room.id })
+  }, [roomsData,]);
 
   return (
     <View style={styles.mb150}>

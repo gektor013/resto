@@ -35,7 +35,8 @@ const useBookingsData = () => {
   const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
     skip: !isConnected,
     refetchOnReconnect: true,
-    pollingInterval: 300000
+    pollingInterval: 300000,
+
   })
 
   // get all rooms data in first render
@@ -49,8 +50,6 @@ const useBookingsData = () => {
     Array.from(editUnsyncBookings, (elem) => {
       const tables = elem.tables ? [`/api/tables/${elem?.tables?.id}`] : []
 
-      // console.log(elem, "ELEMENT");
-      // console.log(tables, 'tables');
       editBookings({ ...elem, tables }).unwrap()
         .then(res => {
           if (res) {
@@ -74,6 +73,8 @@ const useBookingsData = () => {
         .finally(() => dispatch(resetBookingData()))
     })
   }
+
+  console.log(isConnected);
 
   useEffect(() => {
     if (roomsData) {
@@ -112,6 +113,7 @@ const useBookingsData = () => {
     if (isConnected === true) {
       setBookingsData(otherDayBookings)
     } else if (isConnected === false) {
+      console.log('ELSE');
       const unsyncCreated = createdUnsyncBooking.filter(elem => elem.status !== 5)
       const unsyncEdited = editUnsyncBookings.filter(elem => elem.status !== 5)
 
