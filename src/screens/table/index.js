@@ -3,28 +3,29 @@ import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, SegmentedButtons, Surface, useTheme } from 'react-native-paper';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { useGetAllRoomsQuery } from '../../store/api/roomsApi';
 import { useNetInfo } from '@react-native-community/netinfo';
 import LoadingScreen from '../loading';
+import { useSelector } from 'react-redux';
 
 const TableGroup = () => {
-  // const [oneRoom, setOneRoom] = useState(null)
   const [value, setValue] = useState(1);
   const [lastPressed, setLastPressed] = useState(0);
   const { isConnected } = useNetInfo();
 
-  const { data: roomsData, isLoading: roomsDataLoading } = useGetAllRoomsQuery('', {
+  const { isLoading: roomsDataLoading } = useGetAllRoomsQuery('', {
     skip: isConnected === false,
     refetchOnReconnect: true,
   })
+  const { rooms: roomsData } = useSelector(state => state.rooms)
+
   const { colors } = useTheme();
   const navigation = useNavigation()
 
   const oneRoom = roomsData?.find(arr => arr.id === value)
-  console.log(oneRoom, 'ONEROOM');
+
   const handlePress = useCallback((item) => {
     const time = new Date().getTime();
     const delta = time - lastPressed;
@@ -36,12 +37,6 @@ const TableGroup = () => {
       }
     }
   }, [lastPressed]);
-
-  // useEffect(() => {
-  //   const findRoom = roomsData?.find(arr => arr.id === value)
-
-  //   setOneRoom(findRoom)
-  // }, [roomsData])
 
   return (
     <>
@@ -84,7 +79,6 @@ const TableScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const { isConnected } = useNetInfo();
 
-  // console.log(isConnected, 'isConnected');
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -114,8 +108,7 @@ const TableScreen = ({ navigation }) => {
       <View
         style={{ ...styles.container, backgroundColor: colors.background }}
       >
-        <TableGroup />
-        {/* {deletedIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={deletedPageData} cancel={true} />} */}
+        {isConnected ? <TableGroup /> : null}
       </View>
     </SafeAreaView>
   )

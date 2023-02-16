@@ -14,6 +14,7 @@ const BookingFormScreen = ({ route, navigation }) => {
       headerStyle: {
         backgroundColor: colors.background,
       },
+      headerTintColor: colors.onBackground,
       headerTitleStyle: {
         color: colors.onBackground,
       },

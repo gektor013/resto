@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetBookingData, } from '../store/slice/bookingDataSlice';
+import { resetBookingData } from '../store/slice/bookingDataSlice';
 import { setUnsynchronizedCreateBookings, setUnsynchronizedEditedBookings } from '../store/slice/bookingsSlice';
 import { useNavigation } from '@react-navigation/native';
 import uuid from 'react-native-uuid';
@@ -15,16 +15,18 @@ const useBookingForm = (route) => {
   const { rooms: roomsData } = useSelector(state => state.rooms)
 
   const findRoom = (tableId) => {
-    return roomsData?.find(item => item.tables.some((table) => table.id === tableId))?.name
+    return roomsData?.find(item => item.tables.some((table) => table.id === tableId))
   }
 
   const onSubmitWithMode = (data) => {
     if (!route?.params) {
-      dispatch(setUnsynchronizedCreateBookings({ ...data, internalID: uuid.v4(), unsync: true }))
+      dispatch(setUnsynchronizedCreateBookings(
+        { ...data, internalID: uuid.v4(), unsync: true, table: { ...data.table, room: { ...findRoom(data.table.id) } } }
+      ))
     }
     if (route?.params) {
       dispatch(setUnsynchronizedEditedBookings(
-        { ...data, internalID: data?.internalID ? data?.internalID : uuid.v4(), unsync: true }
+        { ...data, internalID: data?.internalID ? data?.internalID : uuid.v4(), unsync: true, table: { ...data.table, room: { ...findRoom(data.table.id) } } }
       ))
     }
     navigation.navigate('list')
@@ -34,7 +36,6 @@ const useBookingForm = (route) => {
     dispatch(resetBookingData())
     navigation.navigate('list')
   }
-
 
   return {
     colors,

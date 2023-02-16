@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, } from 'react-native'
+import { StyleSheet, View, } from 'react-native'
 import React, { useEffect } from 'react'
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,7 +10,6 @@ const DeletedBookingsScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const { deletedData, deletedIsFetch } = useCancelBookingsData()
 
-  // console.log(navigation.isFocused());
   useEffect(() => {
     navigation.setOptions({
       headerShown: true,
@@ -42,6 +41,5 @@ const styles = StyleSheet.create({
   container: {
     minHeight: '100%',
     padding: 10,
-    // paddingHorizontal: '10%',
   },
 })

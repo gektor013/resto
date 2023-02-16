@@ -208,13 +208,13 @@ const BookingForm = ({ route }) => {
           required: { value: true },
           validate: (value) => {
             return (
-              value[0] !== ""
+              value !== ""
             )
           }
         }}
         render={({ field: { onChange, onBlur, value } }) => {
           const roomName = findRoom(value.id)
-          const newValue = value?.name ? `${roomName} ${value?.name}` : ""
+          const newValue = value?.name ? `${roomName.name} ${value?.name}` : ""
           return (
             <>
               <TextInput
@@ -473,10 +473,7 @@ const BookingForm = ({ route }) => {
           style={styles.mv25p}
           mode="contained"
           onPress={handleSubmit(onSubmitWithMode)}
-          loading={true}
-
           disabled={!isValid}>
-          {/* {mode === modes.CREATE ? 'Save' : 'Edit'} */}
           {route?.params ? 'Edit' : 'Save'}
         </Button>
 

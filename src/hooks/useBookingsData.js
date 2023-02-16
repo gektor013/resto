@@ -57,6 +57,7 @@ const useBookingsData = () => {
           }
         })
         .catch(e => console.log(e, 'onEditBookings error'))
+        .finally(() => dispatch(resetBookingData()))
     })
   }
 
@@ -73,8 +74,6 @@ const useBookingsData = () => {
         .finally(() => dispatch(resetBookingData()))
     })
   }
-
-  console.log(isConnected);
 
   useEffect(() => {
     if (roomsData) {
@@ -113,7 +112,6 @@ const useBookingsData = () => {
     if (isConnected === true) {
       setBookingsData(otherDayBookings)
     } else if (isConnected === false) {
-      console.log('ELSE');
       const unsyncCreated = createdUnsyncBooking.filter(elem => elem.status !== 5)
       const unsyncEdited = editUnsyncBookings.filter(elem => elem.status !== 5)
 

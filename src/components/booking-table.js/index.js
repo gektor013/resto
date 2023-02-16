@@ -180,7 +180,7 @@ const Row = ({ item, disabled }) => {
         <DataTable.Cell>{startTime}-{endTime}</DataTable.Cell>
         <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
         <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
-        <DataTable.Cell>{`${table?.room?.name}, ${table?.name}`}</DataTable.Cell>
+        <DataTable.Cell>{`${table?.room?.name || ''}, ${table?.name}`}</DataTable.Cell>
         <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
         <DataTable.Cell>{phone}</DataTable.Cell>
         <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
