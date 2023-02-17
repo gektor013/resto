@@ -24,7 +24,6 @@ const TableForm = () => {
   const { colors } = useTheme();
   const route = useRoute()
   const navigate = useNavigation()
-  // const { id, name, room, seatQuantity } = route?.params
 
   const { roomsData, expanded, createTableLoading, patchTableLoading, daleteTableLoading, handleOpenTableSelect, handleCreateTable, handleTableDelete
   } = useTableForm(route?.params?.id)
@@ -37,15 +36,20 @@ const TableForm = () => {
     setValue,
   } = useForm({
     defaultValues: useMemo(() => {
-      return route?.params ? { id: route?.params.id, name: route?.params.name, room: route?.params.room, seatQuantity: route?.params.seatQuantity } : { ...initialRoomState }
+      return route?.params ?
+        { id: route?.params.id, name: route?.params.name, room: route?.params.room, seatQuantity: route?.params.seatQuantity }
+        : { ...initialRoomState }
     }, [initialRoomState]),
     mode: 'onChange',
   });
-  // console.log(getValues());
 
-  useEffect(() => {
-    roomsData && roomsData?.length !== 0 && setValue('room', roomsData[0])
-  }, [roomsData]);
+  // useEffect(() => {
+  //   roomsData && roomsData?.length !== 0 && setValue('room', roomsData[0])
+  // }, [roomsData]);
+
+  console.log(route.params, "Params");
+  // console.log(getValues(), "Values");
+
 
 
   return (
@@ -103,7 +107,7 @@ const TableForm = () => {
       />
       <HelperText type="error">{errors.seatQuantity?.message}</HelperText>
 
-      <List.Section style={{ borderWidth: 1, borderRadius: 3, borderColor: colors.outline }}>
+      {/* <List.Section style={{ borderWidth: 1, borderRadius: 3, borderColor: colors.outline }}>
         <List.Accordion
           expanded={expanded}
           title={getValues().room.name || (roomsData && roomsData[0].name)}
@@ -119,7 +123,7 @@ const TableForm = () => {
         </List.Accordion>
       </List.Section>
 
-      <HelperText type="error">{errors.tables?.message}</HelperText>
+      <HelperText type="error">{errors.tables?.message}</HelperText> */}
 
       <View>
         <Button
@@ -139,7 +143,7 @@ const TableForm = () => {
           Cancel
         </Button>
 
-        {route?.params && (
+        {route?.params?.id && (
           <Button
             style={styles.mv25p}
             mode="contained"

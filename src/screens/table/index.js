@@ -88,14 +88,15 @@ const TableGroup = () => {
             }
             {isConnected ? (
               <TouchableOpacity
-                onPress={() => navigation.navigate('tableForm')}>
+                onPress={() => navigation.navigate('tableForm', { room: oneRoom })}>
                 <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
                   <Text>+</Text>
                 </Surface>
               </TouchableOpacity>
             ) : ''}
           </View>
-        </>)}
+        </>)
+      }
     </>
   )
 }

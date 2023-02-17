@@ -5,6 +5,8 @@ import ActiveBookingScreen from '../../screens/activeBookings';
 import FormScreen from '../../screens/bookingForm';
 import TableScreen from '../../screens/table';
 import { useTheme } from 'react-native-paper';
+import RoomFormScreen from '../../screens/roomForm';
+import TableFormScreen from '../../screens/tableForm';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,7 +45,20 @@ const ActiveBookingStack = () => {
           name="tablesScreen"
           component={TableScreen}
         />
-
+        <Stack.Screen
+          options={() => ({
+            title: 'New room',
+          })}
+          name="roomForm"
+          component={RoomFormScreen}
+        />
+        <Stack.Screen
+          options={() => ({
+            title: 'New table',
+          })}
+          name="tableForm"
+          component={TableFormScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

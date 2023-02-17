@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { formatDateParams } from '../utils/dates'
-import { clearAllEditBookings, clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
+import { clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
 import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { currentDate, statusForActivePage } from '../constants';
+import { statusForActivePage } from '../constants';
 import { useGetAllRoomsQuery } from '../store/api/roomsApi';
 import { setAllRoomsData } from '../store/slice/roomsSlice';
 import { resetBookingData } from '../store/slice/bookingDataSlice';
@@ -48,9 +48,10 @@ const useBookingsData = () => {
   // edit bookings
   const onEditBookings = () => {
     Array.from(editUnsyncBookings, (elem) => {
-      const tables = elem.tables ? [`/api/tables/${elem?.tables?.id}`] : []
+      // const tables = elem.tables ? [`/api/tables/${elem?.tables?.id}`] : []
 
-      editBookings({ ...elem, tables }).unwrap()
+      // console.log(elem, 'ELEM TABLES');
+      editBookings(elem).unwrap()
         .then(res => {
           if (res) {
             dispatch(clearUnsynchronizedEditedBookings())
