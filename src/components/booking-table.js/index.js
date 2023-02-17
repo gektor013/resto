@@ -116,7 +116,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
         <DataTable.Title>Zeit</DataTable.Title>
         <DataTable.Title>Pax</DataTable.Title>
         <DataTable.Title>Name</DataTable.Title>
-        <DataTable.Title>Tischs</DataTable.Title>
+        <DataTable.Title>Tisch</DataTable.Title>
         <DataTable.Title>Notizen</DataTable.Title>
         <DataTable.Title>Telefon</DataTable.Title>
         <DataTable.Title>Erstellt</DataTable.Title>
@@ -155,6 +155,7 @@ const Row = ({ item, disabled }) => {
     table,
     status,
     endTime,
+    employee,
     prefixName,
     createdAt,
     startTime,
@@ -165,6 +166,7 @@ const Row = ({ item, disabled }) => {
   } = item;
   const { colors } = useTheme();
   const navigation = useNavigation();
+  console.log(item);
 
   const onBookingPressHandler = (item) => {
     navigation.navigate('form', item)
@@ -183,7 +185,7 @@ const Row = ({ item, disabled }) => {
         <DataTable.Cell>{`${table?.room?.name || ''} ${table?.name || ''}`}</DataTable.Cell>
         <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
         <DataTable.Cell>{phone}</DataTable.Cell>
-        <DataTable.Cell>{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
+        <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
         <DataTable.Cell>status {status}</DataTable.Cell>
       </DataTable.Row>
     </View>

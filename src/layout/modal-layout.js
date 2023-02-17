@@ -4,7 +4,7 @@ import { Dialog, Portal, Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 
-const ModaLayout = ({ children, visible, onCancel, onSave, title }) => {
+const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false, addCallBack }) => {
   const state = useSelector(state => state.bookingData)
   const [disabled, setDisabled] = useState(true)
 
@@ -25,7 +25,7 @@ const ModaLayout = ({ children, visible, onCancel, onSave, title }) => {
       }
     }
 
-    if (title === 'Select desk') {
+    if (title === 'Select employee') {
       setDisabled(false)
     }
   }
@@ -37,7 +37,20 @@ const ModaLayout = ({ children, visible, onCancel, onSave, title }) => {
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={onCancel}>
-        <Dialog.Title>{title}</Dialog.Title>
+        <View style={styles.titleContainer}>
+          <Dialog.Title>{title}</Dialog.Title>
+          {
+            addBtn &&
+            <Button
+              mode="contained"
+              icon={'plus'}
+              onPress={addCallBack}
+              style={styles.btn}
+            >
+              Emploee
+            </Button>
+          }
+        </View>
         <Dialog.Content>
           {children}
         </Dialog.Content>
@@ -77,5 +90,16 @@ const styles = StyleSheet.create({
   },
   mr10: {
     marginRight: 10
+  },
+
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 20,
+    justifyContent: 'space-between'
+  },
+  btn: {
+    justifyContent: 'center',
+    height: 40
   }
 })

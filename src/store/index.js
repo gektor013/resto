@@ -18,6 +18,7 @@ import { bookingsApi } from './api/bookingsApi';
 import { roomsApi } from './api/roomsApi';
 import { tablesApi } from './api/tablesApi';
 import { userApi } from './api/usersApi';
+import { employeeApi } from './api/employeeApi';
 
 
 import authenticationReducer from './slice/authenticationSlice';
@@ -25,8 +26,7 @@ import bookingsReducer from './slice/bookingsSlice';
 import controlSlice from './slice/controlSlice';
 import bookingData from './slice/bookingDataSlice';
 import roomsSlice from './slice/roomsSlice';
-
-// import messagesSlice from './slice/messagesSlice';
+import employeesSlice from './slice/employeesSlice';
 
 const storage = new MMKVLoader().initialize();
 
@@ -34,7 +34,7 @@ const persistConfig = {
   key: 'root',
   storage,
   whitelist: ['authentication'],
-  // whitelist: ['authentication', 'bookings', 'rooms'],
+  // whitelist: ['authentication', 'bookings', 'rooms', 'employees'],
   blacklist: ['control'],
 };
 
@@ -44,13 +44,15 @@ const reducers = combineReducers({
   [roomsApi.reducerPath]: roomsApi.reducer,
   [tablesApi.reducerPath]: tablesApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
+  [employeeApi.reducerPath]: employeeApi.reducer,
+
 
   authentication: authenticationReducer,
   bookings: bookingsReducer,
   control: controlSlice,
   rooms: roomsSlice,
+  employees: employeesSlice,
   bookingData,
-  // messages: messagesSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);
@@ -69,6 +71,7 @@ const store = configureStore({
       roomsApi.middleware,
       tablesApi.middleware,
       userApi.middleware,
+      employeeApi.middleware,
     ),
 });
 

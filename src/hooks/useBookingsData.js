@@ -8,6 +8,8 @@ import { statusForActivePage } from '../constants';
 import { useGetAllRoomsQuery } from '../store/api/roomsApi';
 import { setAllRoomsData } from '../store/slice/roomsSlice';
 import { resetBookingData } from '../store/slice/bookingDataSlice';
+import { useGetAllEmployeesQuery } from '../store/api/employeeApi';
+import { setAllEmployeesData } from '../store/slice/employeesSlice';
 
 
 const useBookingsData = () => {
@@ -44,13 +46,15 @@ const useBookingsData = () => {
     skip: !isConnected,
   })
 
+  // get all employees data in first render
+  const { data: employeesData } = useGetAllEmployeesQuery('', {
+    skip: !isConnected,
+  })
+
 
   // edit bookings
   const onEditBookings = () => {
     Array.from(editUnsyncBookings, (elem) => {
-      // const tables = elem.tables ? [`/api/tables/${elem?.tables?.id}`] : []
-
-      // console.log(elem, 'ELEM TABLES');
       editBookings(elem).unwrap()
         .then(res => {
           if (res) {
@@ -80,10 +84,14 @@ const useBookingsData = () => {
   }
 
   useEffect(() => {
-    if (roomsData) {
+    if (roomsData?.length) {
       dispatch(setAllRoomsData(roomsData))
     }
-  }, [roomsData])
+
+    if (employeesData?.length) {
+      dispatch(setAllEmployeesData(employeesData))
+    }
+  }, [roomsData, employeesData])
 
   // send when there is internet
   useEffect(() => {

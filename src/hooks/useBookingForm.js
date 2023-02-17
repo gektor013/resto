@@ -32,6 +32,7 @@ const useBookingForm = (route) => {
       ))
     }
     navigation.navigate('list')
+    dispatch(resetBookingData())
   }
 
   const onCancelPressHandler = () => {

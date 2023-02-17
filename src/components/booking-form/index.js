@@ -8,12 +8,11 @@ import moment from 'moment';
 import { formatDate } from '../../utils/dates';
 import useBookingForm from '../../hooks/useBookingForm';
 import ModaLayout from '../../layout/modal-layout';
-import Tables from '../tables-modal';
+import Employees from '../employee-modal';
 import { useNavigation } from '@react-navigation/native';
 
 const MIN_NAME_LENGTH = 1;
 const PHONE_MIN_LENGTH = 10;
-const PHONE_MAX_LENGTH = 12;
 const MAX_COMMENT_LENGTH = 250;
 const MIN_TIME_LENGTH = 5
 
@@ -35,10 +34,12 @@ const ERROR_MESSAGES = {
 const BookingForm = ({ route }) => {
   const navigation = useNavigation()
   const [isOpenTableModal, setIsOpenTableModal] = useState(false)
-  const { colors, bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
-  // const [selectedTable, setSelectedTable] = useState({})
+  const [isOpenEmploeeModal, setIsOpenEmploeeModal] = useState(false)
+  const [isShowInput, setIsShowInput] = useState(false)
+  const [selectedEmployee, setSelectedEmployee] = useState(null)
 
-  // console.log(route?.params.table, "ROUTE");
+  const { colors, bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
+  const isParamsTable = route?.params?.table
 
   const {
     control,
@@ -53,11 +54,9 @@ const BookingForm = ({ route }) => {
     mode: 'onChange',
   });
 
-  const isParamsTable = route?.params?.table
   useEffect(() => {
-
     isParamsTable && setValue('table', isParamsTable)
-    // && setSelectedTable(getValues()?.table)
+    route?.params?.employee && setSelectedEmployee(route?.params?.employee)
   }, [getValues, route])
 
   useEffect(() => {
@@ -67,9 +66,6 @@ const BookingForm = ({ route }) => {
     return () => setIsOpenTableModal(false)
   }, [isOpenTableModal, navigation])
 
-  // useEffect(() => )
-
-  // console.log(getValues(), 'GETVAL');
   return (
     <View style={styles.mb150}>
       <Controller
@@ -283,10 +279,10 @@ const BookingForm = ({ route }) => {
             value: PHONE_MIN_LENGTH,
             message: ERROR_MESSAGES.PHONE_INVALID,
           },
-          maxLength: {
-            value: PHONE_MAX_LENGTH,
-            message: ERROR_MESSAGES.PHONE_INVALID,
-          },
+          // maxLength: {
+          //   value: PHONE_MAX_LENGTH,
+          //   message: ERROR_MESSAGES.PHONE_INVALID,
+          // },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
@@ -486,6 +482,68 @@ const BookingForm = ({ route }) => {
       <HelperText type="error">
         {errors.commentByAdminForAdmin?.message}
       </HelperText>
+
+      <Controller
+        control={control}
+        // rules={{
+        //   required: { value: true },
+        //   validate: (value) => {
+        //     return (
+        //       value !== ""
+        //     )
+        //   }
+        // }}
+        render={({ field: { onChange, onBlur, value } }) => {
+          // const roomName = findRoom(value.id)
+          // const newValue = value?.name ? `${roomName.name} ${value?.name}` : ""
+          return (
+            <>
+              <TextInput
+                autoCorrect={false}
+                mode="outlined"
+                label="emploee"
+                style={styles.mv5p}
+                value={selectedEmployee?.name || ""}
+                onTouchStart={() => {
+                  setIsOpenEmploeeModal(true);
+                }}
+                showSoftInputOnFocus={false}
+                focusable={false}
+                caretHidden={true}
+              />
+
+              <ModaLayout
+                visible={isOpenEmploeeModal}
+                onCancel={() => setIsOpenEmploeeModal(false)}
+                title={'Select employee'}
+                addBtn={true}
+                addCallBack={() => setIsShowInput(true)}
+                onSave={() => {
+                  onChange(selectedEmployee)
+                  setIsOpenEmploeeModal(false)
+                }}
+              >
+                <Employees
+                  isShowInput={isShowInput}
+                  onCancel={() => {
+                    setSelectedEmployee(null)
+                    setIsShowInput(false)
+                  }}
+                  onSave={(e) => {
+                    // setIsShowInput(false)
+                    // setSelectedEmployee()
+                    // console.log(e);
+                  }}
+                  // setIsShowInput={setIsShowInput}
+                  selectedEmployee={selectedEmployee}
+                  setSelectedEmployee={setSelectedEmployee}
+                />
+              </ModaLayout>
+            </>
+          )
+        }}
+        name="employee"
+      />
 
 
       <View>
