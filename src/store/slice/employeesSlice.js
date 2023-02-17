@@ -13,7 +13,6 @@ export const employeesSlice = createSlice({
     },
     deleteEmployeesData: (state, action) => {
       const filterElement = state.employees.filter(elem => elem.id !== action.payload)
-      console.log(filterElement, 'filterElement');
       state.employees = filterElement
     },
     createEmployeeData: (state, action) => {

@@ -85,7 +85,7 @@ const BookingForm = ({ route }) => {
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             mode="outlined"
-            label="name"
+            label="Name"
             style={styles.mv5p}
             selectionColor={colors.white}
             underlineColor={colors.white}
@@ -108,7 +108,7 @@ const BookingForm = ({ route }) => {
             <TextInput
               autoCorrect={false}
               mode="outlined"
-              label="date"
+              label="Date"
               style={styles.mv5p}
               value={formatDate(new Date(value))}
               onTouchStart={() => {
@@ -154,7 +154,7 @@ const BookingForm = ({ route }) => {
                 <TextInput
                   autoCorrect={false}
                   mode="outlined"
-                  label="start time"
+                  label="Start time"
                   style={{ ...styles.mv5p, flex: 1 }}
                   value={value}
                   focusable={false}
@@ -191,7 +191,7 @@ const BookingForm = ({ route }) => {
               <TextInput
                 autoCorrect={false}
                 mode="outlined"
-                label="end time"
+                label="End time"
                 style={styles.mv5p}
                 value={value}
                 focusable={false}
@@ -234,7 +234,7 @@ const BookingForm = ({ route }) => {
               <TextInput
                 autoCorrect={false}
                 mode="outlined"
-                label="tables"
+                label=" Select tables"
                 style={styles.mv5p}
                 value={newValue}
                 onTouchStart={() => {
@@ -244,18 +244,6 @@ const BookingForm = ({ route }) => {
                 focusable={false}
                 caretHidden={true}
               />
-
-              {/* <ModaLayout
-                visible={isOpenTableModal}
-                onCancel={() => setIsOpenTableModal(false)}
-                title={'Select desk'}
-                onSave={() => {
-                  onChange(selectedTable)
-                  setIsOpenTableModal(false)
-                }}
-              >
-                <Tables selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
-              </ModaLayout> */}
             </>
           )
         }}
@@ -287,7 +275,7 @@ const BookingForm = ({ route }) => {
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             mode="outlined"
-            label="phone"
+            label="Inser phone number"
             style={styles.mv5p}
             selectionColor={colors.white}
             underlineColor={colors.white}
@@ -465,7 +453,7 @@ const BookingForm = ({ route }) => {
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             mode="outlined"
-            label="commentByAdminForAdmin"
+            label="Add comment"
             style={styles.mv5p}
             selectionColor={colors.white}
             underlineColor={colors.white}

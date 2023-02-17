@@ -43,15 +43,6 @@ const TableForm = () => {
     mode: 'onChange',
   });
 
-  // useEffect(() => {
-  //   roomsData && roomsData?.length !== 0 && setValue('room', roomsData[0])
-  // }, [roomsData]);
-
-  console.log(route.params, "Params");
-  // console.log(getValues(), "Values");
-
-
-
   return (
     <View style={styles.mb150}>
       <Controller

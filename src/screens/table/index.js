@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, Text, View, ScrollView } from 'react-native'
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, SegmentedButtons, Surface, useTheme } from 'react-native-paper';
@@ -57,9 +57,13 @@ const TableGroup = () => {
     <>
       {roomsDataLoading ? (<LoadingScreen />) : (
         <>
+          {/* <ScrollView style={{ flex: 1, backgroundColor: 'red' }}
+            showsHorizontalScrollIndicator={false}
+            horizontal={true}> */}
           <SegmentedButtons
             value={value}
             onValueChange={setValue}
+            style={{ alignItems: 'center', marginBottom: 0 }}
             buttons={
               roomsData ? roomsData?.map(item => ({
                 value: item.id,
@@ -68,6 +72,7 @@ const TableGroup = () => {
               })) : []
             }
           />
+          {/* </ScrollView> */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
             {
               oneRoom?.tables.map((item, idx) => {
@@ -78,9 +83,9 @@ const TableGroup = () => {
                   >
                     <View style={{ alignItems: 'center' }}>
                       <Surface style={{ ...styles.surface, backgroundColor: route?.params?.selectTable?.id === item.id ? colors.primary : '#3fab1a' }} elevation={4}>
-                        <Text>{item.name}</Text>
+                        <Text style={{ color: colors.onBackground }}>{item.name}</Text>
                       </Surface>
-                      <Text>{item.seatQuantity} seats</Text>
+                      <Text style={{ color: colors.onBackground }}>{item.seatQuantity} seats</Text>
                     </View>
                   </TouchableOpacity>
                 )
@@ -108,24 +113,16 @@ const TableScreen = ({ navigation }) => {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <>
-          <Button
-            icon="plus"
-            style={{ marginRight: 10 }}
-            mode="contained"
-            disabled={isConnected === false}
-            onPress={() => navigation.navigate('roomForm')}>
-            New room
-          </Button>
-          {/* <Button
-            icon="plus"
-            mode="contained"
-            disabled={isConnected === false}
-            onPress={() => navigation.navigate('tableForm')}>
-            New table
-          </Button> */}
-        </>
+        <Button
+          icon="plus"
+          style={{ marginRight: 10 }}
+          mode="contained"
+          disabled={isConnected === false}
+          onPress={() => navigation.navigate('roomForm')}>
+          New room
+        </Button>
       ),
+      headerTintColor: colors.onBackground,
     });
   }, [navigation, isConnected]);
 

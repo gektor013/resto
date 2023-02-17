@@ -166,7 +166,6 @@ const Row = ({ item, disabled }) => {
   } = item;
   const { colors } = useTheme();
   const navigation = useNavigation();
-  console.log(item);
 
   const onBookingPressHandler = (item) => {
     navigation.navigate('form', item)

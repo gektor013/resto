@@ -8,7 +8,7 @@ export const employeeApi = createApi({
   refetchOnReconnect: true,
   endpoints: builder => ({
     getAllEmployees: builder.query({
-      query: () => (console.log('getAllEmployees'), {
+      query: () => ({
         url: `/employees`,
       }),
       providesTags: result =>
