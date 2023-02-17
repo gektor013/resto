@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, SegmentedButtons, Surface, useTheme } from 'react-native-paper';
@@ -20,13 +20,15 @@ const TableGroup = () => {
     refetchOnReconnect: true,
   })
   const { rooms: roomsData } = useSelector(state => state.rooms)
-
+  console.log('');
   const { colors } = useTheme();
   const navigation = useNavigation()
 
   const oneRoom = roomsData?.find(arr => arr.id === value)
 
-  const handlePress = useCallback((item) => {
+  const handleDoublePress = useCallback((item) => {
+    if (isConnected === false) return
+
     const time = new Date().getTime();
     const delta = time - lastPressed;
     setLastPressed(time);
@@ -36,7 +38,7 @@ const TableGroup = () => {
         navigation.navigate('roomForm', item)
       }
     }
-  }, [lastPressed]);
+  }, [lastPressed, isConnected]);
 
   return (
     <>
@@ -50,7 +52,7 @@ const TableGroup = () => {
                 value: item.id,
                 label: item.name,
                 accessibilityLabel: 'qweq',
-                onPress: () => handlePress(item),
+                onPress: () => handleDoublePress(item),
               })) : []
             }
           />
@@ -59,16 +61,27 @@ const TableGroup = () => {
               oneRoom?.tables.map((item, idx) => {
                 return (
                   <TouchableOpacity key={item.createdAt + idx}
-                    onPress={() => navigation.navigate('tableForm', { ...item, room: oneRoom })}
+                    onLongPress={() => navigation.navigate('tableForm', { ...item, room: oneRoom })}
                   >
-                    <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
-                      <Text>{item.name}</Text>
-                      <Text>{item.seatQuantity} seats</Text>
-                    </Surface>
+                    <View style={{ alignItems: 'center' }}>
+                      <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
+                        {/* <Text>{item.name}</Text> */}
+                      </Surface>
+                      {/* <Text>{item.seatQuantity} seats</Text> */}
+                    </View>
                   </TouchableOpacity>
                 )
               })
             }
+            {isConnected ? (
+              <TouchableOpacity
+                onPress={() => navigation.navigate('tableForm')}>
+              >
+                <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
+                  {/* <Text>+</Text> */}
+                </Surface>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </>)}
     </>
@@ -91,13 +104,13 @@ const TableScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('roomForm')}>
             New room
           </Button>
-          <Button
+          {/* <Button
             icon="plus"
             mode="contained"
             disabled={isConnected === false}
             onPress={() => navigation.navigate('tableForm')}>
             New table
-          </Button>
+          </Button> */}
         </>
       ),
     });
@@ -108,7 +121,8 @@ const TableScreen = ({ navigation }) => {
       <View
         style={{ ...styles.container, backgroundColor: colors.background }}
       >
-        {isConnected ? <TableGroup /> : null}
+        {/* {isConnected ? <TableGroup /> : null} */}
+        <TableGroup />
       </View>
     </SafeAreaView>
   )

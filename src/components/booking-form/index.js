@@ -9,6 +9,7 @@ import { formatDate } from '../../utils/dates';
 import useBookingForm from '../../hooks/useBookingForm';
 import ModaLayout from '../../layout/modal-layout';
 import Tables from '../tables-modal';
+import { useNavigation } from '@react-navigation/native';
 
 const MIN_NAME_LENGTH = 1;
 const PHONE_MIN_LENGTH = 10;
@@ -32,6 +33,7 @@ const ERROR_MESSAGES = {
 };
 
 const BookingForm = ({ route }) => {
+  const navigation = useNavigation()
   const [isOpenTableModal, setIsOpenTableModal] = useState(false)
   const { colors, bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
   const [selectedTable, setSelectedTable] = useState({})
@@ -51,8 +53,14 @@ const BookingForm = ({ route }) => {
   });
 
   useEffect(() => {
-    setSelectedTable(getValues().table)
+    setSelectedTable(getValues()?.table)
   }, [getValues])
+
+  useEffect(() => {
+    isOpenTableModal && navigation.navigate('tablesScreen', { selectedTable, setSelectedTable })
+
+    return () => setIsOpenTableModal(false)
+  }, [isOpenTableModal])
 
   return (
     <View style={styles.mb150}>
@@ -126,22 +134,60 @@ const BookingForm = ({ route }) => {
       />
       <HelperText type="error">{errors.date?.message}</HelperText>
 
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: ERROR_MESSAGES.REQUIRED },
-          minLength: {
-            value: MIN_TIME_LENGTH,
-            message: ERROR_MESSAGES.TIME_INVALID,
-          },
-        }}
-        render={({ field: { onChange, onBlur, value } }) => {
-          return (
+      <View style={{ flexDirection: 'row' }}>
+        <Controller
+          control={control}
+          rules={{
+            required: { value: true, message: ERROR_MESSAGES.REQUIRED },
+            minLength: {
+              value: MIN_TIME_LENGTH,
+              message: ERROR_MESSAGES.TIME_INVALID,
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => {
+            return (
+              <>
+                <TextInput
+                  autoCorrect={false}
+                  mode="outlined"
+                  label="start time"
+                  style={{ ...styles.mv5p, flex: 1 }}
+                  value={value}
+                  focusable={false}
+                  caretHidden={true}
+                  onBlur={onBlur}
+                  // keyboardType="numeric"
+                  onChangeText={value => onChange(value)}
+                  error={errors.startTime && true}
+                  render={props => (
+                    <MaskInput
+                      {...props}
+                      mask={[/\d/, /\d/, ':', /\d/, /\d/]}
+                    />
+                  )}
+                />
+              </>
+            )
+          }}
+          name="startTime"
+        />
+        <HelperText type="error">{errors.startTime?.message}</HelperText>
+
+        <Controller
+          control={control}
+          rules={{
+            required: { value: true, message: ERROR_MESSAGES.REQUIRED },
+            minLength: {
+              value: MIN_TIME_LENGTH,
+              message: ERROR_MESSAGES.TIME_INVALID,
+            },
+          }}
+          render={({ field: { onChange, onBlur, value } }) => (
             <>
               <TextInput
                 autoCorrect={false}
                 mode="outlined"
-                label="start time"
+                label="end time"
                 style={styles.mv5p}
                 value={value}
                 focusable={false}
@@ -149,7 +195,7 @@ const BookingForm = ({ route }) => {
                 onBlur={onBlur}
                 // keyboardType="numeric"
                 onChangeText={value => onChange(value)}
-                error={errors.startTime && true}
+                error={errors.endTime && true}
                 render={props => (
                   <MaskInput
                     {...props}
@@ -158,46 +204,10 @@ const BookingForm = ({ route }) => {
                 )}
               />
             </>
-          )
-        }}
-        name="startTime"
-      />
-      <HelperText type="error">{errors.startTime?.message}</HelperText>
-
-      <Controller
-        control={control}
-        rules={{
-          required: { value: true, message: ERROR_MESSAGES.REQUIRED },
-          minLength: {
-            value: MIN_TIME_LENGTH,
-            message: ERROR_MESSAGES.TIME_INVALID,
-          },
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <>
-            <TextInput
-              autoCorrect={false}
-              mode="outlined"
-              label="end time"
-              style={styles.mv5p}
-              value={value}
-              focusable={false}
-              caretHidden={true}
-              onBlur={onBlur}
-              // keyboardType="numeric"
-              onChangeText={value => onChange(value)}
-              error={errors.endTime && true}
-              render={props => (
-                <MaskInput
-                  {...props}
-                  mask={[/\d/, /\d/, ':', /\d/, /\d/]}
-                />
-              )}
-            />
-          </>
-        )}
-        name="endTime"
-      />
+          )}
+          name="endTime"
+        />
+      </View>
       <HelperText type="error">{errors.endTime?.message}</HelperText>
 
       {/* TABLE MODAL */}
@@ -231,7 +241,7 @@ const BookingForm = ({ route }) => {
                 caretHidden={true}
               />
 
-              <ModaLayout
+              {/* <ModaLayout
                 visible={isOpenTableModal}
                 onCancel={() => setIsOpenTableModal(false)}
                 title={'Select desk'}
@@ -241,7 +251,7 @@ const BookingForm = ({ route }) => {
                 }}
               >
                 <Tables selectedTable={selectedTable} setSelectedTable={setSelectedTable} />
-              </ModaLayout>
+              </ModaLayout> */}
             </>
           )
         }}
@@ -289,7 +299,7 @@ const BookingForm = ({ route }) => {
       />
       <HelperText type="error">{errors.phone?.message}</HelperText>
 
-      <Controller
+      {/* <Controller
         control={control}
         rules={{
           pattern: {
@@ -313,74 +323,76 @@ const BookingForm = ({ route }) => {
         )}
         name="email"
       />
-      <HelperText type="error">{errors.email?.message}</HelperText>
+      <HelperText type="error">{errors.email?.message}</HelperText> */}
+      <View style={{ flexDirection: 'row' }}>
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              mode="outlined"
+              label="number of adult"
+              style={styles.mv5p}
+              selectionColor={colors.white}
+              underlineColor={colors.white}
+              activeUnderlineColor={colors.white}
+              value={value?.toString()}
+              onBlur={onBlur}
+              keyboardType="numeric"
+              onChangeText={value => onChange(Number(value))}
+              error={errors.numberOfGuestsAdult && true}
+            />
+          )
+          }
+          name="numberOfGuestsAdult"
+        />
+        <HelperText type="error"></HelperText>
 
-      <Controller
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            mode="outlined"
-            label="number of adult"
-            style={styles.mv5p}
-            selectionColor={colors.white}
-            underlineColor={colors.white}
-            activeUnderlineColor={colors.white}
-            value={value?.toString()}
-            onBlur={onBlur}
-            keyboardType="numeric"
-            onChangeText={value => onChange(Number(value))}
-            error={errors.numberOfGuestsAdult && true}
-          />
-        )
-        }
-        name="numberOfGuestsAdult"
-      />
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              mode="outlined"
+              label="number of child"
+              style={styles.mv5p}
+              selectionColor={colors.white}
+              underlineColor={colors.white}
+              activeUnderlineColor={colors.white}
+              value={value?.toString()}
+              onBlur={onBlur}
+              keyboardType="numeric"
+              onChangeText={value => onChange(Number(value))}
+              error={errors.numberOfGuestsChild && true}
+            />
+          )}
+          name="numberOfGuestsChild"
+        />
+        <HelperText type="error"></HelperText>
+
+        <Controller
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              mode="outlined"
+              label="number of baby"
+              style={styles.mv5p}
+              selectionColor={colors.white}
+              underlineColor={colors.white}
+              activeUnderlineColor={colors.white}
+              value={value?.toString()}
+              onBlur={onBlur}
+              keyboardType="numeric"
+              onChangeText={value => onChange(Number(value))}
+              error={errors.numberOfGuestsBaby && true}
+            />
+          )}
+          name="numberOfGuestsBaby"
+        />
+
+      </View>
       <HelperText type="error"></HelperText>
 
-      <Controller
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            mode="outlined"
-            label="number of child"
-            style={styles.mv5p}
-            selectionColor={colors.white}
-            underlineColor={colors.white}
-            activeUnderlineColor={colors.white}
-            value={value?.toString()}
-            onBlur={onBlur}
-            keyboardType="numeric"
-            onChangeText={value => onChange(Number(value))}
-            error={errors.numberOfGuestsChild && true}
-          />
-        )}
-        name="numberOfGuestsChild"
-      />
-      <HelperText type="error"></HelperText>
 
-      <Controller
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            mode="outlined"
-            label="number of baby"
-            style={styles.mv5p}
-            selectionColor={colors.white}
-            underlineColor={colors.white}
-            activeUnderlineColor={colors.white}
-            value={value?.toString()}
-            onBlur={onBlur}
-            keyboardType="numeric"
-            onChangeText={value => onChange(Number(value))}
-            error={errors.numberOfGuestsBaby && true}
-          />
-        )}
-        name="numberOfGuestsBaby"
-      />
-      <HelperText type="error"></HelperText>
-
-
-      <Controller
+      {/* <Controller
         control={control}
         rules={{
           maxLength: {
@@ -436,7 +448,7 @@ const BookingForm = ({ route }) => {
       />
       <HelperText type="error">
         {errors.commentByAdminForGuest?.message}
-      </HelperText>
+      </HelperText> */}
 
       <Controller
         control={control}
@@ -492,6 +504,7 @@ const BookingForm = ({ route }) => {
 const styles = StyleSheet.create({
   mv5p: {
     marginVertical: 5,
+    flex: 1
   },
   mv25p: {
     marginVertical: 25,

@@ -1,7 +1,7 @@
 const definitionPrefixName = (prefix) => {
   switch (prefix) {
     case 0:
-      return 'He.';
+      return 'Hr.';
     case 1:
       return 'Fr.';
     case 2:

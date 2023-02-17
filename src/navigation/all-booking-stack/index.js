@@ -3,10 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ActiveBookingScreen from '../../screens/activeBookings';
 import FormScreen from '../../screens/bookingForm';
+import TableScreen from '../../screens/table';
+import { useTheme } from 'react-native-paper';
 
 const Stack = createNativeStackNavigator();
 
 const ActiveBookingStack = () => {
+  const { colors } = useTheme();
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -23,6 +27,21 @@ const ActiveBookingStack = () => {
           })}
           name="form"
           component={FormScreen}
+        />
+        <Stack.Screen
+          options={() => ({
+            headerShown: true,
+            title: 'Tables',
+            headerBackTitle: '',
+            headerStyle: {
+              backgroundColor: colors.background,
+            },
+            headerTitleStyle: {
+              color: colors.onBackground,
+            },
+          })}
+          name="tablesScreen"
+          component={TableScreen}
         />
 
       </Stack.Navigator>

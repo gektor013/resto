@@ -4,7 +4,7 @@ import ActiveBookingsStack from './all-booking-stack/index';
 import WaitingsBookingStack from './waitings-booking-stack';
 import CanceledBookingStack from './canceled-booking-stack';
 import TableStack from './tables-stack';
-import UserStack from './user-stack/index';
+// import UserStack from './user-stack/index';
 
 const Navigation = () => {
   const [index, setIndex] = useState(0);
@@ -26,21 +26,21 @@ const Navigation = () => {
     },
     {
       key: 'table',
-      title: 'Table',
+      title: 'Tables',
       focusedIcon: 'table-furniture',
     },
-    {
-      key: 'users',
-      title: 'Users',
-      focusedIcon: 'account-cog-outline',
-    },
+    // {
+    //   key: 'users',
+    //   title: 'Users',
+    //   focusedIcon: 'account-cog-outline',
+    // },
   ]);
   const renderScene = BottomNavigation.SceneMap({
     all_bookings: ActiveBookingsStack,
     waitings: WaitingsBookingStack,
     canceled: CanceledBookingStack,
     table: TableStack,
-    users: UserStack,
+    // users: UserStack,
   });
 
   return (

@@ -26,7 +26,7 @@ const TablesStack = () => {
               color: colors.onBackground,
             },
           })}
-          name="list"
+          name="tablesScreen"
           component={TableScreen}
         />
         <Stack.Screen
