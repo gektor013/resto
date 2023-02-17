@@ -36,32 +36,40 @@ const BookingForm = ({ route }) => {
   const navigation = useNavigation()
   const [isOpenTableModal, setIsOpenTableModal] = useState(false)
   const { colors, bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm(route)
-  const [selectedTable, setSelectedTable] = useState({})
+  // const [selectedTable, setSelectedTable] = useState({})
 
+  // console.log(route?.params.table, "ROUTE");
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
     getValues,
-
+    setValue,
   } = useForm({
     defaultValues: useMemo(() => {
       return route?.params ? { ...route.params } : { ...bookingState }
-    }, [bookingState]),
+    }, [bookingState, route]),
     mode: 'onChange',
   });
 
+  const isParamsTable = route?.params?.table
   useEffect(() => {
-    setSelectedTable(getValues()?.table)
-  }, [getValues])
+
+    isParamsTable && setValue('table', isParamsTable)
+    // && setSelectedTable(getValues()?.table)
+  }, [getValues, route])
 
   useEffect(() => {
-    isOpenTableModal && navigation.navigate('tablesScreen', { selectedTable, setSelectedTable })
+    isOpenTableModal && navigation.navigate('tablesScreen',
+      { selectTable: isParamsTable ? isParamsTable : null, edit: true })
 
     return () => setIsOpenTableModal(false)
-  }, [isOpenTableModal])
+  }, [isOpenTableModal, navigation])
 
+  // useEffect(() => )
+
+  // console.log(getValues(), 'GETVAL');
   return (
     <View style={styles.mb150}>
       <Controller
@@ -214,16 +222,16 @@ const BookingForm = ({ route }) => {
 
       <Controller
         control={control}
-        rules={{
-          required: { value: true },
-          validate: (value) => {
-            return (
-              value !== ""
-            )
-          }
-        }}
+        // rules={{
+        //   required: { value: true },
+        //   validate: (value) => {
+        //     return (
+        //       value !== ""
+        //     )
+        //   }
+        // }}
         render={({ field: { onChange, onBlur, value } }) => {
-          const roomName = findRoom(value.id)
+          const roomName = findRoom(value?.id)
           const newValue = value?.name ? `${roomName.name} ${value?.name}` : ""
           return (
             <>

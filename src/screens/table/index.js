@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, SegmentedButtons, Surface, useTheme } from 'react-native-paper';
 import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback } from 'react';
 import { useGetAllRoomsQuery } from '../../store/api/roomsApi';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -14,15 +14,15 @@ const TableGroup = () => {
   const [value, setValue] = useState(1);
   const [lastPressed, setLastPressed] = useState(0);
   const { isConnected } = useNetInfo();
+  const navigation = useNavigation()
+  const route = useRoute()
+  const { colors } = useTheme();
 
   const { isLoading: roomsDataLoading } = useGetAllRoomsQuery('', {
     skip: isConnected === false,
     refetchOnReconnect: true,
   })
   const { rooms: roomsData } = useSelector(state => state.rooms)
-  console.log('');
-  const { colors } = useTheme();
-  const navigation = useNavigation()
 
   const oneRoom = roomsData?.find(arr => arr.id === value)
 
@@ -40,6 +40,19 @@ const TableGroup = () => {
     }
   }, [lastPressed, isConnected]);
 
+  const handleSelectTable = (table) => {
+    if (!route?.params?.edit) return
+    navigation.navigate('form', { table: { ...table, room: { id: value } } })
+  }
+
+  useEffect(() => {
+    const routeSelectTable = route?.params?.selectTable
+
+    if (routeSelectTable !== null) {
+      setValue(routeSelectTable?.room?.id)
+    }
+  }, [route])
+
   return (
     <>
       {roomsDataLoading ? (<LoadingScreen />) : (
@@ -51,7 +64,6 @@ const TableGroup = () => {
               roomsData ? roomsData?.map(item => ({
                 value: item.id,
                 label: item.name,
-                accessibilityLabel: 'qweq',
                 onPress: () => handleDoublePress(item),
               })) : []
             }
@@ -61,13 +73,14 @@ const TableGroup = () => {
               oneRoom?.tables.map((item, idx) => {
                 return (
                   <TouchableOpacity key={item.createdAt + idx}
+                    onPress={() => handleSelectTable(item)}
                     onLongPress={() => navigation.navigate('tableForm', { ...item, room: oneRoom })}
                   >
                     <View style={{ alignItems: 'center' }}>
-                      <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
-                        {/* <Text>{item.name}</Text> */}
+                      <Surface style={{ ...styles.surface, backgroundColor: route?.params?.selectTable?.id === item.id ? colors.primary : '#3fab1a' }} elevation={4}>
+                        <Text>{item.name}</Text>
                       </Surface>
-                      {/* <Text>{item.seatQuantity} seats</Text> */}
+                      <Text>{item.seatQuantity} seats</Text>
                     </View>
                   </TouchableOpacity>
                 )
@@ -76,12 +89,11 @@ const TableGroup = () => {
             {isConnected ? (
               <TouchableOpacity
                 onPress={() => navigation.navigate('tableForm')}>
-              >
                 <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
-                  {/* <Text>+</Text> */}
+                  <Text>+</Text>
                 </Surface>
               </TouchableOpacity>
-            ) : null}
+            ) : ''}
           </View>
         </>)}
     </>

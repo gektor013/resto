@@ -12,7 +12,7 @@ const initialState = {
   numberOfGuestsChild: 0,
   numberOfGuestsBaby: 0,
   status: 2,
-  table: {},
+  table: null,
   commentByGuest: '',
   commentByAdminForGuest: '',
   commentByAdminForAdmin: '',

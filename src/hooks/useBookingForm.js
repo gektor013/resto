@@ -19,14 +19,16 @@ const useBookingForm = (route) => {
   }
 
   const onSubmitWithMode = (data) => {
+    const createDataTable = data?.table ? { ...data?.table, room: { ...findRoom(data?.table?.id) } } : null
+
     if (!route?.params) {
       dispatch(setUnsynchronizedCreateBookings(
-        { ...data, internalID: uuid.v4(), unsync: true, table: { ...data.table, room: { ...findRoom(data.table.id) } } }
+        { ...data, internalID: uuid.v4(), unsync: true, table: createDataTable }
       ))
     }
     if (route?.params) {
       dispatch(setUnsynchronizedEditedBookings(
-        { ...data, internalID: data?.internalID ? data?.internalID : uuid.v4(), unsync: true, table: { ...data.table, room: { ...findRoom(data.table.id) } } }
+        { ...data, internalID: data?.internalID ? data?.internalID : uuid.v4(), unsync: true, table: createDataTable }
       ))
     }
     navigation.navigate('list')

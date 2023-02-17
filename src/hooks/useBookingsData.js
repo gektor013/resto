@@ -70,7 +70,10 @@ const useBookingsData = () => {
             dispatch(clearUnsynchronizedCreateBookings())
           }
         })
-        .catch(e => console.log('sendAllOtherDayBookings ERROR'))
+        .catch(e => {
+          console.log('sendAllOtherDayBookings ERROR')
+          dispatch(clearUnsynchronizedCreateBookings())
+        })
         .finally(() => dispatch(resetBookingData()))
     })
   }
