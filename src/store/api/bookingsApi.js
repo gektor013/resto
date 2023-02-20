@@ -5,7 +5,7 @@ import { baseQuery } from './config';
 export const bookingsApi = createApi({
   reducerPath: 'bookingsApi',
   baseQuery: baseQuery,
-  tagTypes: ['Bookings', 'TodayBookings'],
+  tagTypes: ['Bookings', 'TodayBookings', 'BookingDates'],
   refetchOnReconnect: true,
   refetchOnFocus: true,
   endpoints: builder => ({
@@ -25,6 +25,14 @@ export const bookingsApi = createApi({
             { type: 'Bookings', id: 'PARTIAL-BOOKINGS' },
           ],
     }),
+
+    getBookingsDates: builder.query({
+      query: () => ({
+        url: '/bookings/upcoming-dates'
+      }),
+      providesTags: ['BookingDates']
+    }),
+
     getTodayBookingByParams: builder.query({
       query: (query) => ({
         url: `/bookings${query}`,
@@ -43,7 +51,7 @@ export const bookingsApi = createApi({
         method: 'post',
         body,
       }),
-      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }],
+      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }, { type: 'BookingDates' }],
     }),
     editBooking: builder.mutation({
       query: body => ({
@@ -51,7 +59,7 @@ export const bookingsApi = createApi({
         method: 'put',
         body,
       }),
-      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }],
+      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }, { type: 'BookingDates' }],
     }),
     patchBookings: builder.mutation({
       query: body => ({
@@ -67,4 +75,4 @@ export const bookingsApi = createApi({
   }),
 });
 
-export const { useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation, usePatchBookingsMutation } = bookingsApi;
+export const { useGetAllBookingByParamsQuery, useGetBookingsDatesQuery, useGetTodayBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation, usePatchBookingsMutation } = bookingsApi;

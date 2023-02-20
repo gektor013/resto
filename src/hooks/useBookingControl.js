@@ -17,13 +17,12 @@ const useBookingControl = () => {
   };
 
   const onDatePickerHandler = flag => {
-    setIsDatePickerOpen(flag);
+    setIsDatePickerOpen(prev => !prev);
   };
 
-  const onChange = (_, selectedDate) => {
-    const selectedDateString = selectedDate.toString();
+  const onChange = (selectedDate) => {
     setIsDatePickerOpen(false);
-    dispatch(setSelectedDate(selectedDateString));
+    dispatch(setSelectedDate(selectedDate));
   };
 
   // hwen disconnect set today date

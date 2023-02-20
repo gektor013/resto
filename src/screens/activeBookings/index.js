@@ -5,7 +5,6 @@ import { View, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import LoadingScreen from '../loading';
 import ModaLayout from '../../layout/modal-layout';
 import BookingTable from '../../components/booking-table.js';
@@ -17,6 +16,7 @@ import NumberGuset from '../../components/booking-modals/numberGuest';
 import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
 import useBookingsData from '../../hooks/useBookingsData';
 import { logout } from '../../store/slice/authenticationSlice';
+import DaysCalendar from '../../components/calendar';
 
 const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
@@ -79,7 +79,6 @@ const ActiveBookingsScreen = ({ navigation }) => {
       headerBackTitle: '',
       headerRight: () => (
         <Button
-          // icon="plus"
           mode="contained"
           onPress={() => dispatch(logout())}>
           logout
@@ -107,7 +106,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
         </View>
       </SafeAreaView>
 
-      {dateModal && (
+      {/* {dateModal && (
         <DateTimePicker
           id='date'
           minimumDate={new Date()}
@@ -117,12 +116,25 @@ const ActiveBookingsScreen = ({ navigation }) => {
             if (e.type === 'dismissed') {
               return cancelModal('date');
             }
+            console.log(moment('2023-02-26').format('DD MMM YYYY'));
             dispatch(setBookingData({ id: 'date', data: moment(selectedDate).format('DD MMM YYYY') }))
             setDateModal(false);
             onHandleOpenModals('time');
           }}
         />
-      )}
+      )} */}
+
+      <DaysCalendar
+        isVisible={dateModal}
+        onDismiss={() => cancelModal('date')}
+        onSave={(e) => {
+          dispatch(setBookingData({ id: 'date', data: moment(new Date(e)).format('DD MMM YYYY') }))
+          setDateModal(false);
+          onHandleOpenModals('time');
+        }}
+        currentDate={dateString}
+        minDate={dateString}
+      />
       <ModaLayout
         visible={timeModal}
         onCancel={() => cancelModal('time')}
