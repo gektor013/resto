@@ -14,7 +14,7 @@ const useEmployees = () => {
 
   const dispatch = useDispatch()
   const [deleteEmployee] = useDeleteEmployeeMutation()
-  const [createEmployee, { isLoading: createEmployeeLoading }] = useCreateEmployeeMutation()
+  const [createEmployee, { isLoading: createEmployeeLoading, isSuccess: createEmployeeSuccess }] = useCreateEmployeeMutation()
 
   const changeValue = (value) => {
     setEmployeeName({ name: value })
@@ -36,19 +36,20 @@ const useEmployees = () => {
       })
   }
   return {
-    employeeName, createEmployeeLoading, handleDeleteEmployee, handleCreateEmployee, changeValue
+    employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, handleCreateEmployee, changeValue
   }
 }
 
 
 
-const Employees = ({ isShowInput, onCancel, onSave, selectedEmployee, setSelectedEmployee }) => {
-  // const [value, setValue] = useState(selectedTable?.room?.id || 1);
+const Employees = ({ isShowInput, setIsShowInput, onCancel, setSelectedEmployee }) => {
   const { employees } = useSelector(state => state.employees)
   const { colors } = useTheme();
-  const { employeeName, createEmployeeLoading, handleDeleteEmployee, handleCreateEmployee, } = useEmployees()
+  const { employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, handleCreateEmployee, changeValue } = useEmployees()
 
-
+  useEffect(() => {
+    createEmployeeSuccess && setIsShowInput(!createEmployeeSuccess)
+  }, [createEmployeeSuccess])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -65,9 +66,7 @@ const Employees = ({ isShowInput, onCancel, onSave, selectedEmployee, setSelecte
                   underlineColor={colors.white}
                   activeUnderlineColor={colors.white}
                   value={employeeName.name || ''}
-                  // onBlur={onBlur}
                   onChangeText={value => changeValue(value)}
-                // error={errors.name && true}
                 />
                 <View style={styles.btnContainer}>
                   <Button
@@ -82,8 +81,7 @@ const Employees = ({ isShowInput, onCancel, onSave, selectedEmployee, setSelecte
                     style={styles.btn}
                     loading={createEmployeeLoading}
                     onPress={() => handleCreateEmployee(employeeName)}
-                  // disabled={disabled}
-                  // disabled={errors?.startTime || errors?.endTime}
+                    disabled={employeeName.name === ""}
                   >
                     Save
                   </Button>

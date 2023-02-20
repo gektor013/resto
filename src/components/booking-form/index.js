@@ -517,13 +517,8 @@ const BookingForm = ({ route }) => {
                     setSelectedEmployee(null)
                     setIsShowInput(false)
                   }}
-                  onSave={(e) => {
-                    // setIsShowInput(false)
-                    // setSelectedEmployee()
-                    // console.log(e);
-                  }}
-                  // setIsShowInput={setIsShowInput}
-                  selectedEmployee={selectedEmployee}
+                  setIsShowInput={setIsShowInput}
+                  // selectedEmployee={selectedEmployee}
                   setSelectedEmployee={setSelectedEmployee}
                 />
               </ModaLayout>
