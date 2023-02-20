@@ -57,7 +57,7 @@ const Employees = ({ isShowInput, setIsShowInput, onCancel, setSelectedEmployee 
         <>
           {
             isShowInput ? (
-              <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}>
+              <View style={styles.createEmployeeContainer}>
                 <TextInput
                   mode="outlined"
                   label="Name"
@@ -112,14 +112,17 @@ export default Employees
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     alignItems: 'flex-start',
+  },
+  createEmployeeContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   mv5p: {
     marginVertical: 5,
     flex: 1,
     marginRight: 10
-    // height: 50
   },
   surface: {
     marginHorizontal: 5,
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     flexDirection: 'row',
-    // minWidth: '100%',
+
     justifyContent: 'flex-end',
   },
   btn: {

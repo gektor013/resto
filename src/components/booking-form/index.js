@@ -17,9 +17,6 @@ const MAX_COMMENT_LENGTH = 250;
 const MIN_TIME_LENGTH = 5
 
 const REGEX = {
-  name: /^[a-zA-Z]+(?:[\s.]+[a-zA-Z]+)*$/,
-  email:
-    /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
   phone: /^[0-9]*$/,
 };
 
@@ -72,15 +69,10 @@ const BookingForm = ({ route }) => {
         control={control}
         rules={{
           required: { value: true, message: ERROR_MESSAGES.REQUIRED },
-          // pattern: {message: ERROR_MESSAGES.NAME_INVALID, value: REGEX.name},
           minLength: {
             value: MIN_NAME_LENGTH,
             message: ERROR_MESSAGES.NAME_INVALID,
           },
-          // maxLength: {
-          //   value: MAX_NAME_LENGTH,
-          //   message: ERROR_MESSAGES.NAME_TOO_LONG,
-          // },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
@@ -160,7 +152,6 @@ const BookingForm = ({ route }) => {
                   focusable={false}
                   caretHidden={true}
                   onBlur={onBlur}
-                  // keyboardType="numeric"
                   onChangeText={value => onChange(value)}
                   error={errors.startTime && true}
                   render={props => (
@@ -197,7 +188,6 @@ const BookingForm = ({ route }) => {
                 focusable={false}
                 caretHidden={true}
                 onBlur={onBlur}
-                // keyboardType="numeric"
                 onChangeText={value => onChange(value)}
                 error={errors.endTime && true}
                 render={props => (
@@ -218,14 +208,6 @@ const BookingForm = ({ route }) => {
 
       <Controller
         control={control}
-        // rules={{
-        //   required: { value: true },
-        //   validate: (value) => {
-        //     return (
-        //       value !== ""
-        //     )
-        //   }
-        // }}
         render={({ field: { onChange, onBlur, value } }) => {
           const roomName = findRoom(value?.id)
           const newValue = value?.name ? `${roomName.name} ${value?.name}` : ""
@@ -267,10 +249,6 @@ const BookingForm = ({ route }) => {
             value: PHONE_MIN_LENGTH,
             message: ERROR_MESSAGES.PHONE_INVALID,
           },
-          // maxLength: {
-          //   value: PHONE_MAX_LENGTH,
-          //   message: ERROR_MESSAGES.PHONE_INVALID,
-          // },
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
@@ -291,31 +269,6 @@ const BookingForm = ({ route }) => {
       />
       <HelperText type="error">{errors.phone?.message}</HelperText>
 
-      {/* <Controller
-        control={control}
-        rules={{
-          pattern: {
-            message: ERROR_MESSAGES.EMAIL_INVALID,
-            value: REGEX.email,
-          },
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            mode="outlined"
-            label="email"
-            style={styles.mv5p}
-            selectionColor={colors.white}
-            underlineColor={colors.white}
-            activeUnderlineColor={colors.white}
-            value={value || ''}
-            onBlur={onBlur}
-            onChangeText={value => onChange(value)}
-            error={errors.email && true}
-          />
-        )}
-        name="email"
-      />
-      <HelperText type="error">{errors.email?.message}</HelperText> */}
       <View style={{ flexDirection: 'row' }}>
         <Controller
           control={control}
@@ -383,65 +336,6 @@ const BookingForm = ({ route }) => {
       </View>
       <HelperText type="error"></HelperText>
 
-
-      {/* <Controller
-        control={control}
-        rules={{
-          maxLength: {
-            value: MAX_COMMENT_LENGTH,
-            message: ERROR_MESSAGES.COMMENT_TOO_LONG,
-          },
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            mode="outlined"
-            label="commentByGuest"
-            style={styles.mv5p}
-            selectionColor={colors.white}
-            underlineColor={colors.white}
-            activeUnderlineColor={colors.white}
-            // editable={mode === modes.VIEW ? false : true}
-            value={value}
-            onBlur={onBlur}
-            onChangeText={value => onChange(value)}
-            error={errors.commentByGuest && true}
-          />
-        )}
-        name="commentByGuest"
-      />
-      <HelperText type="error">
-        {errors.commentByGuest?.message}
-      </HelperText>
-
-      <Controller
-        control={control}
-        rules={{
-          maxLength: {
-            value: MAX_COMMENT_LENGTH,
-            message: ERROR_MESSAGES.COMMENT_TOO_LONG,
-          },
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            mode="outlined"
-            label="commentByAdminForGuest"
-            style={styles.mv5p}
-            selectionColor={colors.white}
-            underlineColor={colors.white}
-            activeUnderlineColor={colors.white}
-            // editable={mode === modes.VIEW ? false : true}
-            value={value}
-            onBlur={onBlur}
-            onChangeText={value => onChange(value)}
-            error={errors.commentByAdminForGuest && true}
-          />
-        )}
-        name="commentByAdminForGuest"
-      />
-      <HelperText type="error">
-        {errors.commentByAdminForGuest?.message}
-      </HelperText> */}
-
       <Controller
         control={control}
         rules={{
@@ -458,7 +352,6 @@ const BookingForm = ({ route }) => {
             selectionColor={colors.white}
             underlineColor={colors.white}
             activeUnderlineColor={colors.white}
-            // editable={mode === modes.VIEW ? false : true}
             value={value}
             onBlur={onBlur}
             onChangeText={value => onChange(value)}
@@ -473,17 +366,7 @@ const BookingForm = ({ route }) => {
 
       <Controller
         control={control}
-        // rules={{
-        //   required: { value: true },
-        //   validate: (value) => {
-        //     return (
-        //       value !== ""
-        //     )
-        //   }
-        // }}
         render={({ field: { onChange, onBlur, value } }) => {
-          // const roomName = findRoom(value.id)
-          // const newValue = value?.name ? `${roomName.name} ${value?.name}` : ""
           return (
             <>
               <TextInput
@@ -518,7 +401,6 @@ const BookingForm = ({ route }) => {
                     setIsShowInput(false)
                   }}
                   setIsShowInput={setIsShowInput}
-                  // selectedEmployee={selectedEmployee}
                   setSelectedEmployee={setSelectedEmployee}
                 />
               </ModaLayout>
