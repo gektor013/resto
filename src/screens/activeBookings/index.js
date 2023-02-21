@@ -115,7 +115,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
           onHandleOpenModals('time');
         }}
         currentDate={moment(new Date()).format('DD MMM YYYY')}
-        minDate={dateString}
+        minDate={moment(new Date()).format('DD MMM YYYY')}
       />
       <ModaLayout
         visible={timeModal}
