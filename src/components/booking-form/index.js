@@ -46,7 +46,7 @@ const BookingForm = ({ route }) => {
     setValue,
   } = useForm({
     defaultValues: useMemo(() => {
-      return route?.params ? { ...route.params } : { ...bookingState }
+      return route?.params.edit ? { ...route.params } : { ...bookingState }
     }, [bookingState, route]),
     mode: 'onChange',
   });
@@ -58,7 +58,7 @@ const BookingForm = ({ route }) => {
 
   useEffect(() => {
     isOpenTableModal && navigation.navigate('tablesScreen',
-      { selectTable: isParamsTable ? isParamsTable : null, edit: true })
+      { ...route.params, selectTable: isParamsTable ? isParamsTable : null, editTable: true })
 
     return () => setIsOpenTableModal(false)
   }, [isOpenTableModal, navigation])
@@ -417,7 +417,7 @@ const BookingForm = ({ route }) => {
           mode="contained"
           onPress={handleSubmit(onSubmitWithMode)}
           disabled={!isValid}>
-          {route?.params ? 'Edit' : 'Save'}
+          {route?.params?.edit ? 'Edit' : 'Save'}
         </Button>
 
         <Button

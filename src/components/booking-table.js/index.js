@@ -168,7 +168,7 @@ const Row = ({ item, disabled }) => {
   const navigation = useNavigation();
 
   const onBookingPressHandler = (item) => {
-    navigation.navigate('form', item)
+    navigation.navigate('form', { ...item, edit: true })
   }
 
   return (

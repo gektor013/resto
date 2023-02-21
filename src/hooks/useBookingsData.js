@@ -76,7 +76,7 @@ const useBookingsData = () => {
           }
         })
         .catch(e => {
-          console.log('sendAllOtherDayBookings ERROR')
+          console.log(e, 'sendAllOtherDayBookings ERROR')
           dispatch(clearUnsynchronizedCreateBookings())
         })
         .finally(() => dispatch(resetBookingData()))

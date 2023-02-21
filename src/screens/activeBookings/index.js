@@ -106,24 +106,6 @@ const ActiveBookingsScreen = ({ navigation }) => {
         </View>
       </SafeAreaView>
 
-      {/* {dateModal && (
-        <DateTimePicker
-          id='date'
-          minimumDate={new Date()}
-          value={new Date(dateString)}
-          mode="date"
-          onChange={(e, selectedDate) => {
-            if (e.type === 'dismissed') {
-              return cancelModal('date');
-            }
-            console.log(moment('2023-02-26').format('DD MMM YYYY'));
-            dispatch(setBookingData({ id: 'date', data: moment(selectedDate).format('DD MMM YYYY') }))
-            setDateModal(false);
-            onHandleOpenModals('time');
-          }}
-        />
-      )} */}
-
       <DaysCalendar
         isVisible={dateModal}
         onDismiss={() => cancelModal('date')}
@@ -132,7 +114,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
           setDateModal(false);
           onHandleOpenModals('time');
         }}
-        currentDate={dateString}
+        currentDate={moment(new Date()).format('DD MMM YYYY')}
         minDate={dateString}
       />
       <ModaLayout
@@ -168,8 +150,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
         title={'Enter name'}
         onSave={() => {
           setNameGuestModal(false);
-          navigation.navigate('form');
-          // dispatch(setIsChekingsLoading(true));
+          navigation.navigate('form', { edit: false });
         }}
       >
         <NameGuest />

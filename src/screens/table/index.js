@@ -41,8 +41,9 @@ const TableGroup = () => {
   }, [lastPressed, isConnected]);
 
   const handleSelectTable = (table) => {
-    if (!route?.params?.edit) return
-    navigation.navigate('form', { table: { ...table, room: { id: value } } })
+    if (!route?.params?.editTable) return
+
+    navigation.navigate('form', { ...route?.params, table: { ...table, room: { id: value } } })
   }
 
   useEffect(() => {
