@@ -19,8 +19,9 @@ import ComentAndPhone from '../booking-modals/comentAndPhone';
 import Employees from '../employee-modal';
 import useBookingForm from '../../hooks/useBookingForm';
 
-const BookingTable = ({ bookingsData, cancel }) => {
+const BookingTable = ({ bookingsData, cancel, isNewBooking }) => {
   const dispatch = useDispatch()
+  const bookingState = useSelector(state => state.bookingData)
 
   const handleChancheBookingStatus = (booking, status) => {
     const updateBooking = {
@@ -72,7 +73,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
     );
   };
 
-  return bookingsData?.length ? (
+  return bookingsData?.length || isNewBooking ? (
     <DataTable style={styles.tableContainer}>
       <DataTable.Header>
         <DataTable.Title>Zeit</DataTable.Title>
@@ -85,7 +86,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
       </DataTable.Header>
       <SwipeableFlatList
         keyExtractor={item => item.id ? item.id : item.internalID}
-        data={bookingsData}
+        data={isNewBooking ? [bookingState] : bookingsData}
         renderItem={({ item }) => {
           return (
             <Row
@@ -140,9 +141,10 @@ const Row = ({ item, disabled }) => {
     navigation.navigate('form', { ...item, edit: true })
   }
 
+  // console.log(bookingState);
   return (
     <>
-      {bookingState.isNewBooking &&
+      {bookingState.isNewBooking ?
         (
           <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
             <DataTable.Row
@@ -212,28 +214,42 @@ const Row = ({ item, disabled }) => {
                 </View>
               </DataTable.Cell>
             </DataTable.Row>
-            {
-              (
-                <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-                  <Button
-                    mode="contained"
-                    style={{ marginRight: 5, flex: 1 }}
-                    onPress={() => cancelModal('phone')}
-                  >
-                    Cancel
-                  </Button>
 
-                  <Button
-                    mode="contained"
-                    style={{ flex: 1 }}
-                    onPress={() => onHandleOpenModals('employee')}
-                  >
-                    Save
-                  </Button>
-                </View>
-              )
-            }
+            <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+              <Button
+                mode="contained"
+                style={{ marginRight: 5, flex: 1 }}
+                onPress={() => cancelModal('phone')}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                mode="contained"
+                style={{ flex: 1 }}
+                onPress={() => onHandleOpenModals('employee')}
+              >
+                Save
+              </Button>
+            </View>
+
           </View>
+        ) : (
+          <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+            <DataTable.Row
+              disabled={disabled}
+              // onPress={() => onBookingPressHandler(item)}
+              style={{ backgroundColor: getRowColorByStatus(status) }}
+            >
+              <DataTable.Cell>{startTime}-{endTime}</DataTable.Cell>
+              <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
+              <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
+              <DataTable.Cell>{`${table?.room?.name} ${table?.name}`}</DataTable.Cell>
+              <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
+              <DataTable.Cell>{phone}</DataTable.Cell>
+              <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
+            </DataTable.Row>
+          </View >
         )
       }
 
@@ -306,7 +322,6 @@ const Row = ({ item, disabled }) => {
         addCallBack={() => setIsShowInput(true)}
         onSave={() => {
           cancelModal('employee', false)
-          dispatch(setBookingData({ id: 'employee', data: selectedEmployee }))
           onSubmitWithMode()
         }}
       >

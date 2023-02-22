@@ -60,7 +60,12 @@ const ActiveBookingsScreen = ({ navigation }) => {
             isConnected={isConnected}
             onHandleOpenModals={onHandleOpenModals}
           />
-          {otherDayBookingFetch ? <LoadingScreen /> : <BookingTable bookingsData={bookingData} cancel={false} />}
+          {otherDayBookingFetch ? <LoadingScreen /> :
+            <BookingTable
+              bookingsData={bookingData}
+              cancel={false}
+              isNewBooking={bookingState.isNewBooking}
+            />}
         </View>
       </SafeAreaView>
 

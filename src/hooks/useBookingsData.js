@@ -69,6 +69,7 @@ const useBookingsData = () => {
   // send when there is internet
   const sendUnsyncCreadetBookings = async () => {
     Array.from(createdUnsyncBooking, (booking) => {
+      // console.log(booking.employee, 'booking');
       createBooking(booking).unwrap()
         .then(res => {
           if (res) {

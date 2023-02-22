@@ -18,7 +18,7 @@ const initialState = {
   commentByAdminForAdmin: '',
   createdAt: new Date().getHours(),
   employee: null,
-  isNewBooking: true
+  isNewBooking: false
 };
 
 export const bookingDataSlice = createSlice({

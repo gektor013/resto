@@ -19,9 +19,8 @@ const useBookingForm = (route) => {
   }
 
   const onSubmitWithMode = (data) => {
-    const createDataTable = data?.table ? { ...data?.table, room: { ...findRoom(data?.table?.id) } } : null
+    const createDataTable = bookingState?.table ? { ...bookingState?.table, room: { ...findRoom(bookingState?.table?.id) } } : null
 
-    console.log(route);
     if (!route?.edit) {
       dispatch(setUnsynchronizedCreateBookings(
         { ...bookingState, internalID: uuid.v4(), unsync: true, table: createDataTable }

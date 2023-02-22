@@ -4,6 +4,7 @@ import { Button, Surface, TextInput, useTheme } from 'react-native-paper'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDispatch, useSelector } from 'react-redux'
 import { useCreateEmployeeMutation, useDeleteEmployeeMutation } from '../../store/api/employeeApi'
+import { setBookingData } from '../../store/slice/bookingDataSlice'
 import { createEmployeeData, deleteEmployeesData } from '../../store/slice/employeesSlice'
 
 const initialState = {
@@ -43,9 +44,15 @@ const useEmployees = () => {
 
 
 const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, setSelectedEmployee }) => {
-  const { employees } = useSelector(state => state.employees)
   const { colors } = useTheme();
+  const dispatch = useDispatch();
+  const { employees } = useSelector(state => state.employees)
   const { employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, handleCreateEmployee, changeValue } = useEmployees()
+
+  const onSelectedEmployee = (employee) => {
+    setSelectedEmployee(employee)
+    dispatch(setBookingData({ id: 'employee', data: employee }))
+  }
 
   useEffect(() => {
     createEmployeeSuccess && setIsShowInput(!createEmployeeSuccess)
@@ -94,7 +101,7 @@ const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, se
               employees?.map(employee => (
                 <TouchableOpacity key={employee.id}
                   onLongPress={() => handleDeleteEmployee(employee.id)}
-                  onPress={() => setSelectedEmployee(employee)}>
+                  onPress={() => onSelectedEmployee(employee)}>
                   <Surface style={{ ...styles.surface, backgroundColor: employee.id === selectedEmployee?.id ? colors.onPrimaryContainer : '#3fab1a' }} elevation={4}>
                     <Text>{employee.name}</Text>
                   </Surface>
