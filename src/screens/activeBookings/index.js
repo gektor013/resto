@@ -13,64 +13,22 @@ import BookingsControl from '../../components/bookings-control';
 import NameGuest from '../../components/booking-modals/nameGuest';
 import NumberGuset from '../../components/booking-modals/numberGuest';
 
-import { resetBookingData, setBookingData } from '../../store/slice/bookingDataSlice';
+import { setBookingData } from '../../store/slice/bookingDataSlice';
 import useBookingsData from '../../hooks/useBookingsData';
 import { logout } from '../../store/slice/authenticationSlice';
 import DaysCalendar from '../../components/calendar';
+import useModalsControl from '../../hooks/useModalsControl';
+
+
 
 const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const { bookingData, otherDayBookingFetch } = useBookingsData()
-  const { date: dateString } = useSelector(state => state.control)
-
-  const [dateModal, setDateModal] = useState(false);
-  const [timeModal, setTimeModal] = useState(false);
-  const [numberGuestModal, setNumberGuestModal] = useState(false)
-  const [nameGuestModal, setNameGuestModal] = useState(false)
-  const dispatch = useDispatch()
-
-  const onHandleOpenModals = setterType => {
-    switch (setterType) {
-      case 'date':
-        setDateModal(true);
-        break;
-      case 'time':
-        setTimeModal(true);
-        break;
-      case 'guest':
-        setNumberGuestModal(true);
-        break;
-      case 'name':
-        setNameGuestModal(true);
-        break;
-      default:
-        return;
-    }
-  };
-
-  const cancelModal = useCallback(
-    setter => {
-      switch (setter) {
-        case 'date':
-          setDateModal(false);
-          break;
-        case 'time':
-          setTimeModal(false);
-          break;
-        case 'guest':
-          setNumberGuestModal(false);
-          break;
-        case 'name':
-          setNameGuestModal(false);
-          break;
-        default:
-          return;
-      }
-      dispatch(resetBookingData())
-    },
-    [],
-  );
+  const { modalsState, onHandleOpenModals, cancelModal } = useModalsControl()
+  const { dateModal, timeModal, numberGuestModal, nameGuestModal } = modalsState;
+  const bookingState = useSelector(state => state.bookingData)
 
   useEffect(() => {
     navigation.setOptions({
@@ -111,7 +69,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
         onDismiss={() => cancelModal('date')}
         onSave={(e) => {
           dispatch(setBookingData({ id: 'date', data: moment(new Date(e)).format('DD MMM YYYY') }))
-          setDateModal(false);
+          cancelModal('date', false)
           onHandleOpenModals('time');
         }}
         currentDate={moment(new Date()).format('DD MMM YYYY')}
@@ -120,12 +78,12 @@ const ActiveBookingsScreen = ({ navigation }) => {
       <ModaLayout
         visible={timeModal}
         onCancel={() => cancelModal('time')}
-        disabled={true}
         title={'Time'}
         onSave={() => {
-          setTimeModal(false);
+          cancelModal('time', false)
           onHandleOpenModals('guest');
         }}
+        disabled={(bookingState.startTime?.length < 5 || bookingState.endTime?.length < 5)}
       >
         <TimeModal />
       </ModaLayout>
@@ -133,10 +91,9 @@ const ActiveBookingsScreen = ({ navigation }) => {
       <ModaLayout
         visible={numberGuestModal}
         onCancel={() => cancelModal('guest')}
-        disabled={true}
         title={'Number of guest'}
         onSave={() => {
-          setNumberGuestModal(false);
+          cancelModal('guest', false)
           onHandleOpenModals('name');
         }}
       >
@@ -146,11 +103,11 @@ const ActiveBookingsScreen = ({ navigation }) => {
       <ModaLayout
         visible={nameGuestModal}
         onCancel={() => cancelModal('name')}
-        disabled={true}
+        disabled={bookingState.name === ''}
         title={'Enter name'}
         onSave={() => {
-          setNameGuestModal(false);
-          navigation.navigate('form', { edit: false });
+          cancelModal('name', false)
+          dispatch(setBookingData({ id: 'isNewBooking', data: true }))
         }}
       >
         <NameGuest />

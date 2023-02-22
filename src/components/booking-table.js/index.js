@@ -1,13 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import moment from 'moment';
 import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
 import SwipeableFlatList from 'react-native-swipeable-list';
-import { DataTable, Text, useTheme } from 'react-native-paper';
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
-import { useDispatch } from 'react-redux';
+import { Button, DataTable, Text, useTheme, TextInput } from 'react-native-paper';
+import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux';
 import { setUnsynchronizedEditedBookings, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
 import { definitionPrefixName, getRowColorByStatus } from '../../utils/helpers';
+import ModaLayout from '../../layout/modal-layout';
+import TimeModal from '../booking-modals/time';
+import useModalsControl from '../../hooks/useModalsControl';
+import NumberGuset from '../booking-modals/numberGuest';
+import NameGuest from '../booking-modals/nameGuest';
+import DaysCalendar from '../calendar';
+import { setBookingData } from '../../store/slice/bookingDataSlice';
+import ComentAndPhone from '../booking-modals/comentAndPhone';
+import Employees from '../employee-modal';
+import useBookingForm from '../../hooks/useBookingForm';
 
 const BookingTable = ({ bookingsData, cancel }) => {
   const dispatch = useDispatch()
@@ -26,8 +36,6 @@ const BookingTable = ({ bookingsData, cancel }) => {
       // if have intenalID
       dispatch(setUnsynchronizedCreateBookings(updateBooking))
     }
-
-
   };
 
   const QuickActions = (_, booking) => {
@@ -67,13 +75,13 @@ const BookingTable = ({ bookingsData, cancel }) => {
   return bookingsData?.length ? (
     <DataTable style={styles.tableContainer}>
       <DataTable.Header>
-        <DataTable.Title style={{ maxWidth: "8%" }}>Zeit</DataTable.Title>
-        <DataTable.Title style={{ maxWidth: "8%" }}>Pax</DataTable.Title>
-        <DataTable.Title style={{ maxWidth: "15%" }}>Name</DataTable.Title>
-        <DataTable.Title style={{ maxWidth: "8%" }}>Tisch</DataTable.Title>
+        <DataTable.Title>Zeit</DataTable.Title>
+        <DataTable.Title>Pax</DataTable.Title>
+        <DataTable.Title>Name</DataTable.Title>
+        <DataTable.Title>Tisch</DataTable.Title>
         <DataTable.Title>Notizen</DataTable.Title>
-        <DataTable.Title style={{ maxWidth: "8%" }}>Telefon</DataTable.Title>
-        <DataTable.Title style={{ maxWidth: "15%" }}>Erstellt</DataTable.Title>
+        <DataTable.Title>Telefon</DataTable.Title>
+        <DataTable.Title>Erstellt</DataTable.Title>
       </DataTable.Header>
       <SwipeableFlatList
         keyExtractor={item => item.id ? item.id : item.internalID}
@@ -118,28 +126,246 @@ const Row = ({ item, disabled }) => {
     commentByAdminForAdmin,
   } = item;
   const { colors } = useTheme();
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const [isShowInput, setIsShowInput] = useState(false)
+  const [selectedEmployee, setSelectedEmployee] = useState(null)
+
+  const { modalsState, onHandleOpenModals, cancelModal } = useModalsControl()
+  const { timeModal, numberGuestModal, nameGuestModal, commentAdminModal, phoneModal, employeeModal } = modalsState;
+  const { bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm({ edit: false })
+
 
   const onBookingPressHandler = (item) => {
     navigation.navigate('form', { ...item, edit: true })
   }
 
   return (
-    <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
-      <DataTable.Row
-        disabled={disabled}
-        onPress={() => onBookingPressHandler(item)}
-        style={{ backgroundColor: getRowColorByStatus(status) }}
+    <>
+      {bookingState.isNewBooking &&
+        (
+          <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+            <DataTable.Row
+              disabled={disabled}
+              // onPress={() => onBookingPressHandler(item)}
+              style={{ backgroundColor: getRowColorByStatus(status) }}
+            >
+              <DataTable.Cell >
+                <TouchableOpacity onPress={() => onHandleOpenModals('time')} style={{ alignItems: 'center' }}>
+                  <View style={styles.editContainer}>
+                    <Text >
+                      {bookingState.startTime}-{bookingState.endTime}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <TouchableOpacity onPress={() => onHandleOpenModals('guest')} style={{ alignItems: 'center' }}>
+                  <View style={styles.editContainer}>
+                    <Text >
+                      {bookingState.numberOfGuestsAdult}+{bookingState.numberOfGuestsChild}+{bookingState.numberOfGuestsBaby}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <TouchableOpacity onPress={() => onHandleOpenModals('name')} style={{ alignItems: 'center' }}>
+                  <View style={styles.editContainer}>
+                    <Text >
+                      {definitionPrefixName(bookingState.prefixName)} {bookingState.name}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <TouchableOpacity onPress={() => navigation.navigate('tablesScreen', { selectTable: null, editTable: true })} style={{ alignItems: 'center' }}>
+                  <View style={styles.editContainer}>
+                    <Text >
+                      {`${findRoom(bookingState.table?.id)?.name || ''} ${bookingState.table?.name || ''}`}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <TouchableOpacity onPress={() => onHandleOpenModals('comment')} style={{ alignItems: 'center' }}>
+                  <View style={styles.editContainer}>
+                    <Text >
+                      {bookingState.commentByAdminForAdmin}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <TouchableOpacity onPress={() => onHandleOpenModals('phone')} style={{ alignItems: 'center' }}>
+                  <View style={styles.editContainer}>
+                    <Text >
+                      {bookingState.phone}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </DataTable.Cell>
+              <DataTable.Cell>
+                <View style={{ ...styles.editContainer }}>
+                  <Text>
+                    {bookingState.employee?.name || ''}/{''}
+                  </Text>
+                </View>
+              </DataTable.Cell>
+            </DataTable.Row>
+            {
+              (
+                <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+                  <Button
+                    mode="contained"
+                    style={{ marginRight: 5, flex: 1 }}
+                    onPress={() => cancelModal('phone')}
+                  >
+                    Cancel
+                  </Button>
+
+                  <Button
+                    mode="contained"
+                    style={{ flex: 1 }}
+                    onPress={() => onHandleOpenModals('employee')}
+                  >
+                    Save
+                  </Button>
+                </View>
+              )
+            }
+          </View>
+        )
+      }
+
+      <ModaLayout
+        visible={timeModal}
+        onCancel={() => cancelModal('time', false)}
+        title={'Time'}
+        onSave={() => {
+          cancelModal('time', false)
+        }}
+        disabled={(bookingState.startTime?.length < 5 || bookingState.endTime?.length < 5)}
       >
-        <DataTable.Cell style={{ maxWidth: "8%" }}>{startTime}-{endTime}</DataTable.Cell>
-        <DataTable.Cell style={{ maxWidth: "8%" }}>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
-        <DataTable.Cell style={{ maxWidth: "15%" }}>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
-        <DataTable.Cell style={{ maxWidth: "8%" }}>{`${table?.room?.name || ''} ${table?.name || ''}`}</DataTable.Cell>
-        <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
-        <DataTable.Cell style={{ maxWidth: "8%" }}>{phone}</DataTable.Cell>
-        <DataTable.Cell style={{ maxWidth: "15%" }}>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
-      </DataTable.Row>
-    </View>
+        <TimeModal />
+      </ModaLayout>
+
+      <ModaLayout
+        visible={numberGuestModal}
+        onCancel={() => cancelModal('guest', false)}
+        title={'Number of guest'}
+        onSave={() => {
+          cancelModal('guest', false)
+        }}
+      >
+        <NumberGuset />
+      </ModaLayout>
+
+      <ModaLayout
+        visible={nameGuestModal}
+        onCancel={() => cancelModal('name', false)}
+        title={'Enter name'}
+        onSave={() => {
+          cancelModal('name', false)
+        }}
+        disabled={bookingState.name === ''}
+      >
+        <NameGuest />
+      </ModaLayout>
+
+      <ModaLayout
+        visible={commentAdminModal}
+        onCancel={() => cancelModal('comment', false)}
+        title={'Enter comment'}
+        onSave={() => {
+          cancelModal('comment', false)
+        }}
+      >
+        <ComentAndPhone valueType={'commentByAdminForAdmin'} />
+      </ModaLayout>
+
+      <ModaLayout
+        visible={phoneModal}
+        onCancel={() => cancelModal('phone', false)}
+        title={'Enter Phone'}
+        onSave={() => {
+          cancelModal('phone', false)
+        }}
+      >
+        <ComentAndPhone valueType={'phone'} />
+      </ModaLayout>
+
+      <ModaLayout
+        visible={employeeModal}
+        onCancel={() => {
+          cancelModal('employee', false)
+          setSelectedEmployee(null)
+        }}
+        title={'Select employee'}
+        disabled={selectedEmployee === null}
+        addBtn={true}
+        addCallBack={() => setIsShowInput(true)}
+        onSave={() => {
+          cancelModal('employee', false)
+          dispatch(setBookingData({ id: 'employee', data: selectedEmployee }))
+          onSubmitWithMode()
+        }}
+      >
+        <Employees
+          isShowInput={isShowInput}
+          onCancel={() => setIsShowInput(false)}
+          setIsShowInput={setIsShowInput}
+          selectedEmployee={selectedEmployee}
+          setSelectedEmployee={setSelectedEmployee}
+        />
+      </ModaLayout>
+    </>
+
+    // <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+    //   <DataTable.Row
+    //     disabled={disabled}
+    //     // onPress={() => onBookingPressHandler(item)}
+    //     style={{ backgroundColor: getRowColorByStatus(status) }}
+    //   >
+    //     <DataTable.Cell >
+    //       <View style={id === 677 ? styles.editContainer : null}>
+    //         <Text >
+    //           {startTime}-{endTime}
+    //         </Text>
+    //       </View>
+    //     </DataTable.Cell>
+    //     <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
+    //     <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
+    //     <DataTable.Cell>{`${table?.room?.name} ${table?.name}`}</DataTable.Cell>
+    //     <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
+    //     <DataTable.Cell>{phone}</DataTable.Cell>
+    //     <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
+    //   </DataTable.Row>
+    //   {
+    //     id === 677 && (
+    //       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+    //         <Button
+    //           mode="contained"
+    //           // compact={true}
+    //           // disabled={!isConnected}
+    //           style={{ marginRight: 5, flex: 1 }}
+    //         // onPress={() => dayPlus('minus')}
+    //         >
+    //           Save
+    //         </Button>
+
+    //         <Button
+    //           mode="contained"
+    //           // compact={true}
+    //           // disabled={!isConnected}
+    //           style={{ flex: 1 }}
+    //         // onPress={() => dayPlus('minus')}
+    //         >
+    //           Cancel
+    //         </Button>
+    //       </View>
+    //     )
+    //   }
+    // </View >
   );
 };
 
@@ -155,6 +381,13 @@ const styles = StyleSheet.create({
   swipeContainer: {
     flexGrow: 1,
     // backgroundColor: darkColors.background,
+  },
+  editContainer: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 5
   },
   text: {
     textAlign: 'center',
@@ -176,6 +409,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: '100%',
   },
+  maxW8: {
+    maxWidth: '8%'
+  },
+  maxW15: {
+    maxWidth: "15%"
+  }
 });
 
 

@@ -4,35 +4,34 @@ import { Dialog, Portal, Button } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 
 
-const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false, addCallBack }) => {
-  const state = useSelector(state => state.bookingData)
-  const [disabled, setDisabled] = useState(true)
+const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false, addCallBack, disabled }) => {
+  // const state = useSelector(state => state.bookingData)
+  // const [disabled, setDisabled] = useState(disabledField)
 
-  const isDisabled = () => {
-    if (title === 'Time') {
-      if (state?.startTime?.length === 5 && state?.endTime?.length === 5) {
-        setDisabled(false)
-      } else {
-        setDisabled(true)
-      }
-    }
-    if (title === 'Number of guest') {
-      setDisabled(false)
-    }
-    if (title === 'Enter name') {
-      if (state.name !== '') {
-        setDisabled(false)
-      }
-    }
+  // const isDisabled = () => {
+  //   if (title === 'Time') {
+  //     if (state?.startTime?.length === 5 && state?.endTime?.length === 5) {
+  //       setDisabled(false)
+  //     } else {
+  //       setDisabled(true)
+  //     }
+  //   }
+  //   if (title === 'Number of guest'
+  //     || title === 'Enter comment'
+  //     || title === 'Enter Phone'
+  //   ) {
+  //     setDisabled(false)
+  //   }
+  //   if (title === 'Enter name') {
+  //     if (state.name !== '') {
+  //       setDisabled(false)
+  //     }
+  //   }
+  // }
 
-    if (title === 'Select employee') {
-      setDisabled(false)
-    }
-  }
-
-  useEffect(() => {
-    isDisabled()
-  }, [title, state])
+  // useEffect(() => {
+  //   isDisabled()
+  // }, [title, state])
 
   return (
     <Portal>

@@ -8,13 +8,15 @@ import { useCallback } from 'react';
 import { useGetAllRoomsQuery } from '../../store/api/roomsApi';
 import { useNetInfo } from '@react-native-community/netinfo';
 import LoadingScreen from '../loading';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setBookingData } from '../../store/slice/bookingDataSlice';
 
 const TableGroup = () => {
   const [value, setValue] = useState(1);
   const [lastPressed, setLastPressed] = useState(0);
   const { isConnected } = useNetInfo();
   const navigation = useNavigation()
+  const dispatch = useDispatch()
   const route = useRoute()
   const { colors } = useTheme();
 
@@ -42,8 +44,8 @@ const TableGroup = () => {
 
   const handleSelectTable = (table) => {
     if (!route?.params?.editTable) return
-
-    navigation.navigate('form', { ...route?.params, table: { ...table, room: { id: value } } })
+    dispatch(setBookingData({ id: 'table', data: { ...table, room: { id: value } } }))
+    navigation.goBack()
   }
 
   useEffect(() => {

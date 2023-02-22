@@ -42,7 +42,7 @@ const useEmployees = () => {
 
 
 
-const Employees = ({ isShowInput, setIsShowInput, onCancel, setSelectedEmployee }) => {
+const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, setSelectedEmployee }) => {
   const { employees } = useSelector(state => state.employees)
   const { colors } = useTheme();
   const { employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, handleCreateEmployee, changeValue } = useEmployees()
@@ -95,7 +95,7 @@ const Employees = ({ isShowInput, setIsShowInput, onCancel, setSelectedEmployee 
                 <TouchableOpacity key={employee.id}
                   onLongPress={() => handleDeleteEmployee(employee.id)}
                   onPress={() => setSelectedEmployee(employee)}>
-                  <Surface style={{ ...styles.surface, backgroundColor: '#3fab1a' }} elevation={4}>
+                  <Surface style={{ ...styles.surface, backgroundColor: employee.id === selectedEmployee?.id ? colors.onPrimaryContainer : '#3fab1a' }} elevation={4}>
                     <Text>{employee.name}</Text>
                   </Surface>
                 </TouchableOpacity>

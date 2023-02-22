@@ -85,7 +85,7 @@ const BookingsControl = ({
         )} */}
           <Button
             icon="plus"
-            mode="contained" tableForm
+            mode="contained"
             onPress={() => onHandleOpenModals('date')}>
             New booking
           </Button>

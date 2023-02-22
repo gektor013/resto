@@ -16,7 +16,9 @@ const initialState = {
   commentByGuest: '',
   commentByAdminForGuest: '',
   commentByAdminForAdmin: '',
-  employee: null
+  createdAt: new Date().getHours(),
+  employee: null,
+  isNewBooking: true
 };
 
 export const bookingDataSlice = createSlice({
