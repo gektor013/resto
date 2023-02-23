@@ -3,8 +3,8 @@ import moment from 'moment';
 import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
 import SwipeableFlatList from 'react-native-swipeable-list';
-import { Button, DataTable, Text, useTheme, TextInput } from 'react-native-paper';
-import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback, Pressable } from 'react-native'
+import { Button, DataTable, Text, useTheme, } from 'react-native-paper';
+import { StyleSheet, View, TouchableOpacity, Pressable } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { setUnsynchronizedEditedBookings, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
 import { definitionPrefixName, getRowColorByStatus } from '../../utils/helpers';
@@ -138,7 +138,7 @@ const Row = ({ item, disabled }) => {
 
   const { modalsState, onHandleOpenModals, cancelModal } = useModalsControl()
   const { timeModal, numberGuestModal, nameGuestModal, commentAdminModal, phoneModal, employeeModal } = modalsState;
-  const { bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm()
+  const { bookingState, findRoom, onSubmitWithMode } = useBookingForm()
 
   return (
     <>
@@ -239,7 +239,7 @@ const Row = ({ item, disabled }) => {
               <DataTable.Cell>{`${table?.room?.name || ''} ${table?.name || ''}`}</DataTable.Cell>
               <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
               <DataTable.Cell>{phone}</DataTable.Cell>
-              <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm') || ''}</DataTable.Cell>
+              <DataTable.Cell>{employee?.name}{createdAt ? moment(createdAt).format('/DD-MM-YY HH:mm') : ''}</DataTable.Cell>
             </DataTable.Row>
           </Pressable >
         )

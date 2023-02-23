@@ -20,6 +20,7 @@ const useBookingsData = () => {
   const { date: dateString } = useSelector(state => state.control)
   const { allBooking: todayAllBookings } = useSelector(state => state.bookings.todays)
   const { allOtherDayBooking: otherDayBookings } = useSelector(state => state.bookings.other)
+  const { isNeedUpdate } = useSelector(state => state.control)
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
   const formatDate = formatDateParams(new Date(dateString))
 
@@ -35,10 +36,9 @@ const useBookingsData = () => {
 
   // get all booking by date and query params
   const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } = useGetAllBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
-    skip: !isConnected,
+    skip: !isConnected || isNeedUpdate,
     refetchOnReconnect: true,
     pollingInterval: 300000,
-
   })
 
   // get all rooms data in first render
@@ -69,7 +69,6 @@ const useBookingsData = () => {
   // send when there is internet
   const sendUnsyncCreadetBookings = async () => {
     Array.from(createdUnsyncBooking, (booking) => {
-      // console.log(booking.employee, 'booking');
       createBooking(booking).unwrap()
         .then(res => {
           if (res) {
@@ -96,17 +95,17 @@ const useBookingsData = () => {
 
   // send when there is internet
   useEffect(() => {
-    if (editUnsyncBookings?.length && isConnected) {
+    if (editUnsyncBookings?.length && isConnected && !isNeedUpdate) {
       onEditBookings()
     }
-  }, [editUnsyncBookings, isConnected])
+  }, [editUnsyncBookings, isConnected, isNeedUpdate])
 
   // send other day when there is internet
   useEffect(() => {
-    if (createdUnsyncBooking?.length && isConnected) {
+    if (createdUnsyncBooking?.length && isConnected && !isNeedUpdate) {
       sendUnsyncCreadetBookings()
     }
-  }, [createdUnsyncBooking, isConnected])
+  }, [createdUnsyncBooking, isConnected, isNeedUpdate])
 
   useEffect(() => {
     if (getTodayBookingsData?.length) {
@@ -122,7 +121,7 @@ const useBookingsData = () => {
 
   useEffect(() => {
     //data redux
-    if (isConnected === true) {
+    if (isConnected === true && !isNeedUpdate) {
       setBookingsData(otherDayBookings)
     } else if (isConnected === false) {
       const unsyncCreated = createdUnsyncBooking.filter(elem => elem.status !== 5)
@@ -141,7 +140,7 @@ const useBookingsData = () => {
 
       setBookingsData([...unsyncCreated, ...unsyncEdited, ...syncTodayAllBooking])
     }
-  }, [isConnected, createdUnsyncBooking, editUnsyncBookings, otherDayBookings, todayAllBookings])
+  }, [isConnected, createdUnsyncBooking, editUnsyncBookings, otherDayBookings, todayAllBookings, isNeedUpdate])
 
   return {
     bookingData,

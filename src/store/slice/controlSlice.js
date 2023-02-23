@@ -4,8 +4,6 @@ const initialState = {
   date: new Date().toString(),
   isLoading: false,
   isNeedUpdate: false,
-  isNeedCheckUpdates: false,
-  isUpdateAvailable: false,
 };
 
 export const controlSlice = createSlice({
@@ -18,14 +16,8 @@ export const controlSlice = createSlice({
     setIsNeedUpdate: (state, action) => {
       state.isNeedUpdate = action.payload;
     },
-    setIsNeedCheckUpdates: (state, action) => {
-      state.isNeedCheckUpdates = action.payload;
-    },
     setIsChekingsLoading: (state, action) => {
       state.isLoading = action.payload;
-    },
-    setIsUpdateAvailable: (state, action) => {
-      state.isUpdateAvailable = action.payload;
     },
   },
 });
@@ -33,9 +25,7 @@ export const controlSlice = createSlice({
 export const {
   setSelectedDate,
   setIsNeedUpdate,
-  setIsNeedCheckUpdates,
   setIsChekingsLoading,
-  setIsUpdateAvailable,
 } = controlSlice.actions;
 
 export default controlSlice.reducer;

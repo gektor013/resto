@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import useBookingControl from '../../hooks/useBookingControl';
-import { setSelectedDate } from '../../store/slice/controlSlice';
+import { setIsNeedUpdate, setSelectedDate } from '../../store/slice/controlSlice';
 import moment from 'moment';
 import { formatDate } from '../../utils/dates';
 
@@ -15,10 +15,12 @@ const BookingsControl = ({
   onHandleOpenModals,
 }) => {
   const { date: dateString } = useSelector(state => state.control);
+  const { created, edited } = useSelector(state => state.bookings.unsynchronized)
+
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
+  const { data: bookingsDates } = useGetBookingsDatesQuery()
   const dispatch = useDispatch()
 
-  const { data: bookingsDates } = useGetBookingsDatesQuery()
 
   const dayPlus = (type) => {
     const plusDay = moment(new Date(dateString).setDate(new Date(dateString).getDate() + 1)).toString()
@@ -36,6 +38,15 @@ const BookingsControl = ({
         break;
     }
   };
+
+
+  useEffect(() => {
+    if ((created?.length || edited?.length) && !isConnected) {
+      dispatch(setIsNeedUpdate(true))
+    }
+  }, [created, edited, isConnected])
+
+  // console.log(created?.length || edited?.length, 'CREATED || eDIT');
 
   return (
     <>
@@ -66,23 +77,17 @@ const BookingsControl = ({
               onPress={() => dayPlus('plus')}>
             </Button>
           </View>
-          {/* {!isLoading && isUpdateAvailable ? (
+          {isConnected && (created?.length || edited?.length) ? (
             <Button
               icon="update"
               mode="contained"
-              onPress={onUpdateHandler}
-              disabled={!isConnected}>
+              disabled={!isConnected}
+              onPress={() => dispatch(setIsNeedUpdate(false))}
+            >
               Press to get new updates
             </Button>
-          ) : null} */}
-          {/* {isDatePickerOpen && (
-          <DateTimePicker
-            minimumDate={new Date()}
-            value={new Date()}
-            mode="date"
-            onChange={onChange}
-          />
-        )} */}
+          ) : null}
+
           <Button
             icon="plus"
             mode="contained"

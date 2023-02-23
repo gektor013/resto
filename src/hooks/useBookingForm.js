@@ -20,13 +20,7 @@ const useBookingForm = () => {
 
   const onSubmitWithMode = () => {
     const createDataTable = bookingState?.table ? { ...bookingState?.table, room: { ...findRoom(bookingState?.table?.id) } } : null
-    console.log(bookingState.isNewBooking, 'bookingState.isNewBooking', bookingState.isEdit, 'bookingState.isEdit');
 
-    // if (bookingState.isNewBooking) {
-    //   dispatch(setUnsynchronizedCreateBookings(
-    //     { ...bookingState, internalID: uuid.v4(), unsync: true, table: createDataTable }
-    //   ))
-    // }
     if (bookingState.isEdit) {
       dispatch(setUnsynchronizedEditedBookings(
         { ...bookingState, internalID: bookingState?.internalID ? bookingState?.internalID : uuid.v4(), unsync: true, table: createDataTable }

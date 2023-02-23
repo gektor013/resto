@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Navigation from '../navigation';
 import Loading from '../components/loading';
-import {
-  Button,
-  // Snackbar,
-  Paragraph,
-  Dialog,
-  Portal,
-} from 'react-native-paper';
+import { Button, Paragraph, Dialog, Portal } from 'react-native-paper';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { useDispatch, useSelector } from 'react-redux';
-import { setIsChekingsLoading } from '../store/slice/controlSlice';
-
+import { useSelector } from 'react-redux';
 
 const Layout = () => {
   const [visibleDialog, setDialogVisible] = useState(false);
-  const dispatch = useDispatch();
   const { isLoading } = useSelector(state => state.control)
   const { isConnected } = useNetInfo();
 
@@ -26,12 +17,6 @@ const Layout = () => {
   useEffect(() => {
     if (isConnected === false) onDialogHandler(true);
   }, [isConnected]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      dispatch(setIsChekingsLoading(false));
-    }, 1000)
-  }, [])
 
   return (
     <>
@@ -49,16 +34,6 @@ const Layout = () => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      {/* <Snackbar
-        visible={true}
-        onDismiss={onMessageHide}
-        duration={5000}
-        action={{
-          label: 'Hide',
-          onPress: onMessageHide,
-        }}>
-        {message.message}
-      </Snackbar> */}
     </>
   );
 };
