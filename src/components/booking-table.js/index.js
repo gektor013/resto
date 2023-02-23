@@ -4,7 +4,7 @@ import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
 import SwipeableFlatList from 'react-native-swipeable-list';
 import { Button, DataTable, Text, useTheme, TextInput } from 'react-native-paper';
-import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, TouchableWithoutFeedback, Pressable } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux';
 import { setUnsynchronizedEditedBookings, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
 import { definitionPrefixName, getRowColorByStatus } from '../../utils/helpers';
@@ -13,15 +13,15 @@ import TimeModal from '../booking-modals/time';
 import useModalsControl from '../../hooks/useModalsControl';
 import NumberGuset from '../booking-modals/numberGuest';
 import NameGuest from '../booking-modals/nameGuest';
-import DaysCalendar from '../calendar';
-import { setBookingData } from '../../store/slice/bookingDataSlice';
+import { setEditBookingData } from '../../store/slice/bookingDataSlice';
 import ComentAndPhone from '../booking-modals/comentAndPhone';
 import Employees from '../employee-modal';
 import useBookingForm from '../../hooks/useBookingForm';
 
-const BookingTable = ({ bookingsData, cancel, isNewBooking }) => {
+const BookingTable = ({ bookingsData, cancel }) => {
   const dispatch = useDispatch()
   const bookingState = useSelector(state => state.bookingData)
+  const isNewOrEdit = bookingState.isNewBooking || bookingState.isEdit
 
   const handleChancheBookingStatus = (booking, status) => {
     const updateBooking = {
@@ -73,7 +73,7 @@ const BookingTable = ({ bookingsData, cancel, isNewBooking }) => {
     );
   };
 
-  return bookingsData?.length || isNewBooking ? (
+  return bookingsData?.length || bookingState.isNewBooking ? (
     <DataTable style={styles.tableContainer}>
       <DataTable.Header>
         <DataTable.Title>Zeit</DataTable.Title>
@@ -82,11 +82,15 @@ const BookingTable = ({ bookingsData, cancel, isNewBooking }) => {
         <DataTable.Title>Tisch</DataTable.Title>
         <DataTable.Title>Notizen</DataTable.Title>
         <DataTable.Title>Telefon</DataTable.Title>
-        <DataTable.Title>Erstellt</DataTable.Title>
+        {
+          isNewOrEdit ? null :
+            <DataTable.Title>Erstellt</DataTable.Title>
+        }
       </DataTable.Header>
       <SwipeableFlatList
         keyExtractor={item => item.id ? item.id : item.internalID}
-        data={isNewBooking ? [bookingState] : bookingsData}
+        data={isNewOrEdit ?
+          [bookingState] : bookingsData}
         renderItem={({ item }) => {
           return (
             <Row
@@ -96,7 +100,7 @@ const BookingTable = ({ bookingsData, cancel, isNewBooking }) => {
           )
         }}
         maxSwipeDistance={!cancel ? 300 : 100}
-        renderQuickActions={({ index, item }) => QuickActions(index, item)}
+        renderQuickActions={({ index, item }) => (isNewOrEdit ? null : QuickActions(index, item))}
         contentContainerStyle={styles.swipeContainer}
         shouldBounceOnMount={false}
       />
@@ -134,23 +138,15 @@ const Row = ({ item, disabled }) => {
 
   const { modalsState, onHandleOpenModals, cancelModal } = useModalsControl()
   const { timeModal, numberGuestModal, nameGuestModal, commentAdminModal, phoneModal, employeeModal } = modalsState;
-  const { bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm({ edit: false })
+  const { bookingState, isDatePickerOpen, findRoom, onSubmitWithMode, setIsDatePickerOpen, onCancelPressHandler, } = useBookingForm()
 
-
-  const onBookingPressHandler = (item) => {
-    navigation.navigate('form', { ...item, edit: true })
-  }
-
-  // console.log(bookingState);
   return (
     <>
-      {bookingState.isNewBooking ?
+      {bookingState.isNewBooking || bookingState.isEdit ?
         (
           <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
             <DataTable.Row
               disabled={disabled}
-              // onPress={() => onBookingPressHandler(item)}
-              style={{ backgroundColor: getRowColorByStatus(status) }}
             >
               <DataTable.Cell >
                 <TouchableOpacity onPress={() => onHandleOpenModals('time')} style={{ alignItems: 'center' }}>
@@ -180,10 +176,10 @@ const Row = ({ item, disabled }) => {
                 </TouchableOpacity>
               </DataTable.Cell>
               <DataTable.Cell>
-                <TouchableOpacity onPress={() => navigation.navigate('tablesScreen', { selectTable: null, editTable: true })} style={{ alignItems: 'center' }}>
+                <TouchableOpacity onPress={() => navigation.navigate('tablesScreen', { selectTable: bookingState.table, editTable: true })} style={{ alignItems: 'center' }}>
                   <View style={styles.editContainer}>
                     <Text >
-                      {`${findRoom(bookingState.table?.id)?.name || ''} ${bookingState.table?.name || ''}`}
+                      {`${findRoom(bookingState.table?.id)?.name || 'Room'} ${bookingState.table?.name || ''}`}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -192,7 +188,7 @@ const Row = ({ item, disabled }) => {
                 <TouchableOpacity onPress={() => onHandleOpenModals('comment')} style={{ alignItems: 'center' }}>
                   <View style={styles.editContainer}>
                     <Text >
-                      {bookingState.commentByAdminForAdmin}
+                      {bookingState.commentByAdminForAdmin || 'Comment'}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -201,17 +197,10 @@ const Row = ({ item, disabled }) => {
                 <TouchableOpacity onPress={() => onHandleOpenModals('phone')} style={{ alignItems: 'center' }}>
                   <View style={styles.editContainer}>
                     <Text >
-                      {bookingState.phone}
+                      {bookingState.phone || 'Phone'}
                     </Text>
                   </View>
                 </TouchableOpacity>
-              </DataTable.Cell>
-              <DataTable.Cell>
-                <View style={{ ...styles.editContainer }}>
-                  <Text>
-                    {bookingState.employee?.name || ''}/{''}
-                  </Text>
-                </View>
               </DataTable.Cell>
             </DataTable.Row>
 
@@ -227,7 +216,9 @@ const Row = ({ item, disabled }) => {
               <Button
                 mode="contained"
                 style={{ flex: 1 }}
-                onPress={() => onHandleOpenModals('employee')}
+                onPress={() => {
+                  bookingState.isEdit ? onSubmitWithMode() : onHandleOpenModals('employee')
+                }}
               >
                 Save
               </Button>
@@ -235,21 +226,22 @@ const Row = ({ item, disabled }) => {
 
           </View>
         ) : (
-          <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+          <Pressable
+            onLongPress={() => dispatch(setEditBookingData(item))}
+            key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
             <DataTable.Row
               disabled={disabled}
-              // onPress={() => onBookingPressHandler(item)}
               style={{ backgroundColor: getRowColorByStatus(status) }}
             >
               <DataTable.Cell>{startTime}-{endTime}</DataTable.Cell>
               <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
               <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
-              <DataTable.Cell>{`${table?.room?.name} ${table?.name}`}</DataTable.Cell>
+              <DataTable.Cell>{`${table?.room?.name || ''} ${table?.name || ''}`}</DataTable.Cell>
               <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
               <DataTable.Cell>{phone}</DataTable.Cell>
-              <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
+              <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm') || ''}</DataTable.Cell>
             </DataTable.Row>
-          </View >
+          </Pressable >
         )
       }
 
@@ -257,9 +249,7 @@ const Row = ({ item, disabled }) => {
         visible={timeModal}
         onCancel={() => cancelModal('time', false)}
         title={'Time'}
-        onSave={() => {
-          cancelModal('time', false)
-        }}
+        onSave={() => cancelModal('time', false)}
         disabled={(bookingState.startTime?.length < 5 || bookingState.endTime?.length < 5)}
       >
         <TimeModal />
@@ -335,52 +325,7 @@ const Row = ({ item, disabled }) => {
       </ModaLayout>
     </>
 
-    // <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
-    //   <DataTable.Row
-    //     disabled={disabled}
-    //     // onPress={() => onBookingPressHandler(item)}
-    //     style={{ backgroundColor: getRowColorByStatus(status) }}
-    //   >
-    //     <DataTable.Cell >
-    //       <View style={id === 677 ? styles.editContainer : null}>
-    //         <Text >
-    //           {startTime}-{endTime}
-    //         </Text>
-    //       </View>
-    //     </DataTable.Cell>
-    //     <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
-    //     <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
-    //     <DataTable.Cell>{`${table?.room?.name} ${table?.name}`}</DataTable.Cell>
-    //     <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
-    //     <DataTable.Cell>{phone}</DataTable.Cell>
-    //     <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
-    //   </DataTable.Row>
-    //   {
-    //     id === 677 && (
-    //       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-    //         <Button
-    //           mode="contained"
-    //           // compact={true}
-    //           // disabled={!isConnected}
-    //           style={{ marginRight: 5, flex: 1 }}
-    //         // onPress={() => dayPlus('minus')}
-    //         >
-    //           Save
-    //         </Button>
 
-    //         <Button
-    //           mode="contained"
-    //           // compact={true}
-    //           // disabled={!isConnected}
-    //           style={{ flex: 1 }}
-    //         // onPress={() => dayPlus('minus')}
-    //         >
-    //           Cancel
-    //         </Button>
-    //       </View>
-    //     )
-    //   }
-    // </View >
   );
 };
 
@@ -431,6 +376,54 @@ const styles = StyleSheet.create({
     maxWidth: "15%"
   }
 });
+
+
+// <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+    //   <DataTable.Row
+    //     disabled={disabled}
+    //     // onPress={() => onBookingPressHandler(item)}
+    //     style={{ backgroundColor: getRowColorByStatus(status) }}
+    //   >
+    //     <DataTable.Cell >
+    //       <View style={id === 677 ? styles.editContainer : null}>
+    //         <Text >
+    //           {startTime}-{endTime}
+    //         </Text>
+    //       </View>
+    //     </DataTable.Cell>
+    //     <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
+    //     <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
+    //     <DataTable.Cell>{`${table?.room?.name} ${table?.name}`}</DataTable.Cell>
+    //     <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
+    //     <DataTable.Cell>{phone}</DataTable.Cell>
+    //     <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
+    //   </DataTable.Row>
+    //   {
+    //     id === 677 && (
+    //       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
+    //         <Button
+    //           mode="contained"
+    //           // compact={true}
+    //           // disabled={!isConnected}
+    //           style={{ marginRight: 5, flex: 1 }}
+    //         // onPress={() => dayPlus('minus')}
+    //         >
+    //           Save
+    //         </Button>
+
+    //         <Button
+    //           mode="contained"
+    //           // compact={true}
+    //           // disabled={!isConnected}
+    //           style={{ flex: 1 }}
+    //         // onPress={() => dayPlus('minus')}
+    //         >
+    //           Cancel
+    //         </Button>
+    //       </View>
+    //     )
+    //   }
+    // </View >
 
 
  // if (booking.id) {

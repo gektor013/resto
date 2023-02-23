@@ -54,7 +54,6 @@ export const bookingsSlice = createSlice({
         booking => booking.internalID === action.payload.internalID,
       );
 
-
       if (unsyncCreatedIndex === -1) {
 
         if (unsyncEditedIndex === -1) {
@@ -69,8 +68,6 @@ export const bookingsSlice = createSlice({
       } else {
         state.unsynchronized.created[unsyncCreatedIndex] = action.payload
       }
-
-
     },
 
     removeUnsynchronizedEditedBookingsById: (state, action) => {

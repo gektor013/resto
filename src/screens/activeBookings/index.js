@@ -64,7 +64,6 @@ const ActiveBookingsScreen = ({ navigation }) => {
             <BookingTable
               bookingsData={bookingData}
               cancel={false}
-              isNewBooking={bookingState.isNewBooking}
             />}
         </View>
       </SafeAreaView>

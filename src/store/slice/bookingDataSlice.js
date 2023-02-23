@@ -16,9 +16,10 @@ const initialState = {
   commentByGuest: '',
   commentByAdminForGuest: '',
   commentByAdminForAdmin: '',
-  createdAt: new Date().getHours(),
+  createdAt: '',
   employee: null,
-  isNewBooking: false
+  isNewBooking: false,
+  isEdit: false
 };
 
 export const bookingDataSlice = createSlice({
@@ -29,12 +30,17 @@ export const bookingDataSlice = createSlice({
       state[action.payload.id] = action.payload.data
     },
     resetBookingData: () => initialState,
+
+    setEditBookingData: (_, action) => {
+      return { ...action.payload, isEdit: true }
+    }
   }
 });
 
 export const {
   setBookingData,
   resetBookingData,
+  setEditBookingData,
 } = bookingDataSlice.actions;
 
 export default bookingDataSlice.reducer;

@@ -6,7 +6,7 @@ import { setUnsynchronizedCreateBookings, setUnsynchronizedEditedBookings } from
 import { useNavigation } from '@react-navigation/native';
 import uuid from 'react-native-uuid';
 
-const useBookingForm = (route) => {
+const useBookingForm = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const { colors } = useTheme();
@@ -18,17 +18,22 @@ const useBookingForm = (route) => {
     return roomsData?.find(item => item.tables.some((table) => table.id === tableId))
   }
 
-  const onSubmitWithMode = (data) => {
+  const onSubmitWithMode = () => {
     const createDataTable = bookingState?.table ? { ...bookingState?.table, room: { ...findRoom(bookingState?.table?.id) } } : null
+    console.log(bookingState.isNewBooking, 'bookingState.isNewBooking', bookingState.isEdit, 'bookingState.isEdit');
 
-    if (!route?.edit) {
+    // if (bookingState.isNewBooking) {
+    //   dispatch(setUnsynchronizedCreateBookings(
+    //     { ...bookingState, internalID: uuid.v4(), unsync: true, table: createDataTable }
+    //   ))
+    // }
+    if (bookingState.isEdit) {
+      dispatch(setUnsynchronizedEditedBookings(
+        { ...bookingState, internalID: bookingState?.internalID ? bookingState?.internalID : uuid.v4(), unsync: true, table: createDataTable }
+      ))
+    } else {
       dispatch(setUnsynchronizedCreateBookings(
         { ...bookingState, internalID: uuid.v4(), unsync: true, table: createDataTable }
-      ))
-    }
-    if (route?.edit) {
-      dispatch(setUnsynchronizedEditedBookings(
-        { ...data, internalID: data?.internalID ? data?.internalID : uuid.v4(), unsync: true, table: createDataTable }
       ))
     }
     navigation.navigate('list')
