@@ -14,8 +14,7 @@ const BookingsControl = ({
   isConnected,
   onHandleOpenModals,
 }) => {
-  const { date: dateString } = useSelector(state => state.control);
-  const { created, edited } = useSelector(state => state.bookings.unsynchronized)
+  const { date: dateString, isNeedUpdate } = useSelector(state => state.control);
 
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   const { data: bookingsDates } = useGetBookingsDatesQuery()
@@ -39,12 +38,11 @@ const BookingsControl = ({
     }
   };
 
-
   useEffect(() => {
-    if ((created?.length || edited?.length) && !isConnected) {
+    if (isConnected === false) {
       dispatch(setIsNeedUpdate(true))
     }
-  }, [created, edited, isConnected])
+  }, [isConnected])
 
   // console.log(created?.length || edited?.length, 'CREATED || eDIT');
 
@@ -77,7 +75,7 @@ const BookingsControl = ({
               onPress={() => dayPlus('plus')}>
             </Button>
           </View>
-          {isConnected && (created?.length || edited?.length) ? (
+          {isConnected && isNeedUpdate ? (
             <Button
               icon="update"
               mode="contained"

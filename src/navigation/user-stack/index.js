@@ -28,7 +28,7 @@ const UserStack = () => {
               color: colors.onBackground,
             },
           })}
-          name="list"
+          name="tables"
           component={UsersScreen}
         />
 

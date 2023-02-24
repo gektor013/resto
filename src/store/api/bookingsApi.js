@@ -24,6 +24,7 @@ export const bookingsApi = createApi({
             { type: 'Bookings', id: 'LIST' },
             { type: 'Bookings', id: 'PARTIAL-BOOKINGS' },
           ],
+      forceRefetch: true
     }),
 
     getBookingsDates: builder.query({

@@ -30,14 +30,14 @@ const useBookingForm = () => {
         { ...bookingState, internalID: uuid.v4(), unsync: true, table: createDataTable }
       ))
     }
-    navigation.navigate('list')
+    navigation.navigate('allBokings')
     dispatch(resetBookingData())
   }
 
-  const onCancelPressHandler = () => {
-    dispatch(resetBookingData())
-    navigation.navigate('list')
-  }
+  // const onCancelPressHandler = () => {
+  //   dispatch(resetBookingData())
+  //   navigation.goBack()
+  // }
 
   return {
     colors,
@@ -46,7 +46,7 @@ const useBookingForm = () => {
     findRoom,
     onSubmitWithMode,
     setIsDatePickerOpen,
-    onCancelPressHandler,
+    // onCancelPressHandler,
   }
 }
 

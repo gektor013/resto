@@ -14,7 +14,7 @@ const WaitingsBookingStack = () => {
           options={() => ({
             title: 'Awaiting confirmation',
           })}
-          name="list"
+          name="waitBookings"
           component={WaitingBookingScreen}
         />
         <Stack.Screen

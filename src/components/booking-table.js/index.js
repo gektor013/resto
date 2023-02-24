@@ -1,24 +1,27 @@
 import React, { useState } from 'react'
 import moment from 'moment';
 import uuid from 'react-native-uuid';
-import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
 import SwipeableFlatList from 'react-native-swipeable-list';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { Button, DataTable, Text, useTheme, } from 'react-native-paper';
 import { StyleSheet, View, TouchableOpacity, Pressable } from 'react-native'
-import { useDispatch, useSelector } from 'react-redux';
-import { setUnsynchronizedEditedBookings, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
-import { definitionPrefixName, getRowColorByStatus } from '../../utils/helpers';
-import ModaLayout from '../../layout/modal-layout';
-import TimeModal from '../booking-modals/time';
-import useModalsControl from '../../hooks/useModalsControl';
-import NumberGuset from '../booking-modals/numberGuest';
-import NameGuest from '../booking-modals/nameGuest';
+
 import { setEditBookingData } from '../../store/slice/bookingDataSlice';
-import ComentAndPhone from '../booking-modals/comentAndPhone';
+import { setUnsynchronizedEditedBookings, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
+
+import { definitionPrefixName, getRowColorByStatus } from '../../utils/helpers';
 import Employees from '../employee-modal';
+import TimeModal from '../booking-modals/time';
+import ModaLayout from '../../layout/modal-layout';
+import NameGuest from '../booking-modals/nameGuest';
+import NumberGuset from '../booking-modals/numberGuest';
+import ComentAndPhone from '../booking-modals/comentAndPhone';
+import useModalsControl from '../../hooks/useModalsControl';
 import useBookingForm from '../../hooks/useBookingForm';
 
 const BookingTable = ({ bookingsData, cancel }) => {
+  const route = useRoute()
   const dispatch = useDispatch()
   const bookingState = useSelector(state => state.bookingData)
   const isNewOrEdit = bookingState.isNewBooking || bookingState.isEdit
@@ -43,11 +46,11 @@ const BookingTable = ({ bookingsData, cancel }) => {
     return (
       <View style={styles.quickActionContainer}>
         <View style={{ ...styles.actionsContainer, width: !cancel ? 300 : 100 }}>
-          {!cancel ? (
+          {route.name !== 'cancelBookings' ? (
             <>
               <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
                 <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 4)}>
-                  <Text>Arrived</Text>
+                  <Text>{route.name === 'waitBookings' ? 'Approve' : 'Arrived'}</Text>
                 </TouchableOpacity>
               </View>
               <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
@@ -144,7 +147,7 @@ const Row = ({ item, disabled }) => {
     <>
       {bookingState.isNewBooking || bookingState.isEdit ?
         (
-          <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+          <View key={id || uuid.v4()} style={{ backgroundColor: colors.surface }}>
             <DataTable.Row
               disabled={disabled}
             >
@@ -237,9 +240,9 @@ const Row = ({ item, disabled }) => {
               <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
               <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
               <DataTable.Cell>{`${table?.room?.name || ''} ${table?.name || ''}`}</DataTable.Cell>
-              <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
-              <DataTable.Cell>{phone}</DataTable.Cell>
-              <DataTable.Cell>{employee?.name}{createdAt ? moment(createdAt).format('/DD-MM-YY HH:mm') : ''}</DataTable.Cell>
+              <DataTable.Cell>{commentByAdminForAdmin || ''}</DataTable.Cell>
+              <DataTable.Cell>{phone || ''}</DataTable.Cell>
+              <DataTable.Cell>{employee?.name || ''}{createdAt ? moment(createdAt).format('/DD-MM-YY HH:mm') : ''}</DataTable.Cell>
             </DataTable.Row>
           </Pressable >
         )

@@ -41,8 +41,11 @@ export const bookingsSlice = createSlice({
       }
     },
 
-    clearUnsynchronizedCreateBookings: (state) => {
-      state.unsynchronized.created = []
+    clearUnsynchronizedCreateBookings: (state, action) => {
+      // const updated = state.unsynchronized.created.filter(
+      //   booking => booking.internalID !== action.payload.internalID
+      // );
+      state.unsynchronized.created = [];
     },
 
     setUnsynchronizedEditedBookings: (state, action) => {
@@ -74,8 +77,11 @@ export const bookingsSlice = createSlice({
       state.unsynchronized.edited = state.unsynchronized.edited.filter(booking => booking.id !== action.payload)
     },
 
-    clearUnsynchronizedEditedBookings: (state) => {
-      state.unsynchronized.edited = []
+    clearUnsynchronizedEditedBookings: (state, action) => {
+      const updated = state.unsynchronized.edited.filter(
+        booking => booking.internalID !== action.payload.internalID
+      );
+      state.unsynchronized.edited = updated;
     },
 
     // other bookings reducers

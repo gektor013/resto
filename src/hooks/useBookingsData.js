@@ -29,9 +29,9 @@ const useBookingsData = () => {
 
   // get only todays booking, it is necessary for the missing internet
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
-    skip: !isConnected,
+    skip: !isConnected || isNeedUpdate,
     refetchOnReconnect: true,
-    pollingInterval: 300000
+    pollingInterval: 300000,
   })
 
   // get all booking by date and query params
@@ -39,6 +39,7 @@ const useBookingsData = () => {
     skip: !isConnected || isNeedUpdate,
     refetchOnReconnect: true,
     pollingInterval: 300000,
+    refetchOnMountOrArgChange: true
   })
 
   // get all rooms data in first render
@@ -51,14 +52,13 @@ const useBookingsData = () => {
     skip: !isConnected,
   })
 
-
   // edit bookings
   const onEditBookings = () => {
-    Array.from(editUnsyncBookings, (elem) => {
-      editBookings(elem).unwrap()
+    Array.from(editUnsyncBookings, (booking) => {
+      editBookings(booking).unwrap()
         .then(res => {
           if (res) {
-            dispatch(clearUnsynchronizedEditedBookings())
+            dispatch(clearUnsynchronizedEditedBookings(booking))
           }
         })
         .catch(e => console.log(e, 'onEditBookings error'))
@@ -67,17 +67,19 @@ const useBookingsData = () => {
   }
 
   // send when there is internet
-  const sendUnsyncCreadetBookings = async () => {
+  const sendUnsyncCreatedBookings = async () => {
     Array.from(createdUnsyncBooking, (booking) => {
       createBooking(booking).unwrap()
         .then(res => {
           if (res) {
-            dispatch(clearUnsynchronizedCreateBookings())
+            //when call then?
+            console.log(res, 'CREATE RES');
+            dispatch(clearUnsynchronizedCreateBookings(booking))
           }
         })
         .catch(e => {
           console.log(e, 'sendAllOtherDayBookings ERROR')
-          dispatch(clearUnsynchronizedCreateBookings())
+          // dispatch(clearUnsynchronizedCreateBookings())
         })
         .finally(() => dispatch(resetBookingData()))
     })
@@ -103,7 +105,7 @@ const useBookingsData = () => {
   // send other day when there is internet
   useEffect(() => {
     if (createdUnsyncBooking?.length && isConnected && !isNeedUpdate) {
-      sendUnsyncCreadetBookings()
+      sendUnsyncCreatedBookings()
     }
   }, [createdUnsyncBooking, isConnected, isNeedUpdate])
 
@@ -122,7 +124,7 @@ const useBookingsData = () => {
   useEffect(() => {
     //data redux
     if (isConnected === true && !isNeedUpdate) {
-      setBookingsData(otherDayBookings)
+      setBookingsData([...createdUnsyncBooking, ...editUnsyncBookings, ...otherDayBookings])
     } else if (isConnected === false) {
       const unsyncCreated = createdUnsyncBooking.filter(elem => elem.status !== 5)
       const unsyncEdited = editUnsyncBookings.filter(elem => elem.status !== 5)

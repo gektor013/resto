@@ -14,7 +14,7 @@ const TrashBookingStack = () => {
           options={({ navigation }) => ({
             title: 'Canceled',
           })}
-          name="list"
+          name="cancelBookings"
           component={TrashBookingScreen}
         />
         <Stack.Screen

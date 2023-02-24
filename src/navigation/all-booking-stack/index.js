@@ -20,7 +20,7 @@ const ActiveBookingStack = () => {
           options={({ navigation }) => ({
             title: 'All bookings',
           })}
-          name="list"
+          name="allBokings"
           component={ActiveBookingScreen}
         />
         <Stack.Screen
