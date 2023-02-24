@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { formatDateParams } from '../utils/dates'
-import { clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings } from '../store/slice/bookingsSlice';
+import { clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings, setUnsyncEmployeeToUnsyncCreated } from '../store/slice/bookingsSlice';
 import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -8,8 +8,8 @@ import { statusForActivePage } from '../constants';
 import { useGetAllRoomsQuery } from '../store/api/roomsApi';
 import { setAllRoomsData } from '../store/slice/roomsSlice';
 import { resetBookingData } from '../store/slice/bookingDataSlice';
-import { useGetAllEmployeesQuery } from '../store/api/employeeApi';
-import { setAllEmployeesData } from '../store/slice/employeesSlice';
+import { useCreateEmployeeMutation, useGetAllEmployeesQuery } from '../store/api/employeeApi';
+import { removeUnsyncEmployee, setAllEmployeesData } from '../store/slice/employeesSlice';
 
 
 const useBookingsData = () => {
@@ -22,10 +22,17 @@ const useBookingsData = () => {
   const { allOtherDayBooking: otherDayBookings } = useSelector(state => state.bookings.other)
   const { isNeedUpdate } = useSelector(state => state.control)
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
+  const { allEmployees, unsyncEmployees } = useSelector(state => state.employees)
+
+  // console.log(createdUnsyncBooking, 'createdUnsyncBooking');
+
+
   const formatDate = formatDateParams(new Date(dateString))
 
   const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
   const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
+  const [createEmployee, { isLoading: createEmployeeLoading, isSuccess: createEmployeeSuccess }] = useCreateEmployeeMutation()
+
 
   // get only todays booking, it is necessary for the missing internet
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
@@ -72,18 +79,38 @@ const useBookingsData = () => {
       createBooking(booking).unwrap()
         .then(res => {
           if (res) {
-            //when call then?
-            console.log(res, 'CREATE RES');
             dispatch(clearUnsynchronizedCreateBookings(booking))
           }
         })
         .catch(e => {
           console.log(e, 'sendAllOtherDayBookings ERROR')
-          // dispatch(clearUnsynchronizedCreateBookings())
         })
         .finally(() => dispatch(resetBookingData()))
     })
   }
+
+  const sendUnsyncCreatedEmployees = async () => {
+    Array.from(unsyncEmployees, (employee) => {
+      createEmployee(employee).unwrap()
+        .then(res => {
+          console.log('res');
+          dispatch(setUnsyncEmployeeToUnsyncCreated({ id: res.id, ...employee }))
+          dispatch(removeUnsyncEmployee(employee))
+        })
+        .catch(e => {
+          console.log(e, 'sendUnsyncCreatedEmployees ERROR')
+        })
+    })
+  }
+
+
+
+  // console.log(unsyncEmployees);
+  useEffect(() => {
+    if (createdUnsyncBooking?.length && unsyncEmployees?.length > 0 && isConnected && !isNeedUpdate) {
+      sendUnsyncCreatedEmployees()
+    }
+  }, [createdUnsyncBooking, unsyncEmployees, isConnected, isNeedUpdate])
 
   useEffect(() => {
     if (roomsData?.length) {
@@ -104,10 +131,10 @@ const useBookingsData = () => {
 
   // send other day when there is internet
   useEffect(() => {
-    if (createdUnsyncBooking?.length && isConnected && !isNeedUpdate) {
+    if (createdUnsyncBooking?.length && isConnected && !isNeedUpdate && !unsyncEmployees?.length) {
       sendUnsyncCreatedBookings()
     }
-  }, [createdUnsyncBooking, isConnected, isNeedUpdate])
+  }, [createdUnsyncBooking, isConnected, isNeedUpdate, unsyncEmployees])
 
   useEffect(() => {
     if (getTodayBookingsData?.length) {

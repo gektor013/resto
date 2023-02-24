@@ -1,17 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View, Animated } from 'react-native'
-import { Button, Surface, TextInput, useTheme } from 'react-native-paper'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import React, { useEffect, useState } from 'react'
+import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux'
-import { useCreateEmployeeMutation, useDeleteEmployeeMutation } from '../../store/api/employeeApi'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Button, Surface, TextInput, useTheme } from 'react-native-paper'
 import { setBookingData } from '../../store/slice/bookingDataSlice'
-import { createEmployeeData, deleteEmployeesData } from '../../store/slice/employeesSlice'
+import { setToUnsynchronized, deleteEmployeesData } from '../../store/slice/employeesSlice'
+import { useCreateEmployeeMutation, useDeleteEmployeeMutation } from '../../store/api/employeeApi'
 
 const initialState = {
   name: ''
 }
 const useEmployees = () => {
   const [employeeName, setEmployeeName] = useState(initialState)
+  const { allEmployees, unsyncEmployees } = useSelector(state => state.employees)
 
   const dispatch = useDispatch()
   const [deleteEmployee] = useDeleteEmployeeMutation()
@@ -21,23 +23,36 @@ const useEmployees = () => {
     setEmployeeName({ name: value })
   }
 
-  const handleDeleteEmployee = async (id) => {
+  const handleDeleteEmployee = async (employee) => {
+    if (employee.id) {
+      dispatch(deleteEmployeesData(employee.id))
+    } else {
+      dispatch(deleteEmployeesData(employee.internalID))
+    }
     dispatch(deleteEmployeesData(id))
-    await deleteEmployee(id).unwrap()
-      .catch(e => console.log(e, 'handleDeleteEmployee ERROR'))
+    // await deleteEmployee(employee).unwrap()
+    //   .catch(e => console.log(e, 'handleDeleteEmployee ERROR'))
   }
 
-  const handleCreateEmployee = async (name) => {
-    await createEmployee(name).unwrap()
-      .then(res => {
-        if (res) {
-          dispatch(createEmployeeData(res))
-          setEmployeeName(initialState)
-        }
-      })
+  const setEmployeeToStorage = () => {
+    dispatch(setToUnsynchronized({ ...employeeName, unsync: true, internalID: uuid.v4() }))
+    setEmployeeName(initialState)
   }
+
+  // const handleCreateEmployee = async () => {
+  //   Array.from(unsyncEmployees, (employee) => {
+  //     createEmployee(employee).unwrap()
+  //       .then(res => {
+
+  //       })
+  //       .catch(e => console.log(e, 'handleCreateEmployee'))
+  //   })
+  // }
+
+
+
   return {
-    employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, handleCreateEmployee, changeValue
+    allEmployees, unsyncEmployees, employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, setEmployeeToStorage, changeValue
   }
 }
 
@@ -46,8 +61,7 @@ const useEmployees = () => {
 const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, setSelectedEmployee }) => {
   const { colors } = useTheme();
   const dispatch = useDispatch();
-  const { employees } = useSelector(state => state.employees)
-  const { employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, handleCreateEmployee, changeValue } = useEmployees()
+  const { allEmployees, unsyncEmployees, employeeName, createEmployeeLoading, createEmployeeSuccess, handleDeleteEmployee, setEmployeeToStorage, changeValue } = useEmployees()
 
   const onSelectedEmployee = (employee) => {
     setSelectedEmployee(employee)
@@ -57,6 +71,7 @@ const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, se
   useEffect(() => {
     createEmployeeSuccess && setIsShowInput(!createEmployeeSuccess)
   }, [createEmployeeSuccess])
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -86,8 +101,8 @@ const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, se
                   <Button
                     mode="contained"
                     style={styles.btn}
-                    loading={createEmployeeLoading}
-                    onPress={() => handleCreateEmployee(employeeName)}
+                    // loading={createEmployeeLoading}
+                    onPress={setEmployeeToStorage}
                     disabled={employeeName.name === ""}
                   >
                     Save
@@ -98,11 +113,11 @@ const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, se
           }
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
             {
-              employees?.map(employee => (
-                <TouchableOpacity key={employee.id}
-                  onLongPress={() => handleDeleteEmployee(employee.id)}
+              [...allEmployees, ...unsyncEmployees]?.map(employee => (
+                <TouchableOpacity key={employee.id || employee.internalID}
+                  onLongPress={() => handleDeleteEmployee(employee)}
                   onPress={() => onSelectedEmployee(employee)}>
-                  <Surface style={{ ...styles.surface, backgroundColor: employee.id === selectedEmployee?.id ? colors.onPrimaryContainer : '#3fab1a' }} elevation={4}>
+                  <Surface style={{ ...styles.surface, backgroundColor: employee.unsync && '#ebab3e' || (employee?.id === selectedEmployee?.id ? colors.onPrimaryContainer : '#3fab1a') }} elevation={4}>
                     <Text>{employee.name}</Text>
                   </Surface>
                 </TouchableOpacity>

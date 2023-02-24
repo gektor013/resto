@@ -41,6 +41,18 @@ export const bookingsSlice = createSlice({
       }
     },
 
+    setUnsyncEmployeeToUnsyncCreated: (state, action) => {
+      const index = state.unsynchronized.created.findIndex(booking => {
+        return booking.employee.internalID === action.payload.internalID
+      })
+
+      if (index === -1) {
+        return
+      } else {
+        state.unsynchronized.created[index] = { ...state.unsynchronized.created[index], employee: action.payload }
+      }
+    },
+
     clearUnsynchronizedCreateBookings: (state, action) => {
       // const updated = state.unsynchronized.created.filter(
       //   booking => booking.internalID !== action.payload.internalID
@@ -109,6 +121,7 @@ export const {
   // unsynchronized reducers
   setUnsynchronizedCreateBookings,
   clearUnsynchronizedCreateBookings,
+  setUnsyncEmployeeToUnsyncCreated,
   setUnsynchronizedEditedBookings,
   clearUnsynchronizedEditedBookings,
   removeUnsynchronizedEditedBookingsById,
