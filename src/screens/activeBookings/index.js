@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import moment from 'moment';
 import { Button, useTheme } from 'react-native-paper';
 import { View, StyleSheet } from 'react-native';
@@ -18,6 +18,7 @@ import useBookingsData from '../../hooks/useBookingsData';
 import { logout } from '../../store/slice/authenticationSlice';
 import DaysCalendar from '../../components/calendar';
 import useModalsControl from '../../hooks/useModalsControl';
+import { createUnicId } from '../../utils/helpers';
 
 
 
@@ -112,6 +113,8 @@ const ActiveBookingsScreen = ({ navigation }) => {
         onSave={() => {
           cancelModal('name', false)
           dispatch(setBookingData({ id: 'isNewBooking', data: true }))
+          dispatch(setBookingData({ id: 'internalID', data: createUnicId() }))
+
         }}
       >
         <NameGuest />
@@ -124,7 +127,6 @@ const styles = StyleSheet.create({
   container: {
     minHeight: '100%',
     padding: 10,
-    // paddingHorizontal: '10%',
   },
   buttons: {
     flexDirection: 'row',

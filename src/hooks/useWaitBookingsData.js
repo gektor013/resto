@@ -13,11 +13,13 @@ const useWaitBookingsData = () => {
 
   const { allOtherDayWaitingBooking } = useSelector(state => state.bookings.other)
 
-  const { data: waitPageData, isFetching: waitIsFetch } = useGetAllBookingByParamsQuery(statusForWaitPage, {
+  const { data: waitPageData, isFetching: waitIsFetch } = useGetAllBookingByParamsQuery('?status=0', {
     skip: !isConnected,
     refetchOnFocus: true,
-    pollingInterval: 3000000
+    pollingInterval: 3000000,
+    refetchOnMountOrArgChange: true
   })
+  // console.log(statusForWaitPage, 'statusForWaitPage');
 
   useEffect(() => {
     if (waitPageData && !waitIsFetch) {

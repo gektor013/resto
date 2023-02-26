@@ -25,7 +25,6 @@ const BookingTable = ({ bookingsData, cancel }) => {
   const dispatch = useDispatch()
   const bookingState = useSelector(state => state.bookingData)
   const isNewOrEdit = bookingState.isNewBooking || bookingState.isEdit
-  // const intId = uuid.v4()
 
   const handleChancheBookingStatus = (booking, status) => {
     const updateBooking = {
@@ -92,7 +91,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
         }
       </DataTable.Header>
       <SwipeableFlatList
-        keyExtractor={item => item.id ? item.id : item.internalIDƒ}
+        keyExtractor={item => item.id ? item.id : item.internalID}
         data={isNewOrEdit ?
           [bookingState] : bookingsData}
         renderItem={({ item }) => {
@@ -119,7 +118,6 @@ const BookingTable = ({ bookingsData, cancel }) => {
 
 const Row = ({ item, disabled }) => {
   const {
-    id,
     name,
     phone,
     table,
@@ -144,12 +142,11 @@ const Row = ({ item, disabled }) => {
   const { timeModal, numberGuestModal, nameGuestModal, commentAdminModal, phoneModal, employeeModal } = modalsState;
   const { bookingState, findRoom, onSubmitWithMode } = useBookingForm()
 
-  const intId = uuid.v4()
   return (
     <>
       {bookingState.isNewBooking || bookingState.isEdit ?
         (
-          <View key={id ? id : intId} style={{ backgroundColor: colors.surface }}>
+          <View style={{ backgroundColor: colors.surface }}>
             <DataTable.Row
               disabled={disabled}
             >
@@ -233,7 +230,7 @@ const Row = ({ item, disabled }) => {
         ) : (
           <Pressable
             onLongPress={() => dispatch(setEditBookingData(item))}
-            key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+            style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
             <DataTable.Row
               disabled={disabled}
               style={{ backgroundColor: getRowColorByStatus(status) }}
