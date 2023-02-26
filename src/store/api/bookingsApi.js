@@ -35,7 +35,7 @@ export const bookingsApi = createApi({
     }),
 
     getTodayBookingByParams: builder.query({
-      query: (query) => (console.log(query, 'query'), {
+      query: (query) => ({
         url: `/bookings${query}`,
       }),
       providesTags: ['TodayBookings'],

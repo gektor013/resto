@@ -20,9 +20,6 @@ const useCancelBookingsData = () => {
     refetchOnMountOrArgChange: true
   })
 
-  // console.log(allOtherDayDeletedBookings);
-
-  // console.log(navigation.isFocused());
   useEffect(() => {
     if (deletedPageData && !deletedIsFetch) {
       dispatch(setOtherDayDeletedBookings(deletedPageData))

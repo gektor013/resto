@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { formatDateParams } from '../utils/dates'
-import { clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings, setUnsyncEmployeeToUnsyncCreated } from '../store/slice/bookingsSlice';
+import { clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings, setUnsyncEmployeeToUnsyncCreated } from '../store/slice/bookingsSlice';
 import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -76,22 +76,19 @@ const useBookingsData = () => {
 
   // send when there is internet
   const sendUnsyncCreatedBookings = async () => {
-    // console.log(createdUnsyncBooking, 'createdUnsyncBooking');
-    // Array.from(createdUnsyncBooking, (booking) => {
-    //   console.log(booking, 'booking');
-    // createBooking(createdUnsyncBooking[0]).unwrap()
-    //   .then(res => {
-    //     if (res) {
-    //       dispatch(clearUnsynchronizedCreateBookings(createdUnsyncBooking[0]))
-    //     }
-    //   })
-    //   .catch(e => {
-    //     console.log(e, 'sendUnsyncCreatedBookings ERROR')
-    //   })
-    //   .finally(() => dispatch(resetBookingData()))
-    // })
+    if (!createdUnsyncBooking[0]?.employee?.id) return
+
+    createBooking(createdUnsyncBooking[0]).unwrap()
+      .then(res => {
+        if (res) {
+          dispatch(clearUnsynchronizedCreateBookings(createdUnsyncBooking[0]))
+        }
+      })
+      .catch(e => {
+        console.log(e, 'sendUnsyncCreatedBookings ERROR')
+      })
+      .finally(() => dispatch(resetBookingData()))
   }
-  // console.log(createdUnsyncBooking, 'createdUnsyncBooking');
 
   const sendUnsyncCreatedEmployees = async () => {
     await createEmployee(unsyncEmployees[0]).unwrap()
@@ -132,7 +129,7 @@ const useBookingsData = () => {
 
   // send other day when there is internet
   useEffect(() => {
-    if (createdUnsyncBooking?.length && isConnected && !isNeedUpdate && !unsyncEmployees?.length) {
+    if (createdUnsyncBooking[0]?.employee?.id && isConnected && !isNeedUpdate && !unsyncEmployees?.length) {
       sendUnsyncCreatedBookings()
       // console.log('sendUnsyncCreatedBookings');
     }
