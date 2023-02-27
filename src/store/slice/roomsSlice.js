@@ -2,7 +2,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   allRooms: [],
-  createdRooms: [{ internalID: "8ccae2da-cfa3-4b47-a5b3-afbbd5f84124", name: "Gvg", tables: [] }],
+  createdRooms: [],
   editedRooms: [],
   deletedRooms: [],
 
@@ -103,8 +103,11 @@ export const roomsSlice = createSlice({
         state.createdRooms.findIndex(room => room.internalID === action.payload.room.internalID)
 
       if (oneRoomInAllRoomsIndex !== -1) {
+        const keyName = action.payload?.id ? 'id' : 'internalID'
+
         const oneTableOnAllRoomsIndex =
-          state.allRooms[oneRoomInAllRoomsIndex].tables.findIndex(table => table.id === action.payload.id)
+          state.allRooms[oneRoomInAllRoomsIndex].tables.findIndex(table => table[keyName] === action.payload[keyName])
+
 
         if (oneTableOnAllRoomsIndex !== -1) {
 
@@ -128,9 +131,6 @@ export const roomsSlice = createSlice({
           return
         }
       }
-
-
-
     }
   }
 });

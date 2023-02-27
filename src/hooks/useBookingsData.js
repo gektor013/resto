@@ -77,13 +77,13 @@ const useBookingsData = () => {
   }
 
   // send when there is internet
-  const sendUnsyncCreatedBookings = async () => {
-    if (!createdUnsyncBooking[0]?.employee?.id) return
+  const sendUnsyncCreatedBookings = async (data) => {
+    if (!data?.employee?.id) return
 
-    createBooking(createdUnsyncBooking[0]).unwrap()
+    createBooking(data).unwrap()
       .then(res => {
         if (res) {
-          dispatch(clearUnsynchronizedCreateBookings(createdUnsyncBooking[0]))
+          dispatch(clearUnsynchronizedCreateBookings({ internalID: data.internalID }))
         }
       })
       .catch(e => {
@@ -94,13 +94,24 @@ const useBookingsData = () => {
 
   useEffect(() => {
     if (createdUnsyncBooking?.length && unsyncEmployees?.length && isConnected && !isNeedUpdate) {
+      // console.log(unsyncEmployees?.length, 'unsyncEmployees?.length');
+      // const empl = unsyncEmployees[0]
+      // console.log(empl, 'empl');
+      sendUnsyncCreatedEmployees(unsyncEmployees[0])
+    }
+  }, [unsyncEmployees, isConnected, isNeedUpdate])
 
-      Promise.all([
-        sendUnsyncCreatedEmployees(),
-        sendUnsyncCreatedBookings()
-      ])
+
+
+  useEffect(() => {
+    if (createdUnsyncBooking?.length && !unsyncEmployees?.length && isConnected && !isNeedUpdate) {
+      console.log(createdUnsyncBooking?.length, 'createdUnsyncBooking?.length');
+      sendUnsyncCreatedBookings(createdUnsyncBooking[0])
     }
   }, [createdUnsyncBooking, unsyncEmployees, isConnected, isNeedUpdate])
+
+
+
 
   // send when there is internet
   useEffect(() => {
@@ -110,11 +121,11 @@ const useBookingsData = () => {
   }, [editUnsyncBookings, isConnected, isNeedUpdate])
 
   // send other day when there is internet
-  useEffect(() => {
-    if (createdUnsyncBooking[0]?.employee?.id && isConnected && !isNeedUpdate && !unsyncEmployees?.length) {
-      sendUnsyncCreatedBookings()
-    }
-  }, [createdUnsyncBooking, isConnected, isNeedUpdate, unsyncEmployees])
+  // useEffect(() => {
+  //   if (createdUnsyncBooking[0]?.employee?.id && isConnected && !isNeedUpdate && !unsyncEmployees?.length) {
+  //     sendUnsyncCreatedBookings()
+  //   }
+  // }, [createdUnsyncBooking, isConnected, isNeedUpdate, unsyncEmployees])
 
   // first render we send to persist actual rooms & employe data 
   useEffect(() => {
