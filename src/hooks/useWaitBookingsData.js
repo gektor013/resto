@@ -19,7 +19,6 @@ const useWaitBookingsData = () => {
     pollingInterval: 3000000,
     refetchOnMountOrArgChange: true
   })
-  // console.log(statusForWaitPage, 'statusForWaitPage');
 
   useEffect(() => {
     if (waitPageData && !waitIsFetch) {

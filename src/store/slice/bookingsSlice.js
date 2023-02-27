@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   // these bookings show if there is no internet
@@ -112,6 +112,26 @@ export const bookingsSlice = createSlice({
 
   }
 });
+
+const selectEmployees = state => state.bookings;
+
+export const todayAllBookingsCS = createSelector(
+  selectEmployees,
+  bookings => bookings.todays.allBooking
+);
+
+export const otherDayBookingsCS = createSelector(
+  selectEmployees,
+  bookings => bookings.other.allOtherDayBooking
+);
+
+export const createdUnsyncBookingCS = createSelector(
+  selectEmployees,
+  bookings => bookings.unsynchronized
+);
+
+
+
 
 export const {
   //today reducers

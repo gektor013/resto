@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { formatDateParams } from '../utils/dates'
-import { clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, setOtherDayAllBookings, setTodaysAllBookings, setUnsyncEmployeeToUnsyncCreated } from '../store/slice/bookingsSlice';
+import { clearUnsynchronizedCreateBookings, clearUnsynchronizedEditedBookings, createdUnsyncBookingCS, otherDayBookingsCS, setOtherDayAllBookings, setTodaysAllBookings, todayAllBookingsCS } from '../store/slice/bookingsSlice';
 import { useCreateBookingMutation, useEditBookingMutation, useGetAllBookingByParamsQuery, useGetTodayBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -8,31 +8,33 @@ import { statusForActivePage } from '../constants';
 import { useGetAllRoomsQuery } from '../store/api/roomsApi';
 import { setAllRoomsData } from '../store/slice/roomsSlice';
 import { resetBookingData } from '../store/slice/bookingDataSlice';
-import { useCreateEmployeeMutation, useDeleteEmployeeMutation, useGetAllEmployeesQuery } from '../store/api/employeeApi';
-import { deletedEmployeesCS, unsyncEmployeesDataCS, removeUnsyncEmployee, setAllEmployeesData, clearDeletedEmployee, } from '../store/slice/employeesSlice';
-
+import { useGetAllEmployeesQuery } from '../store/api/employeeApi';
+import { setAllEmployeesData } from '../store/slice/employeesSlice';
+import useEmployees from './useEmployees';
 
 const useBookingsData = () => {
   const [bookingData, setBookingsData] = useState([])
   const dispatch = useDispatch()
   const { isConnected } = useNetInfo();
 
+  //date selector
   const { date: dateString } = useSelector(state => state.control)
-  const { allBooking: todayAllBookings } = useSelector(state => state.bookings.todays)
-  const { allOtherDayBooking: otherDayBookings } = useSelector(state => state.bookings.other)
-  const { isNeedUpdate } = useSelector(state => state.control)
-  const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(state => state.bookings.unsynchronized)
-
-  const unsyncEmployees = useSelector(unsyncEmployeesDataCS);
-  const deletedEmployees = useSelector(deletedEmployeesCS);
-
   const formatDate = formatDateParams(new Date(dateString))
+
+  console.log(bookingData[0], 'bookingsData');
+
+  // booking selector
+  const todayAllBookings = useSelector(todayAllBookingsCS)
+  const otherDayBookings = useSelector(otherDayBookingsCS)
+  const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(createdUnsyncBookingCS)
+
+  const { isNeedUpdate } = useSelector(state => state.control)
 
   const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
   const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
 
-  const [createEmployee] = useCreateEmployeeMutation()
-  const [deleteEmployee] = useDeleteEmployeeMutation()
+  // Employees HOOK
+  const { unsyncEmployees, sendUnsyncCreatedEmployees } = useEmployees(isConnected)
 
 
   // get only todays booking, it is necessary for the missing internet
@@ -90,33 +92,13 @@ const useBookingsData = () => {
       .finally(() => dispatch(resetBookingData()))
   }
 
-  const sendUnsyncCreatedEmployees = async () => {
-    await createEmployee(unsyncEmployees[0]).unwrap()
-      .then(res => {
-        dispatch(removeUnsyncEmployee(unsyncEmployees[0]))
-        dispatch(setUnsyncEmployeeToUnsyncCreated({ id: res.id, ...unsyncEmployees[0] }))
-      })
-      .catch(e => {
-        console.log(e, 'sendUnsyncCreatedEmployees ERROR')
-      })
-  }
-
-  const onDeleteEmployees = async () => {
-    Array.from(deletedEmployees, (employee) => {
-      deleteEmployee(employee.id).unwrap()
-        .then(() => dispatch(clearDeletedEmployee()))
-        .catch((e) => console.log(e, 'onDeleteEmployees ERROR'))
-    })
-  }
-
   useEffect(() => {
     if (createdUnsyncBooking?.length && unsyncEmployees?.length && isConnected && !isNeedUpdate) {
-      sendUnsyncCreatedEmployees()
-        .then(() => sendUnsyncCreatedBookings())
-      // Promise.all([
-      //   sendUnsyncCreatedEmployees(),
-      //   sendUnsyncCreatedBookings()
-      // ]).then((res) => console.log(res, console.log('Promise res')))
+
+      Promise.all([
+        sendUnsyncCreatedEmployees(),
+        sendUnsyncCreatedBookings()
+      ])
     }
   }, [createdUnsyncBooking, unsyncEmployees, isConnected, isNeedUpdate])
 
@@ -131,15 +113,8 @@ const useBookingsData = () => {
   useEffect(() => {
     if (createdUnsyncBooking[0]?.employee?.id && isConnected && !isNeedUpdate && !unsyncEmployees?.length) {
       sendUnsyncCreatedBookings()
-      // console.log('sendUnsyncCreatedBookings');
     }
   }, [createdUnsyncBooking, isConnected, isNeedUpdate, unsyncEmployees])
-
-  useEffect(() => {
-    if (deletedEmployees?.length && isConnected) {
-      onDeleteEmployees()
-    }
-  }, [deletedEmployees, isConnected])
 
   // first render we send to persist actual rooms & employe data 
   useEffect(() => {
