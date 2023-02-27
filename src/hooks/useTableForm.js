@@ -3,18 +3,18 @@ import { useGetAllRoomsQuery, useLazyGetAllRoomsQuery } from "../store/api/rooms
 import { useCreateTableMutation, useDeleteTableMutation, useGetTableByIdQuery, usePatchTableDataMutation } from "../store/api/tablesApi";
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from "react-redux";
-import { setAllRoomsData } from "../store/slice/roomsSlice";
+import { editTableSlice, setAllRoomsData, setNewTableToRoomSlice } from "../store/slice/roomsSlice";
+import { createUnicId } from "../utils/helpers";
 
 
 
-const useTableForm = (id) => {
+const useTableForm = (route) => {
   const { data: roomsData } = useGetAllRoomsQuery();
   const [createTable, { isLoading: createTableLoading }] = useCreateTableMutation();
   const [getAllRooms] = useLazyGetAllRoomsQuery()
   const [patchTableData, { isLoading: patchTableLoading }] = usePatchTableDataMutation()
   const [deleteTable, { isLoading: daleteTableLoading }] = useDeleteTableMutation()
-  const [expanded, setExpanded] = useState(false);
-  const handleOpenTableSelect = () => setExpanded(!expanded);
+
   const navigation = useNavigation();
   const dispatch = useDispatch()
 
@@ -28,31 +28,41 @@ const useTableForm = (id) => {
   }
 
   const handleCreateTable = async (data) => {
-    const newData = { ...data, room: `/api/rooms/${data.room.id}` };
+    // const newData = { ...data, room: `/api/rooms/${data.room.id}` };
 
-    {
-      id ? (
-        await patchTableData(newData).unwrap()
-          .then((res) => {
-            if (res) {
-              requestNewAllRoomData()
-              navigation.goBack()
-            }
-          })
-          .catch((e) => console.log(e, 'patchTableData ERROR'))
-
-      ) : (
-        await createTable(newData)
-          .unwrap()
-          .then((res) => {
-            if (res) {
-              requestNewAllRoomData()
-              navigation.goBack()
-            }
-          })
-          .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
-      )
+    // console.log(!data.internalID);
+    // console.log({ ...data, internalID: createUnicId() });
+    if (!data?.id && !data?.internalID) {
+      dispatch(setNewTableToRoomSlice({ ...data, internalID: createUnicId() }))
+      navigation.goBack()
+    } else {
+      dispatch(editTableSlice(data))
+      navigation.goBack()
     }
+    // console.log(data, 'DATA');
+    // {
+    //   id ? (
+    //     await patchTableData(newData).unwrap()
+    //       .then((res) => {
+    //         if (res) {
+    //           requestNewAllRoomData()
+    //           navigation.goBack()
+    //         }
+    //       })
+    //       .catch((e) => console.log(e, 'patchTableData ERROR'))
+
+    //   ) : (
+    //     await createTable(newData)
+    //       .unwrap()
+    //       .then((res) => {
+    //         if (res) {
+    //           requestNewAllRoomData()
+    //           navigation.goBack()
+    //         }
+    //       })
+    //       .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
+    //   )
+    // }
   };
 
   const handleTableDelete = async () => {
@@ -65,7 +75,7 @@ const useTableForm = (id) => {
 
 
   return {
-    roomsData, expanded, createTableLoading, patchTableLoading, daleteTableLoading, handleOpenTableSelect, handleCreateTable, handleTableDelete
+    roomsData, createTableLoading, patchTableLoading, daleteTableLoading, handleCreateTable, handleTableDelete
   }
 }
 

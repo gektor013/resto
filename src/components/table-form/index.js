@@ -25,23 +25,21 @@ const TableForm = () => {
   const route = useRoute()
   const navigate = useNavigation()
 
-  const { roomsData, expanded, createTableLoading, patchTableLoading, daleteTableLoading, handleOpenTableSelect, handleCreateTable, handleTableDelete
-  } = useTableForm(route?.params?.id)
+  const { createTableLoading, patchTableLoading, daleteTableLoading, handleCreateTable, handleTableDelete
+  } = useTableForm(route?.params)
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    getValues,
-    setValue,
   } = useForm({
     defaultValues: useMemo(() => {
-      return route?.params ?
-        { id: route?.params.id, name: route?.params.name, room: route?.params.room, seatQuantity: route?.params.seatQuantity }
-        : { ...initialRoomState }
+      return { ...route.params }
     }, [initialRoomState]),
     mode: 'onChange',
   });
+
+  // console.log(route.params, 'PARAMS');
 
   return (
     <View style={styles.mb150}>
@@ -97,25 +95,6 @@ const TableForm = () => {
         name="seatQuantity"
       />
       <HelperText type="error">{errors.seatQuantity?.message}</HelperText>
-
-      {/* <List.Section style={{ borderWidth: 1, borderRadius: 3, borderColor: colors.outline }}>
-        <List.Accordion
-          expanded={expanded}
-          title={getValues().room.name || (roomsData && roomsData[0].name)}
-
-          // title={getValues().room}
-          onPress={handleOpenTableSelect}>
-          {roomsData?.map(room => (
-            <List.Item key={room.id} title={room.name} onPress={() => {
-              setValue('room', room)
-              handleOpenTableSelect()
-            }} />
-          ))}
-        </List.Accordion>
-      </List.Section>
-
-      <HelperText type="error">{errors.tables?.message}</HelperText> */}
-
       <View>
         <Button
           style={styles.mv25p}

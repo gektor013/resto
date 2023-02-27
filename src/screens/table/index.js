@@ -20,15 +20,16 @@ const TableGroup = () => {
   const dispatch = useDispatch()
   const route = useRoute()
   const { colors } = useTheme();
+
   const allRoomsData = useSelector(allRoomsDataCS)
   const createdRoomsData = useSelector(createdRoomsDataCS)
+
+  const oneRoom = [...allRoomsData, ...createdRoomsData]?.find(arr => arr.id === value || arr.internalID === value)
 
   const { isLoading: roomsDataLoading } = useGetAllRoomsQuery('', {
     skip: isConnected === false,
     refetchOnReconnect: true,
   })
-
-  const oneRoom = allRoomsData?.find(arr => arr.id === value)
 
   const handleDoublePress = useCallback((item) => {
     if (isConnected === false) return
@@ -53,17 +54,15 @@ const TableGroup = () => {
   useEffect(() => {
     const routeSelectTable = route?.params?.selectTable
 
-    if (routeSelectTable !== null) {
+    if (routeSelectTable) {
       setValue(routeSelectTable?.room?.id)
     }
-  }, [route])
 
+    if (!routeSelectTable && allRoomsData?.length) {
+      setValue(allRoomsData[0].id)
+    }
+  }, [route, allRoomsData])
 
-  // createdRoomsData.map(item => ({
-  //   value: item.internalID,
-  //   label: item.name,
-  //   onPress: () => handleDoublePress(item),
-  // }))
   return (
     <>
       {roomsDataLoading ? (<LoadingScreen />) : (
@@ -86,13 +85,15 @@ const TableGroup = () => {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
             {
               oneRoom?.tables.map((item, idx) => {
+                const bgColor = item.id !== undefined && route?.params?.selectTable?.id === item.id ? colors.primary : '#3fab1a'
+
                 return (
-                  <TouchableOpacity key={item.createdAt + idx}
+                  <TouchableOpacity key={item.id || item.internalID}
                     onPress={() => handleSelectTable(item)}
-                    onLongPress={() => navigation.navigate('tableForm', { ...item, room: oneRoom })}
+                    onLongPress={() => navigation.navigate('tableForm', { ...item, room: { id: oneRoom.id, internalID: oneRoom.internalID } })}
                   >
                     <View style={{ alignItems: 'center' }}>
-                      <Surface style={{ ...styles.surface, backgroundColor: route?.params?.selectTable?.id === item.id ? colors.primary : '#3fab1a' }} elevation={4}>
+                      <Surface style={{ ...styles.surface, backgroundColor: bgColor }} elevation={4}>
                         <Text style={{ color: colors.onBackground }}>{item.name}</Text>
                       </Surface>
                       <Text style={{ color: colors.onBackground }}>{item.seatQuantity} seats</Text>
@@ -101,14 +102,14 @@ const TableGroup = () => {
                 )
               })
             }
-            {isConnected ? (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('tableForm', { room: oneRoom })}>
-                <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
-                  <Text>+</Text>
-                </Surface>
-              </TouchableOpacity>
-            ) : ''}
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('tableForm', { room: oneRoom })}>
+              <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
+                <Text>+</Text>
+              </Surface>
+            </TouchableOpacity>
+
           </View>
         </>)
       }
