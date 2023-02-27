@@ -6,6 +6,7 @@ import { useRoute } from '@react-navigation/native';
 
 import { useNavigation } from '@react-navigation/native';
 import useRoomForm from '../../hooks/useRoomForm';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const MIN_NAME_LENGTH = 1;
 
@@ -20,6 +21,7 @@ const initialRoomState = {
 };
 
 const RoomForm = () => {
+  const { isConnected } = useNetInfo()
   const { colors } = useTheme();
   const navigate = useNavigation()
   const route = useRoute()
@@ -31,7 +33,7 @@ const RoomForm = () => {
     formState: { errors, isValid },
   } = useForm({
     defaultValues: useMemo(() => {
-      return route.params ? { name: route?.params?.name, id: route?.params?.id } : { ...initialRoomState }
+      return route.params ? { ...route.params } : { ...initialRoomState }
     }, [initialRoomState, route.params]),
     mode: 'onChange',
   });
@@ -72,6 +74,7 @@ const RoomForm = () => {
           style={styles.mv25p}
           mode="contained"
           loading={createRoomLoading || patchLoading}
+
           onPress={handleSubmit(handleCreateRoom)}
           disabled={!isValid}>
           Save
@@ -85,7 +88,7 @@ const RoomForm = () => {
           Cancel
         </Button>
 
-        {route.params && (
+        {route.params && isConnected && (
           <Button
             style={styles.mv25p}
             mode="contained"

@@ -1,7 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  rooms: []
+  allRooms: [],
+
+  createdRooms: [],
+  editedRooms: [],
+  deletedRooms: []
 };
 
 export const roomsSlice = createSlice({
@@ -9,31 +13,59 @@ export const roomsSlice = createSlice({
   initialState,
   reducers: {
     setAllRoomsData: (state, action) => {
-      state.rooms = action.payload
+      state.allRooms = action.payload
     },
     createRoomSlice: (state, action) => {
-      state.rooms = [...state.rooms, action.payload]
+      state.createdRooms.push(action.payload)
     },
-    patchRoomSlice: (state, action) => {
-      const index = state.rooms.findIndex(
+    editedRoomsSlice: (state, action) => {
+      const oneRoomToAllRoomsIndex = state.allRooms.findIndex(
         room => room.id === action.payload.id,
       );
 
-      if (index === -1) {
-        state.rooms = [
-          ...state.rooms, { ...action.payload }
-        ];
+      const unsyncCreatedIndex = state.createdRooms.findIndex(
+        room => room.internalID === action.payload.internalID,
+      );
+
+
+      // console.log(oneRoomToAllRoomsIndex, 'oneRoomToAllRoomsIndex');
+      if (oneRoomToAllRoomsIndex === -1) {
+
+        if (unsyncCreatedIndex === -1) {
+          return
+        } else {
+          state.createdRooms[unsyncCreatedIndex] = action.payload
+        }
       } else {
-        state.rooms[index] = { ...action.payload }
+        state.allRooms[oneRoomToAllRoomsIndex] = action.payload
+        state.editedRooms.push(action.payload)
       }
     },
   }
 });
 
+const selectRooms = state => state.rooms;
+
+export const allRoomsDataCS = createSelector(
+  selectRooms,
+  state => state.allRooms
+);
+
+export const createdRoomsDataCS = createSelector(
+  selectRooms,
+  state => state.createdRooms
+);
+
+export const editedRoomsDataCS = createSelector(
+  selectRooms,
+  state => state.editedRooms
+);
+
 export const {
   setAllRoomsData,
   createRoomSlice,
   patchRoomSlice,
+  editedRoomsSlice
 } = roomsSlice.actions;
 
 export default roomsSlice.reducer;

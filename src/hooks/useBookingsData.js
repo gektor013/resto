@@ -21,7 +21,7 @@ const useBookingsData = () => {
   const { date: dateString } = useSelector(state => state.control)
   const formatDate = formatDateParams(new Date(dateString))
 
-  console.log(bookingData[0], 'bookingsData');
+  // console.log(bookingData[0], 'bookingsData');
 
   // booking selector
   const todayAllBookings = useSelector(todayAllBookingsCS)
