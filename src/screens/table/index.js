@@ -22,13 +22,11 @@ const TableGroup = () => {
   const { colors } = useTheme();
   const allRoomsData = useSelector(allRoomsDataCS)
   const createdRoomsData = useSelector(createdRoomsDataCS)
-  const editedRoomsData = useSelector(editedRoomsDataCS)
 
   const { isLoading: roomsDataLoading } = useGetAllRoomsQuery('', {
     skip: isConnected === false,
     refetchOnReconnect: true,
   })
-  // console.log(roomsData, 'ROOMS');
 
   const oneRoom = allRoomsData?.find(arr => arr.id === value)
 

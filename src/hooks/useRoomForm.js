@@ -1,78 +1,54 @@
+import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useCreateRoomMutation, useDeleteRoomMutation, usePatchRoomDataMutation } from '../store/api/roomsApi';
 import { useDispatch, useSelector } from 'react-redux';
-import { createRoomSlice, patchRoomSlice, allRoomsDataCS, createdRoomsDataCS, editedRoomsSlice, editedRoomsDataCS } from '../store/slice/roomsSlice';
-import { useEffect, useState } from 'react';
-import { createUnicId } from '../utils/helpers';
+import { allRoomsDataCS, createdRoomsDataCS, editedRoomsDataCS, createRoomSlice, deletedRoomsSlice, deletedRoomsDataCS } from '../store/slice/roomsSlice';
 
 const useRoomForm = (route) => {
-  const allRoomsData = useSelector(allRoomsDataCS)
   const createdRoomsData = useSelector(createdRoomsDataCS)
   const editedRoomsData = useSelector(editedRoomsDataCS)
+  const deletedRoomsData = useSelector(deletedRoomsDataCS)
 
-  // console.log(allRoomsData[0], 'allRoomsData');
-  // console.log(createdRoomsData, 'createdRoomsData');
-  // console.log(editedRoomsData, 'editedRoomsData');
-
-
-  const [createRoom, { isLoading: createRoomLoading }] = useCreateRoomMutation();
-  const [patchRoomData, { isLoading: patchLoading }] = usePatchRoomDataMutation()
-  const [deleteRoom, { isLoading: deleteLoading }] = useDeleteRoomMutation()
   const navigate = useNavigation()
   const dispatch = useDispatch()
 
-  // console.log(route.params, 'Route');
+  const [createRoom] = useCreateRoomMutation();
+  const [patchRoomData] = usePatchRoomDataMutation()
+  const [deleteRoom] = useDeleteRoomMutation()
 
-  const handleCreateRoom = (data) => {
-    if (!route.params) {
-      dispatch(createRoomSlice({ ...data, internalID: createUnicId() }))
-      navigate.goBack()
-    } else {
-      dispatch(editedRoomsSlice(data))
-      navigate.goBack()
-    }
-  };
+  const createsRooms = async () => {
+    await createRoom(data)
+      .unwrap()
+      .then((res) => {
+        // if (res) {
+        //   // navigate.goBack()
+        // }
+      })
+      .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
+  }
 
-
-
-  // const createsRooms = async () => {
-  //   await createRoom(data)
-  //     .unwrap()
-  //     .then((res) => {
-  //       if (res) {
-  //         dispatch(createRoomSlice(res))
-  //         navigate.goBack()
-  //       }
-  //     })
-  //     .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
-  // }
-
-  // const editRooms = async () => {
-  //   await patchRoomData(data).unwrap()
-  //     .then((res) => {
-  //       if (res) {
-  //         dispatch(patchRoomSlice(res))
-  //         navigate.goBack()
-  //       }
-  //     })
-  //     .catch((e) => console.log(e, 'patchRoomData ERROR'))
-  // }
+  const editRooms = async () => {
+    Array.from(editedRoomsData, (room) => {
+      patchRoomData(room).unwrap()
+        .then((res) => {
+          // if (res) {
+          //   // navigate.goBack()
+          // }
+        })
+        .catch((e) => console.log(e, 'patchRoomData ERROR'))
+    })
+  }
 
   const handleDeleteRoom = async () => {
-    const id = route?.params?.id
-    await deleteRoom(id).unwrap()
-      .catch((e) => console.log(e, 'handleDeleteRoom ERROR'))
-      .finally(() => navigate.goBack())
+    Array.from(deletedRoomsData, (room) => {
+      deleteRoom(room.id).unwrap()
+        .catch((e) => console.log(e, 'handleDeleteRoom ERROR'))
+      // .finally(() => navigate.goBack())
+    })
   }
 
 
-  useEffect(() => {
-
-  }, [])
-
-
-
-  return { createRoomLoading, patchLoading, deleteLoading, handleDeleteRoom, handleCreateRoom };
+  return {};
 };
 
 export default useRoomForm;
