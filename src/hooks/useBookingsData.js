@@ -30,7 +30,6 @@ const useBookingsData = () => {
   const otherDayBookings = useSelector(otherDayBookingsCS)
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(createdUnsyncBookingCS)
 
-  console.log(editUnsyncBookings, 'editUnsyncBookings');
   const isNeedUpdate = useSelector(isNeedUpdateCS)
 
   const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
@@ -82,7 +81,7 @@ const useBookingsData = () => {
 
   // send when there is internet
   const sendUnsyncCreatedBookings = async (data) => {
-    if (!data?.employee?.id) return
+    if (!data?.employee?.id || !data?.table.id) return
 
     createBooking(data).unwrap()
       .then(res => {

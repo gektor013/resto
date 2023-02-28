@@ -9,7 +9,7 @@ export const roomsApi = createApi({
   keepUnusedDataFor: 1,
   endpoints: builder => ({
     getAllRooms: builder.query({
-      query: () => ({
+      query: () => (console.log('getAllRooms'), {
         url: `/rooms`,
       }),
       providesTags: result =>

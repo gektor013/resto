@@ -19,31 +19,6 @@ export const roomsSlice = createSlice({
   name: 'rooms',
   initialState,
   reducers: {
-    //updates the table data in the redux when successfully sent to the server
-    updateTableDataSlice: (state, action) => {
-      const { internalID, name, id, seatQuantity } = action.payload
-
-      const removalTable =
-        state.tables.createdTables.find(table => table.internalID === internalID)
-
-      const searchTableInCreatedRooms =
-        state.createdRooms.findIndex(room => room.internalID === action.payload.room.internalID)
-
-      if (removalTable) {
-        state.tables.createdTables =
-          state.tables.createdTables.filter(table => table.internalID !== removalTable.internalID)
-      }
-
-      if (searchTableInCreatedRooms !== -1) {
-        const oneTableOnCreatedRooms =
-          state.createdRooms[searchTableInCreatedRooms].tables.findIndex(table => table.internalID === internalID)
-
-        state.createdRooms[searchTableInCreatedRooms].tables[oneTableOnCreatedRooms] = { id, name, seatQuantity }
-      } else {
-        return
-      }
-    },
-
     // updates the data on the first render
     setAllRoomsData: (state, action) => {
       state.allRooms = action.payload
@@ -194,6 +169,41 @@ export const roomsSlice = createSlice({
         }
       }
     },
+
+    //updates the table data in the redux when successfully sent to the server
+    updateTableDataSlice: (state, action) => {
+      const { internalID, name, id, seatQuantity } = action.payload
+
+      const removalTable =
+        state.tables.createdTables.find(table => table.internalID === internalID)
+
+      const searchTableInCreatedRooms =
+        state.createdRooms.findIndex(room => room.internalID === action.payload.room.internalID)
+
+      if (removalTable) {
+        state.tables.createdTables =
+          state.tables.createdTables.filter(table => table.internalID !== removalTable.internalID)
+      }
+
+      if (searchTableInCreatedRooms !== -1) {
+        const oneTableOnCreatedRooms =
+          state.createdRooms[searchTableInCreatedRooms].tables.findIndex(table => table.internalID === internalID)
+
+        state.createdRooms[searchTableInCreatedRooms].tables[oneTableOnCreatedRooms] = { id, name, seatQuantity }
+      } else {
+        return
+      }
+    },
+
+    removeTableInDeletedTables: (state, action) => {
+      const findDeletedTablse =
+        state.tables.deletedTables.find(table => table.id === action.payload.id)
+
+      if (findDeletedTablse) {
+        state.tables.deletedTables = state.tables.deletedTables.filter(table => table.id !== findDeletedTablse.id)
+      }
+
+    }
   }
 });
 
@@ -224,6 +234,11 @@ export const createdTablesDataCS = createSelector(
   state => state.tables.createdTables
 );
 
+export const deletedTablesDataCS = createSelector(
+  selectRooms,
+  state => state.tables.deletedTables
+);
+
 export const {
   setAllRoomsData,
   createRoomSlice,
@@ -233,6 +248,7 @@ export const {
   editTableSlice,
   deletedTableSlice,
   updateTableDataSlice,
+  removeTableInDeletedTables,
 } = roomsSlice.actions;
 
 export default roomsSlice.reducer;
