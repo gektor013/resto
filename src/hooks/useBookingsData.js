@@ -94,9 +94,6 @@ const useBookingsData = () => {
 
   useEffect(() => {
     if (createdUnsyncBooking?.length && unsyncEmployees?.length && isConnected && !isNeedUpdate) {
-      // console.log(unsyncEmployees?.length, 'unsyncEmployees?.length');
-      // const empl = unsyncEmployees[0]
-      // console.log(empl, 'empl');
       sendUnsyncCreatedEmployees(unsyncEmployees[0])
     }
   }, [unsyncEmployees, isConnected, isNeedUpdate])

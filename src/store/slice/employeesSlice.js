@@ -34,7 +34,14 @@ export const employeesSlice = createSlice({
     },
 
     clearDeletedEmployee: (state) => {
-      state.deletedEmployees = []
+
+      // const employeeWithInternalID = state.unsyncEmployees.find(
+      //   employee => employee.internalID === action.payload.internalID,
+      // );
+
+      // if (employeeWithInternalID) {
+      //   state.unsyncEmployees = state.unsyncEmployees.filter(employee => employee.internalID !== employeeWithInternalID.internalID)
+      // }
     },
 
     removeUnsyncEmployee: (state, action) => {

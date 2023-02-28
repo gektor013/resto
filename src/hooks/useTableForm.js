@@ -3,7 +3,7 @@ import { useGetAllRoomsQuery, useLazyGetAllRoomsQuery } from "../store/api/rooms
 import { useCreateTableMutation, useDeleteTableMutation, useGetTableByIdQuery, usePatchTableDataMutation } from "../store/api/tablesApi";
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from "react-redux";
-import { editTableSlice, setAllRoomsData, setNewTableToRoomSlice } from "../store/slice/roomsSlice";
+import { deletedTableSlice, editTableSlice, setAllRoomsData, setNewTableToRoomSlice } from "../store/slice/roomsSlice";
 import { createUnicId } from "../utils/helpers";
 
 
@@ -65,11 +65,14 @@ const useTableForm = (route) => {
     // }
   };
 
-  const handleTableDelete = async () => {
-    await deleteTable(id).unwrap()
-      .then(() => getAllRooms())
-      .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
-      .finally(() => navigation.goBack())
+  const handleTableDelete = () => {
+    // console.log(route, 'RRROUTE');
+    dispatch(deletedTableSlice(route))
+    navigation.goBack()
+    // await deleteTable(id).unwrap()
+    //   .then(() => getAllRooms())
+    //   .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
+    //   .finally(() => navigation.goBack())
   }
 
 

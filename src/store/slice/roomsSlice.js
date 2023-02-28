@@ -15,13 +15,45 @@ const initialState = {
 
 
 
-
-
-
 export const roomsSlice = createSlice({
   name: 'rooms',
   initialState,
   reducers: {
+
+    deletedTableSlice: (state, action) => {
+      const oneRoomInAllRoomsIndex =
+        state.allRooms.findIndex(room => room.id === action.payload.room.id)
+
+      const oneRoomInCreatedRoomsIndex =
+        state.createdRooms.findIndex(room => room.internalID === action.payload.room.internalID)
+
+      if (oneRoomInAllRoomsIndex !== -1) {
+        const oneTableOnAllRooms = state.allRooms[oneRoomInAllRoomsIndex].tables.find(table => table.id === action.payload.id)
+
+        if (oneTableOnAllRooms) {
+          state.allRooms[oneRoomInAllRoomsIndex].tables = state.allRooms[oneRoomInAllRoomsIndex].tables.filter(table => table.id !== oneTableOnAllRooms.id)
+          state.tables.deletedTables.push(oneTableOnAllRooms)
+          console.log(state.tables.deletedTables, 'state.tables.deletedTables');
+        } else {
+          return
+        }
+      }
+
+
+      if (oneRoomInCreatedRoomsIndex !== -1) {
+        const oneTableOnCreatedRooms =
+          state.createdRooms[oneRoomInCreatedRoomsIndex].tables.find(table => table.internalID === action.payload.internalID)
+
+        if (oneTableOnCreatedRooms) {
+          state.createdRooms[oneRoomInCreatedRoomsIndex].tables =
+            state.createdRooms[oneRoomInCreatedRoomsIndex].tables.filter(table => table.internalID !== oneTableOnCreatedRooms.internalID)
+        } else {
+          return
+        }
+      }
+    },
+
+
     setAllRoomsData: (state, action) => {
       state.allRooms = action.payload
     },
@@ -131,7 +163,11 @@ export const roomsSlice = createSlice({
           return
         }
       }
-    }
+    },
+
+
+
+
   }
 });
 
@@ -164,6 +200,7 @@ export const {
   deletedRoomsSlice,
   setNewTableToRoomSlice,
   editTableSlice,
+  deletedTableSlice
 } = roomsSlice.actions;
 
 export default roomsSlice.reducer;

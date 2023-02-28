@@ -113,16 +113,16 @@ const TableForm = () => {
           Cancel
         </Button>
 
-        {route?.params?.id && (
-          <Button
-            style={styles.mv25p}
-            mode="contained"
-            loading={daleteTableLoading}
-            onPress={handleTableDelete}
-          >
-            Delete
-          </Button>
-        )}
+        {/* {route?.params?.id && ( */}
+        <Button
+          style={styles.mv25p}
+          mode="contained"
+          loading={daleteTableLoading}
+          onPress={handleTableDelete}
+        >
+          Delete
+        </Button>
+        {/* )} */}
       </View>
     </View>
 

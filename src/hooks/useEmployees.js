@@ -16,13 +16,7 @@ const useEmployees = (isConnected) => {
   const [deleteEmployee] = useDeleteEmployeeMutation()
 
 
-
-  const testLog = () => {
-    return console.log('=====', unsyncEmployees, '====');
-  }
-
   const sendUnsyncCreatedEmployees = async (data) => {
-    // testLog()
     await createEmployee(data).unwrap()
       .then(res => {
         dispatch(removeUnsyncEmployee(data))
@@ -36,7 +30,7 @@ const useEmployees = (isConnected) => {
   const onDeleteEmployees = async () => {
     Array.from(deletedEmployees, (employee) => {
       deleteEmployee(employee.id).unwrap()
-        .then(() => dispatch(clearDeletedEmployee()))
+        .then(() => dispatch(clearDeletedEmployee(employee)))
         .catch((e) => console.log(e, 'onDeleteEmployees ERROR'))
     })
   }

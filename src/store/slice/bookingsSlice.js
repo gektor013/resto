@@ -43,17 +43,10 @@ export const bookingsSlice = createSlice({
 
     setUnsyncEmployeeToUnsyncCreated: (state, action) => {
       const index = state.unsynchronized.created.findIndex(booking => {
-        // console.log(booking.employee.internalID, 'booking.employee.internalID', action.payload.internalID, 'action.payload.internalID');
         return booking.employee.internalID === action.payload.internalID
       })
 
-      // console.log('====================================');
-      // console.log(index, 'index');
-      // console.log('====================================');
-      // console.log(action.payload);
-
       if (index === -1) {
-
         return
       } else {
         state.unsynchronized.created[index] = { ...state.unsynchronized.created[index], employee: action.payload }
