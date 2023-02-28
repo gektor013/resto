@@ -24,6 +24,22 @@ export const bookingsSlice = createSlice({
   name: 'bookings',
   initialState,
   reducers: {
+    updateBookingTable: (state, action) => {
+      const createdBookingIndex =
+        state.unsynchronized.created.findIndex(book => book.table.internalID === action.payload.internalID)
+
+      const editBookingIndex =
+        state.unsynchronized.edited.findIndex(book => book.table.internalID === action.payload.internalID)
+
+      if (createdBookingIndex !== -1) {
+        state.unsynchronized.created[createdBookingIndex].table.id = action.payload.id
+      }
+      if (editBookingIndex !== -1) {
+        state.unsynchronized.edited[editBookingIndex].table.id = action.payload.id
+      }
+
+    },
+
     setTodaysAllBookings: (state, action) => {
       state.todays.allBooking = action.payload
     },
@@ -158,7 +174,11 @@ export const {
   // ohter day reducers
   setOtherDayAllBookings,
   setOtherDayWaitBookings,
-  setOtherDayDeletedBookings
+  setOtherDayDeletedBookings,
+
+
+  updateBookingTable
+
 } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

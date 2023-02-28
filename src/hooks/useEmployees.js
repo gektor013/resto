@@ -1,20 +1,23 @@
-import { useEffect } from 'react'
-import { setUnsyncEmployeeToUnsyncCreated } from '../store/slice/bookingsSlice';
+import { useEffect, useState } from 'react'
+import { createdUnsyncBookingCS, setUnsyncEmployeeToUnsyncCreated } from '../store/slice/bookingsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useCreateEmployeeMutation, useDeleteEmployeeMutation, useGetAllEmployeesQuery } from '../store/api/employeeApi';
 import { deletedEmployeesCS, unsyncEmployeesDataCS, removeUnsyncEmployee, setAllEmployeesData, clearDeletedEmployee, } from '../store/slice/employeesSlice';
+import { isNeedUpdateCS } from '../store/slice/controlSlice';
 
 const useEmployees = (isConnected) => {
+  const [isEmployeeSynchronaized, setIsEmployeeSynchronaized] = useState(false)
   const dispatch = useDispatch()
+
+  const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(createdUnsyncBookingCS)
+  const isNeedUpdate = useSelector(isNeedUpdateCS)
 
   const unsyncEmployees = useSelector(unsyncEmployeesDataCS);
   const deletedEmployees = useSelector(deletedEmployeesCS);
 
-
   const [createEmployee] = useCreateEmployeeMutation()
   const [deleteEmployee] = useDeleteEmployeeMutation()
-
 
   const sendUnsyncCreatedEmployees = async (data) => {
     await createEmployee(data).unwrap()
@@ -36,13 +39,29 @@ const useEmployees = (isConnected) => {
   }
 
   useEffect(() => {
+    if (!unsyncEmployees?.length && !isEmployeeSynchronaized && isConnected && !isNeedUpdate) {
+      setIsEmployeeSynchronaized(true)
+    }
+
+    if (isConnected === false) {
+      setIsEmployeeSynchronaized(false)
+    }
+  }, [isConnected, isNeedUpdate, unsyncEmployees])
+
+  useEffect(() => {
     if (deletedEmployees?.length && isConnected) {
       onDeleteEmployees()
     }
   }, [deletedEmployees, isConnected])
 
+  useEffect(() => {
+    if (createdUnsyncBooking?.length && unsyncEmployees?.length && isConnected && !isNeedUpdate) {
+      sendUnsyncCreatedEmployees(unsyncEmployees[0])
+    }
+  }, [unsyncEmployees, isConnected, isNeedUpdate])
   return {
-    unsyncEmployees, sendUnsyncCreatedEmployees
+    isEmployeeSynchronaized, unsyncEmployees
+    // unsyncEmployees, sendUnsyncCreatedEmployees
   }
 }
 

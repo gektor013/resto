@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   date: '',
@@ -33,9 +33,17 @@ export const bookingDataSlice = createSlice({
 
     setEditBookingData: (_, action) => {
       return { ...action.payload, isEdit: true }
-    }
+    },
   }
 });
+
+const selectBookingData = state => state.bookingData;
+
+export const bookingsDataCS = createSelector(
+  selectBookingData,
+  bookings => bookings
+);
+
 
 export const {
   setBookingData,

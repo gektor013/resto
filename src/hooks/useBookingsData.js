@@ -12,6 +12,7 @@ import { useGetAllEmployeesQuery } from '../store/api/employeeApi';
 import { setAllEmployeesData } from '../store/slice/employeesSlice';
 import useEmployees from './useEmployees';
 import useTableForm from './useTableForm';
+import { isNeedUpdateCS } from '../store/slice/controlSlice';
 
 const useBookingsData = () => {
   const [bookingData, setBookingsData] = useState([])
@@ -29,15 +30,16 @@ const useBookingsData = () => {
   const otherDayBookings = useSelector(otherDayBookingsCS)
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(createdUnsyncBookingCS)
 
-  const { isNeedUpdate } = useSelector(state => state.control)
+  console.log(editUnsyncBookings, 'editUnsyncBookings');
+  const isNeedUpdate = useSelector(isNeedUpdateCS)
 
   const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
   const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
 
   // Employees HOOK
-  const { unsyncEmployees, sendUnsyncCreatedEmployees } = useEmployees(isConnected)
+  const { unsyncEmployees, isEmployeeSynchronaized } = useEmployees(isConnected)
   // Rooms & tables HOOK
-  const { } = useTableForm()
+  const { isTableSynchronaized } = useTableForm(isEmployeeSynchronaized, isConnected)
 
   // get only todays booking, it is necessary for the missing internet
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
@@ -65,17 +67,17 @@ const useBookingsData = () => {
   })
 
   // edit bookings
-  const onEditBookings = () => {
-    Array.from(editUnsyncBookings, (booking) => {
-      editBookings(booking).unwrap()
-        .then(res => {
-          if (res) {
-            dispatch(clearUnsynchronizedEditedBookings(booking))
-          }
-        })
-        .catch(e => console.log(e, 'onEditBookings error'))
-        .finally(() => dispatch(resetBookingData()))
-    })
+  const onEditBookings = (data) => {
+    if (!data?.table.id) return
+
+    editBookings(data).unwrap()
+      .then(res => {
+        if (res) {
+          dispatch(clearUnsynchronizedEditedBookings(data))
+        }
+      })
+      .catch(e => console.log(e, 'onEditBookings error'))
+      .finally(() => dispatch(resetBookingData()))
   }
 
   // send when there is internet
@@ -94,28 +96,25 @@ const useBookingsData = () => {
       .finally(() => dispatch(resetBookingData()))
   }
 
-  useEffect(() => {
-    if (createdUnsyncBooking?.length && unsyncEmployees?.length && isConnected && !isNeedUpdate) {
-      sendUnsyncCreatedEmployees(unsyncEmployees[0])
-    }
-  }, [unsyncEmployees, isConnected, isNeedUpdate])
-
-
+  // useEffect(() => {
+  //   if (createdUnsyncBooking?.length && unsyncEmployees?.length && isConnected && !isNeedUpdate) {
+  //     sendUnsyncCreatedEmployees(unsyncEmployees[0])
+  //   }
+  // }, [unsyncEmployees, isConnected, isNeedUpdate])
 
   useEffect(() => {
-    if (createdUnsyncBooking?.length && !unsyncEmployees?.length && isConnected && !isNeedUpdate) {
-      console.log(createdUnsyncBooking?.length, 'createdUnsyncBooking?.length');
+    if (createdUnsyncBooking?.length && isTableSynchronaized && isConnected && !isNeedUpdate) {
       sendUnsyncCreatedBookings(createdUnsyncBooking[0])
     }
-  }, [createdUnsyncBooking, unsyncEmployees, isConnected, isNeedUpdate])
+  }, [createdUnsyncBooking, isConnected, isNeedUpdate, isTableSynchronaized])
 
 
   // send when there is internet
   useEffect(() => {
-    if (editUnsyncBookings?.length && isConnected && !isNeedUpdate) {
-      onEditBookings()
+    if (editUnsyncBookings?.length && isTableSynchronaized && isConnected && !isNeedUpdate) {
+      onEditBookings(editUnsyncBookings[0])
     }
-  }, [editUnsyncBookings, isConnected, isNeedUpdate])
+  }, [editUnsyncBookings, isConnected, isNeedUpdate, isTableSynchronaized])
 
   // first render we send to persist actual rooms & employe data 
   useEffect(() => {
@@ -143,7 +142,9 @@ const useBookingsData = () => {
   useEffect(() => {
     //data redux
     if (isConnected === true && !isNeedUpdate) {
-      setBookingsData([...createdUnsyncBooking, ...editUnsyncBookings, ...otherDayBookings])
+      setBookingsData([...otherDayBookings])
+
+      // setBookingsData([...createdUnsyncBooking, ...editUnsyncBookings, ...otherDayBookings])
     } else if (isConnected === false) {
       const unsyncCreated = createdUnsyncBooking.filter(elem => elem.status !== 5)
       const unsyncEdited = editUnsyncBookings.filter(elem => elem.status !== 5)
