@@ -1,11 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
 
-import { List } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import useTableForm from '../../hooks/useTableForm';
 import { deletedTableSlice, editTableSlice, setNewTableToRoomSlice } from '../../store/slice/roomsSlice';
 import { useDispatch } from 'react-redux';
 import { createUnicId } from '../../utils/helpers';
@@ -15,12 +13,6 @@ const MIN_NAME_LENGTH = 1;
 const ERROR_MESSAGES = {
   REQUIRED: 'This field is required',
   NAME_INVALID: 'Invalid name',
-};
-
-const initialRoomState = {
-  name: "",
-  seatQuantity: "",
-  room: {}
 };
 
 const TableForm = () => {
@@ -54,8 +46,6 @@ const TableForm = () => {
     dispatch(deletedTableSlice(route?.params))
     navigation.goBack()
   }
-
-  // console.log(route.params, 'PARAMS');
 
   return (
     <View style={styles.mb150}>

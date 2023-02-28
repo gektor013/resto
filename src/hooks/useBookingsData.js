@@ -11,6 +11,7 @@ import { resetBookingData } from '../store/slice/bookingDataSlice';
 import { useGetAllEmployeesQuery } from '../store/api/employeeApi';
 import { setAllEmployeesData } from '../store/slice/employeesSlice';
 import useEmployees from './useEmployees';
+import useTableForm from './useTableForm';
 
 const useBookingsData = () => {
   const [bookingData, setBookingsData] = useState([])
@@ -36,6 +37,7 @@ const useBookingsData = () => {
   // Employees HOOK
   const { unsyncEmployees, sendUnsyncCreatedEmployees } = useEmployees(isConnected)
   // Rooms & tables HOOK
+  const { } = useTableForm()
 
   // get only todays booking, it is necessary for the missing internet
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
@@ -108,21 +110,12 @@ const useBookingsData = () => {
   }, [createdUnsyncBooking, unsyncEmployees, isConnected, isNeedUpdate])
 
 
-
-
   // send when there is internet
   useEffect(() => {
     if (editUnsyncBookings?.length && isConnected && !isNeedUpdate) {
       onEditBookings()
     }
   }, [editUnsyncBookings, isConnected, isNeedUpdate])
-
-  // send other day when there is internet
-  // useEffect(() => {
-  //   if (createdUnsyncBooking[0]?.employee?.id && isConnected && !isNeedUpdate && !unsyncEmployees?.length) {
-  //     sendUnsyncCreatedBookings()
-  //   }
-  // }, [createdUnsyncBooking, isConnected, isNeedUpdate, unsyncEmployees])
 
   // first render we send to persist actual rooms & employe data 
   useEffect(() => {
