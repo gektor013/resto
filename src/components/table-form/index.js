@@ -6,6 +6,9 @@ import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
 import { List } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import useTableForm from '../../hooks/useTableForm';
+import { deletedTableSlice, editTableSlice, setNewTableToRoomSlice } from '../../store/slice/roomsSlice';
+import { useDispatch } from 'react-redux';
+import { createUnicId } from '../../utils/helpers';
 
 const MIN_NAME_LENGTH = 1;
 
@@ -23,10 +26,8 @@ const initialRoomState = {
 const TableForm = () => {
   const { colors } = useTheme();
   const route = useRoute()
-  const navigate = useNavigation()
-
-  const { createTableLoading, patchTableLoading, daleteTableLoading, handleCreateTable, handleTableDelete
-  } = useTableForm(route?.params)
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
 
   const {
     control,
@@ -35,9 +36,24 @@ const TableForm = () => {
   } = useForm({
     defaultValues: useMemo(() => {
       return { ...route.params }
-    }, [initialRoomState]),
+    }, [route]),
     mode: 'onChange',
   });
+
+  const handleCreateTable = async (data) => {
+    if (!data?.id && !data?.internalID) {
+      dispatch(setNewTableToRoomSlice({ ...data, internalID: createUnicId() }))
+      navigation.goBack()
+    } else {
+      dispatch(editTableSlice(data))
+      navigation.goBack()
+    }
+  }
+
+  const handleTableDelete = () => {
+    dispatch(deletedTableSlice(route?.params))
+    navigation.goBack()
+  }
 
   // console.log(route.params, 'PARAMS');
 
@@ -99,7 +115,6 @@ const TableForm = () => {
         <Button
           style={styles.mv25p}
           mode="contained"
-          loading={createTableLoading || patchTableLoading}
           onPress={handleSubmit(handleCreateTable)}
           disabled={!isValid}>
           Save
@@ -117,7 +132,6 @@ const TableForm = () => {
         <Button
           style={styles.mv25p}
           mode="contained"
-          loading={daleteTableLoading}
           onPress={handleTableDelete}
         >
           Delete

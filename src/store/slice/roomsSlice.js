@@ -33,7 +33,6 @@ export const roomsSlice = createSlice({
         if (oneTableOnAllRooms) {
           state.allRooms[oneRoomInAllRoomsIndex].tables = state.allRooms[oneRoomInAllRoomsIndex].tables.filter(table => table.id !== oneTableOnAllRooms.id)
           state.tables.deletedTables.push(oneTableOnAllRooms)
-          console.log(state.tables.deletedTables, 'state.tables.deletedTables');
         } else {
           return
         }

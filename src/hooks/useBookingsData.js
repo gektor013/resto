@@ -35,7 +35,7 @@ const useBookingsData = () => {
 
   // Employees HOOK
   const { unsyncEmployees, sendUnsyncCreatedEmployees } = useEmployees(isConnected)
-
+  // Rooms & tables HOOK
 
   // get only todays booking, it is necessary for the missing internet
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
