@@ -68,7 +68,9 @@ const useEmployees = isConnected => {
   const onDeleteEmployees = async data => {
     deleteEmployee(data.id)
       .unwrap()
-      .then(() => dispatch(clearDeletedEmployee(data)))
+      .then(() => {
+        dispatch(clearDeletedEmployee(data));
+      })
       .catch(e => console.log(e, 'onDeleteEmployees ERROR'));
   };
 

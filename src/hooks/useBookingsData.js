@@ -24,7 +24,7 @@ import {resetBookingData} from '../store/slice/bookingDataSlice';
 import {useGetAllEmployeesQuery} from '../store/api/employeeApi';
 import {setAllEmployeesData} from '../store/slice/employeesSlice';
 import useEmployees from './useEmployees';
-import useTableForm from './useTableForm';
+import useTables from './useTables';
 import {isNeedUpdateCS} from '../store/slice/controlSlice';
 
 const useBookingsData = () => {
@@ -53,7 +53,7 @@ const useBookingsData = () => {
   // Employees HOOK
   const {isEmployeeSynchronaized} = useEmployees(isConnected);
   // Rooms & tables HOOK
-  const {isTableSynchronaized} = useTableForm(
+  const {isTableSynchronaized} = useTables(
     isEmployeeSynchronaized,
     isConnected,
   );
