@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   // these bookings show if there is no internet
@@ -24,6 +24,22 @@ export const bookingsSlice = createSlice({
   name: 'bookings',
   initialState,
   reducers: {
+    updateBookingTable: (state, action) => {
+      const createdBookingIndex =
+        state.unsynchronized.created.findIndex(book => book.table.internalID === action.payload.internalID)
+
+      const editBookingIndex =
+        state.unsynchronized.edited.findIndex(book => book.table.internalID === action.payload.internalID)
+
+      if (createdBookingIndex !== -1) {
+        state.unsynchronized.created[createdBookingIndex].table.id = action.payload.id
+      }
+      if (editBookingIndex !== -1) {
+        state.unsynchronized.edited[editBookingIndex].table.id = action.payload.id
+      }
+
+    },
+
     setTodaysAllBookings: (state, action) => {
       state.todays.allBooking = action.payload
     },
@@ -41,11 +57,31 @@ export const bookingsSlice = createSlice({
       }
     },
 
+    setUnsyncEmployeeToUnsyncCreated: (state, action) => {
+      const index = state.unsynchronized.created.findIndex(booking => {
+        return booking.employee.internalID === action.payload.internalID
+      })
+
+      if (index === -1) {
+        return
+      } else {
+        state.unsynchronized.created[index] = { ...state.unsynchronized.created[index], employee: action.payload }
+      }
+    },
+
     clearUnsynchronizedCreateBookings: (state, action) => {
       // const updated = state.unsynchronized.created.filter(
       //   booking => booking.internalID !== action.payload.internalID
       // );
-      state.unsynchronized.created = [];
+
+      const bookingWithInternalID = state.unsynchronized.created.find(
+        booking => booking.internalID === action.payload.internalID,
+      );
+
+      if (bookingWithInternalID) {
+        state.unsynchronized.created = state.unsynchronized.created.filter(booking => booking.internalID !== bookingWithInternalID.internalID)
+      }
+      // state.unsynchronized.created = [];
     },
 
     setUnsynchronizedEditedBookings: (state, action) => {
@@ -101,6 +137,26 @@ export const bookingsSlice = createSlice({
   }
 });
 
+const selectEmployees = state => state.bookings;
+
+export const todayAllBookingsCS = createSelector(
+  selectEmployees,
+  bookings => bookings.todays.allBooking
+);
+
+export const otherDayBookingsCS = createSelector(
+  selectEmployees,
+  bookings => bookings.other.allOtherDayBooking
+);
+
+export const createdUnsyncBookingCS = createSelector(
+  selectEmployees,
+  bookings => bookings.unsynchronized
+);
+
+
+
+
 export const {
   //today reducers
   setTodaysAllBookings,
@@ -109,6 +165,7 @@ export const {
   // unsynchronized reducers
   setUnsynchronizedCreateBookings,
   clearUnsynchronizedCreateBookings,
+  setUnsyncEmployeeToUnsyncCreated,
   setUnsynchronizedEditedBookings,
   clearUnsynchronizedEditedBookings,
   removeUnsynchronizedEditedBookingsById,
@@ -117,7 +174,11 @@ export const {
   // ohter day reducers
   setOtherDayAllBookings,
   setOtherDayWaitBookings,
-  setOtherDayDeletedBookings
+  setOtherDayDeletedBookings,
+
+
+  updateBookingTable
+
 } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;

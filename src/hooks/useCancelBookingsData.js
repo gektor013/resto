@@ -16,12 +16,10 @@ const useCancelBookingsData = () => {
   const { data: deletedPageData, isFetching: deletedIsFetch } = useGetAllBookingByParamsQuery(statusForDeletedPage, {
     skip: !isConnected,
     refetchOnFocus: true,
-    pollingInterval: 3000000
+    pollingInterval: 3000000,
+    refetchOnMountOrArgChange: true
   })
 
-  // console.log(allOtherDayDeletedBookings);
-
-  // console.log(navigation.isFocused());
   useEffect(() => {
     if (deletedPageData && !deletedIsFetch) {
       dispatch(setOtherDayDeletedBookings(deletedPageData))

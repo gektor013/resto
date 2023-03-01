@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   date: new Date().toString(),
@@ -21,6 +21,14 @@ export const controlSlice = createSlice({
     },
   },
 });
+
+const selectControl = state => state.control;
+
+export const isNeedUpdateCS = createSelector(
+  selectControl,
+  state => state.isNeedUpdate
+);
+
 
 export const {
   setSelectedDate,

@@ -1,11 +1,15 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
 
 import { useNavigation } from '@react-navigation/native';
-import useRoomForm from '../../hooks/useRoomForm';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { useDispatch } from 'react-redux';
+import { createRoomSlice, deletedRoomsSlice, editedRoomsSlice } from '../../store/slice/roomsSlice';
+import { createUnicId } from '../../utils/helpers';
+import { useCallback } from 'react';
 
 const MIN_NAME_LENGTH = 1;
 
@@ -20,10 +24,12 @@ const initialRoomState = {
 };
 
 const RoomForm = () => {
+  const { isConnected } = useNetInfo()
   const { colors } = useTheme();
-  const navigate = useNavigation()
   const route = useRoute()
-  const { createRoomLoading, patchLoading, deleteLoading, handleDeleteRoom, handleCreateRoom } = useRoomForm(route)
+  const navigate = useNavigation()
+  const dispatch = useDispatch()
+  const handleGoBack = useCallback(() => navigate.goBack(), [])
 
   const {
     control,
@@ -31,10 +37,25 @@ const RoomForm = () => {
     formState: { errors, isValid },
   } = useForm({
     defaultValues: useMemo(() => {
-      return route.params ? { name: route?.params?.name, id: route?.params?.id } : { ...initialRoomState }
+      return route.params ? { ...route.params } : { ...initialRoomState }
     }, [initialRoomState, route.params]),
     mode: 'onChange',
   });
+
+  const handleCreateRoom = (data) => {
+    if (!route.params) {
+      dispatch(createRoomSlice({ ...data, internalID: createUnicId() }))
+      handleGoBack()
+    } else {
+      dispatch(editedRoomsSlice(data))
+      handleGoBack()
+    }
+  };
+
+  const handleDeleteRoom = () => {
+    dispatch(deletedRoomsSlice(route.params))
+    handleGoBack()
+  }
 
   return (
     <View style={styles.mb150}>
@@ -71,7 +92,6 @@ const RoomForm = () => {
         <Button
           style={styles.mv25p}
           mode="contained"
-          loading={createRoomLoading || patchLoading}
           onPress={handleSubmit(handleCreateRoom)}
           disabled={!isValid}>
           Save
@@ -85,11 +105,10 @@ const RoomForm = () => {
           Cancel
         </Button>
 
-        {route.params && (
+        {route.params && isConnected && (
           <Button
             style={styles.mv25p}
             mode="contained"
-            loading={deleteLoading}
             disabled={route?.params?.tables?.length !== 0}
             onPress={handleDeleteRoom}
           >

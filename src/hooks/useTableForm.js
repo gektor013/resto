@@ -1,71 +1,104 @@
-import { useEffect, useState } from "react";
-import { useGetAllRoomsQuery, useLazyGetAllRoomsQuery } from "../store/api/roomsApi";
-import { useCreateTableMutation, useDeleteTableMutation, useGetTableByIdQuery, usePatchTableDataMutation } from "../store/api/tablesApi";
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from "react-redux";
-import { setAllRoomsData } from "../store/slice/roomsSlice";
+import { useEffect, useState, useMemo } from "react";
+import { useLazyGetAllRoomsQuery } from "../store/api/roomsApi";
+import { useCreateTableMutation, useDeleteTableMutation, usePatchTableDataMutation } from "../store/api/tablesApi";
+import { useDispatch, useSelector } from "react-redux";
+import { createdTablesDataCS, deletedTablesDataCS, removeTableInDeletedTables, setAllRoomsData, setNewTableToRoomSlice, updateTableDataSlice } from "../store/slice/roomsSlice";
+import { isNeedUpdateCS } from "../store/slice/controlSlice";
+import { updateBookingTable } from "../store/slice/bookingsSlice";
+import { bookingsDataCS } from "../store/slice/bookingDataSlice";
 
-
-
-const useTableForm = (id) => {
-  const { data: roomsData } = useGetAllRoomsQuery();
-  const [createTable, { isLoading: createTableLoading }] = useCreateTableMutation();
-  const [getAllRooms] = useLazyGetAllRoomsQuery()
-  const [patchTableData, { isLoading: patchTableLoading }] = usePatchTableDataMutation()
-  const [deleteTable, { isLoading: daleteTableLoading }] = useDeleteTableMutation()
-  const [expanded, setExpanded] = useState(false);
-  const handleOpenTableSelect = () => setExpanded(!expanded);
-  const navigation = useNavigation();
+const useTableForm = (isEmployeeSynchronaized, isConnected) => {
+  const [isTableSynchronaized, setIsTableSynchronaized] = useState(false)
   const dispatch = useDispatch()
 
-  const requestNewAllRoomData = async () => {
-    await getAllRooms().unwrap()
-      .then(res => {
-        if (res) {
-          dispatch(setAllRoomsData(res))
-        }
-      }).catch((e) => console.log(e, 'requestNewAllRoomData ERROR'))
+  // const { data: roomsData } = useGetAllRoomsQuery();
+  const [createTable,] = useCreateTableMutation();
+  const [getAllRooms] = useLazyGetAllRoomsQuery()
+  const [patchTableData,] = usePatchTableDataMutation()
+  const [deleteTable] = useDeleteTableMutation()
+
+  // create selector
+  const isNeedUpdate = useSelector(isNeedUpdateCS)
+  const unsyncCreatedTables = useSelector(createdTablesDataCS)
+  const deletedTables = useSelector(deletedTablesDataCS)
+  const { isEdit, isNewBooking } = useSelector(bookingsDataCS)
+
+  // constants
+  const isFormUnUsed = useMemo(() => !isNewBooking && !isEdit, [isEdit, isNewBooking])
+  const readyToUpdate = useMemo(() => isConnected && !isNeedUpdate, [isConnected, isNeedUpdate])
+  // const requestNewAllRoomData = async () => {
+  //   await getAllRooms().unwrap()
+  //     .then(res => {
+  //       if (res) {
+  //         dispatch(setAllRoomsData(res))
+  //       }
+  //     }).catch((e) => console.log(e, 'requestNewAllRoomData ERROR'))
+  // }
+
+  const onCreatedTableSuccess = (data) => {
+    dispatch(updateBookingTable(data))
+    dispatch(updateTableDataSlice(data))
   }
 
-  const handleCreateTable = async (data) => {
-    const newData = { ...data, room: `/api/rooms/${data.room.id}` };
+  const onCreateTable = async (data) => {
+    const newData = { ...data, room: data.room.id ? `/api/rooms/${data.room.id}` : null };
 
-    {
-      id ? (
-        await patchTableData(newData).unwrap()
-          .then((res) => {
-            if (res) {
-              requestNewAllRoomData()
-              navigation.goBack()
-            }
-          })
-          .catch((e) => console.log(e, 'patchTableData ERROR'))
-
-      ) : (
-        await createTable(newData)
-          .unwrap()
-          .then((res) => {
-            if (res) {
-              requestNewAllRoomData()
-              navigation.goBack()
-            }
-          })
-          .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
-      )
-    }
+    await createTable(newData)
+      .unwrap()
+      .then((res) => {
+        if (res) {
+          console.log(res, 'RES');
+          onCreatedTableSuccess({ id: res.id, ...data })
+          // requestNewAllRoomData()
+          // navigation.goBack()
+        }
+      })
+      .catch((e) => console.log(e, 'onCreateTable ERROR'))
   };
 
-  const handleTableDelete = async () => {
-    await deleteTable(id).unwrap()
-      .then(() => getAllRooms())
-      .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
-      .finally(() => navigation.goBack())
+  const onEditTable = async () => {
+    await patchTableData(newData).unwrap()
+      .then((res) => {
+        if (res) {
+          // requestNewAllRoomData()
+          // navigation.goBack()
+        }
+      })
+      .catch((e) => console.log(e, 'patchTableData ERROR'))
+  }
+
+  const onDeleteTable = async (data) => {
+    // console.log(data, 'data');
+    await deleteTable(data.id).unwrap()
+      .then(() => dispatch(removeTableInDeletedTables(data)))
+      .catch((e) => console.log(e, 'onDeleteTable ERROR'))
   }
 
 
+  useEffect(() => {
+    if (deletedTables?.length && isFormUnUsed && readyToUpdate && isEmployeeSynchronaized) {
+      onDeleteTable(deletedTables[0])
+    }
+  }, [deletedTables, isFormUnUsed, readyToUpdate, isEmployeeSynchronaized])
+
+  useEffect(() => {
+    if (unsyncCreatedTables?.length && isFormUnUsed && readyToUpdate && isEmployeeSynchronaized) {
+      onCreateTable(unsyncCreatedTables[0])
+    }
+  }, [unsyncCreatedTables, isFormUnUsed, readyToUpdate, isEmployeeSynchronaized])
+
+  useEffect(() => {
+    if (!unsyncCreatedTables?.length && !isTableSynchronaized && isEmployeeSynchronaized && readyToUpdate) {
+      setIsTableSynchronaized(true)
+    }
+
+    if (isConnected === false) {
+      setIsTableSynchronaized(false)
+    }
+  }, [unsyncCreatedTables, isTableSynchronaized, isEmployeeSynchronaized, readyToUpdate])
 
   return {
-    roomsData, expanded, createTableLoading, patchTableLoading, daleteTableLoading, handleOpenTableSelect, handleCreateTable, handleTableDelete
+    isTableSynchronaized
   }
 }
 

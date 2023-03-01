@@ -1,11 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
 
-import { List } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import useTableForm from '../../hooks/useTableForm';
+import { deletedTableSlice, editTableSlice, setNewTableToRoomSlice } from '../../store/slice/roomsSlice';
+import { useDispatch } from 'react-redux';
+import { createUnicId } from '../../utils/helpers';
 
 const MIN_NAME_LENGTH = 1;
 
@@ -14,34 +15,37 @@ const ERROR_MESSAGES = {
   NAME_INVALID: 'Invalid name',
 };
 
-const initialRoomState = {
-  name: "",
-  seatQuantity: "",
-  room: {}
-};
-
 const TableForm = () => {
   const { colors } = useTheme();
   const route = useRoute()
-  const navigate = useNavigation()
-
-  const { roomsData, expanded, createTableLoading, patchTableLoading, daleteTableLoading, handleOpenTableSelect, handleCreateTable, handleTableDelete
-  } = useTableForm(route?.params?.id)
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    getValues,
-    setValue,
   } = useForm({
     defaultValues: useMemo(() => {
-      return route?.params ?
-        { id: route?.params.id, name: route?.params.name, room: route?.params.room, seatQuantity: route?.params.seatQuantity }
-        : { ...initialRoomState }
-    }, [initialRoomState]),
+      return { ...route.params }
+    }, [route]),
     mode: 'onChange',
   });
+
+  const handleCreateTable = async (data) => {
+    if (!data?.id && !data?.internalID) {
+      dispatch(setNewTableToRoomSlice({ ...data, internalID: createUnicId() }))
+      navigation.goBack()
+    } else {
+      dispatch(editTableSlice(data))
+      navigation.goBack()
+    }
+  }
+
+  const handleTableDelete = () => {
+    dispatch(deletedTableSlice(route?.params))
+    navigation.goBack()
+  }
 
   return (
     <View style={styles.mb150}>
@@ -97,30 +101,10 @@ const TableForm = () => {
         name="seatQuantity"
       />
       <HelperText type="error">{errors.seatQuantity?.message}</HelperText>
-
-      {/* <List.Section style={{ borderWidth: 1, borderRadius: 3, borderColor: colors.outline }}>
-        <List.Accordion
-          expanded={expanded}
-          title={getValues().room.name || (roomsData && roomsData[0].name)}
-
-          // title={getValues().room}
-          onPress={handleOpenTableSelect}>
-          {roomsData?.map(room => (
-            <List.Item key={room.id} title={room.name} onPress={() => {
-              setValue('room', room)
-              handleOpenTableSelect()
-            }} />
-          ))}
-        </List.Accordion>
-      </List.Section>
-
-      <HelperText type="error">{errors.tables?.message}</HelperText> */}
-
       <View>
         <Button
           style={styles.mv25p}
           mode="contained"
-          loading={createTableLoading || patchTableLoading}
           onPress={handleSubmit(handleCreateTable)}
           disabled={!isValid}>
           Save
@@ -134,16 +118,15 @@ const TableForm = () => {
           Cancel
         </Button>
 
-        {route?.params?.id && (
-          <Button
-            style={styles.mv25p}
-            mode="contained"
-            loading={daleteTableLoading}
-            onPress={handleTableDelete}
-          >
-            Delete
-          </Button>
-        )}
+        {/* {route?.params?.id && ( */}
+        <Button
+          style={styles.mv25p}
+          mode="contained"
+          onPress={handleTableDelete}
+        >
+          Delete
+        </Button>
+        {/* )} */}
       </View>
     </View>
 

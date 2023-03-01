@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { resetBookingData } from '../store/slice/bookingDataSlice';
 import { setUnsynchronizedCreateBookings, setUnsynchronizedEditedBookings } from '../store/slice/bookingsSlice';
 import { useNavigation } from '@react-navigation/native';
-import uuid from 'react-native-uuid';
+import { createUnicId } from '../utils/helpers';
 
 const useBookingForm = () => {
   const navigation = useNavigation();
@@ -20,14 +20,15 @@ const useBookingForm = () => {
 
   const onSubmitWithMode = () => {
     const createDataTable = bookingState?.table ? { ...bookingState?.table, room: { ...findRoom(bookingState?.table?.id) } } : null
+    const internalID = bookingState?.internalID ? bookingState?.internalID : createUnicId()
 
     if (bookingState.isEdit) {
       dispatch(setUnsynchronizedEditedBookings(
-        { ...bookingState, internalID: bookingState?.internalID ? bookingState?.internalID : uuid.v4(), unsync: true, table: createDataTable }
+        { ...bookingState, internalID, unsync: true, table: createDataTable }
       ))
     } else {
       dispatch(setUnsynchronizedCreateBookings(
-        { ...bookingState, internalID: uuid.v4(), unsync: true, table: createDataTable }
+        { ...bookingState, internalID, unsync: true, table: createDataTable }
       ))
     }
     navigation.navigate('allBokings')

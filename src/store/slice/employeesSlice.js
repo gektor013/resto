@@ -1,7 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createSelector } from '@reduxjs/toolkit';
 
 const initialState = {
-  employees: []
+  allEmployees: [],
+
+  unsyncEmployees: [],
+  deletedEmployees: []
 };
 
 export const employeesSlice = createSlice({
@@ -9,39 +12,75 @@ export const employeesSlice = createSlice({
   initialState,
   reducers: {
     setAllEmployeesData: (state, action) => {
-      state.employees = action.payload
+      state.allEmployees = action.payload
     },
+    setToUnsynchronized: (state, action) => {
+      state.unsyncEmployees.push(action.payload)
+    },
+
     deleteEmployeesData: (state, action) => {
-      const filterElement = state.employees.filter(elem => elem.id !== action.payload)
-      state.employees = filterElement
+
+      const employeeWithId = state.allEmployees.find(
+        employee => employee.id === action.payload,
+      );
+
+      if (employeeWithId) {
+        state.allEmployees = state.allEmployees.filter(employee => employee.id !== employeeWithId.id)
+        state.deletedEmployees.push(employeeWithId)
+      } else {
+        state.unsyncEmployees = state.unsyncEmployees.filter(employee => employee.internalID !== action.payload)
+      }
+
     },
-    createEmployeeData: (state, action) => {
-      state.employees = [...state.employees, action.payload]
+
+    clearDeletedEmployee: (state) => {
+
+      // const employeeWithInternalID = state.unsyncEmployees.find(
+      //   employee => employee.internalID === action.payload.internalID,
+      // );
+
+      // if (employeeWithInternalID) {
+      //   state.unsyncEmployees = state.unsyncEmployees.filter(employee => employee.internalID !== employeeWithInternalID.internalID)
+      // }
+    },
+
+    removeUnsyncEmployee: (state, action) => {
+      const employeeWithInternalID = state.unsyncEmployees.find(
+        employee => employee.internalID === action.payload.internalID,
+      );
+
+      if (employeeWithInternalID) {
+        state.unsyncEmployees = state.unsyncEmployees.filter(employee => employee.internalID !== employeeWithInternalID.internalID)
+      }
+      // state.unsyncEmployees = []
+      // return () => initialState
     }
-    // createRoomSlice: (state, action) => {
-    //   state.rooms = [...state.rooms, action.payload]
-    // },
-    // patchRoomSlice: (state, action) => {
-    //   const index = state.rooms.findIndex(
-    //     room => room.id === action.payload.id,
-    //   );
-
-    //   if (index === -1) {
-    //     state.rooms = [
-    //       ...state.rooms, { ...action.payload }
-    //     ];
-    //   } else {
-    //     state.rooms[index] = { ...action.payload }
-    //   }
-    // },
-
   }
 });
+
+const selectEmployees = state => state.employees;
+
+export const allEmployeesCS = createSelector(
+  selectEmployees,
+  employees => employees.allEmployees
+);
+
+export const unsyncEmployeesDataCS = createSelector(
+  selectEmployees,
+  employees => employees.unsyncEmployees
+);
+
+export const deletedEmployeesCS = createSelector(
+  selectEmployees,
+  employees => employees.deletedEmployees
+);
 
 export const {
   setAllEmployeesData,
   deleteEmployeesData,
-  createEmployeeData
+  clearDeletedEmployee,
+  setToUnsynchronized,
+  removeUnsyncEmployee,
 } = employeesSlice.actions;
 
 export default employeesSlice.reducer;

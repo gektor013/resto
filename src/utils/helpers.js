@@ -1,3 +1,5 @@
+import uuid from 'react-native-uuid';
+
 const definitionPrefixName = (prefix) => {
   switch (prefix) {
     case 0:
@@ -23,4 +25,8 @@ const getRowColorByStatus = (status) => {
   }
 }
 
-export { definitionPrefixName, getRowColorByStatus }
+const createUnicId = () => {
+  return uuid.v4()
+}
+
+export { definitionPrefixName, getRowColorByStatus, createUnicId }

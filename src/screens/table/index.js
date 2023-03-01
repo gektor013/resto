@@ -10,6 +10,7 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import LoadingScreen from '../loading';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBookingData } from '../../store/slice/bookingDataSlice';
+import { allRoomsDataCS, createdRoomsDataCS, editedRoomsDataCS } from '../../store/slice/roomsSlice';
 
 const TableGroup = () => {
   const [value, setValue] = useState(1);
@@ -20,13 +21,15 @@ const TableGroup = () => {
   const route = useRoute()
   const { colors } = useTheme();
 
+  const allRoomsData = useSelector(allRoomsDataCS)
+  const createdRoomsData = useSelector(createdRoomsDataCS)
+
+  const oneRoom = [...allRoomsData, ...createdRoomsData]?.find(arr => arr.id === value || arr.internalID === value)
+
   const { isLoading: roomsDataLoading } = useGetAllRoomsQuery('', {
     skip: isConnected === false,
     refetchOnReconnect: true,
   })
-  const { rooms: roomsData } = useSelector(state => state.rooms)
-
-  const oneRoom = roomsData?.find(arr => arr.id === value)
 
   const handleDoublePress = useCallback((item) => {
     if (isConnected === false) return
@@ -51,10 +54,14 @@ const TableGroup = () => {
   useEffect(() => {
     const routeSelectTable = route?.params?.selectTable
 
-    if (routeSelectTable !== null) {
+    if (routeSelectTable) {
       setValue(routeSelectTable?.room?.id)
     }
-  }, [route])
+
+    if (!routeSelectTable && allRoomsData?.length) {
+      setValue(allRoomsData[0].id)
+    }
+  }, [route, allRoomsData])
 
   return (
     <>
@@ -68,24 +75,25 @@ const TableGroup = () => {
             onValueChange={setValue}
             style={{ alignItems: 'center', marginBottom: 0 }}
             buttons={
-              roomsData ? roomsData?.map(item => ({
-                value: item.id,
+              allRoomsData ? [...allRoomsData, ...createdRoomsData]?.map(item => ({
+                value: item?.id || item?.internalID,
                 label: item.name,
                 onPress: () => handleDoublePress(item),
-              })) : []
-            }
+              })) : []}
           />
           {/* </ScrollView> */}
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
             {
               oneRoom?.tables.map((item, idx) => {
+                const bgColor = item.id !== undefined && route?.params?.selectTable?.id === item.id ? colors.primary : '#3fab1a'
+
                 return (
-                  <TouchableOpacity key={item.createdAt + idx}
+                  <TouchableOpacity key={item.id || item.internalID}
                     onPress={() => handleSelectTable(item)}
-                    onLongPress={() => navigation.navigate('tableForm', { ...item, room: oneRoom })}
+                    onLongPress={() => navigation.navigate('tableForm', { ...item, room: { id: oneRoom.id, internalID: oneRoom.internalID } })}
                   >
                     <View style={{ alignItems: 'center' }}>
-                      <Surface style={{ ...styles.surface, backgroundColor: route?.params?.selectTable?.id === item.id ? colors.primary : '#3fab1a' }} elevation={4}>
+                      <Surface style={{ ...styles.surface, backgroundColor: bgColor }} elevation={4}>
                         <Text style={{ color: colors.onBackground }}>{item.name}</Text>
                       </Surface>
                       <Text style={{ color: colors.onBackground }}>{item.seatQuantity} seats</Text>
@@ -94,14 +102,14 @@ const TableGroup = () => {
                 )
               })
             }
-            {isConnected ? (
-              <TouchableOpacity
-                onPress={() => navigation.navigate('tableForm', { room: oneRoom })}>
-                <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
-                  <Text>+</Text>
-                </Surface>
-              </TouchableOpacity>
-            ) : ''}
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate('tableForm', { room: oneRoom })}>
+              <Surface style={{ ...styles.surface, backgroundColor: colors.primary }} elevation={4}>
+                <Text>+</Text>
+              </Surface>
+            </TouchableOpacity>
+
           </View>
         </>)
       }

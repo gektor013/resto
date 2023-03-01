@@ -38,7 +38,7 @@ export const bookingsApi = createApi({
       query: (query) => ({
         url: `/bookings${query}`,
       }),
-      providesTags: ['TodayBookings']
+      providesTags: ['TodayBookings'],
     }),
     getBookingById: builder.query({
       query: id => ({

@@ -118,7 +118,6 @@ const BookingTable = ({ bookingsData, cancel }) => {
 
 const Row = ({ item, disabled }) => {
   const {
-    id,
     name,
     phone,
     table,
@@ -147,7 +146,7 @@ const Row = ({ item, disabled }) => {
     <>
       {bookingState.isNewBooking || bookingState.isEdit ?
         (
-          <View key={id || uuid.v4()} style={{ backgroundColor: colors.surface }}>
+          <View style={{ backgroundColor: colors.surface }}>
             <DataTable.Row
               disabled={disabled}
             >
@@ -231,7 +230,7 @@ const Row = ({ item, disabled }) => {
         ) : (
           <Pressable
             onLongPress={() => dispatch(setEditBookingData(item))}
-            key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
+            style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
             <DataTable.Row
               disabled={disabled}
               style={{ backgroundColor: getRowColorByStatus(status) }}
