@@ -31,14 +31,10 @@ const useEmployees = () => {
     setEmployeeName({name: value});
   };
 
-
-  const handleDeleteEmployee = async (employee) => {
-
   const handleDeleteEmployee = async (employee, selectedEmployee) => {
     if (JSON.stringify(employee) === JSON.stringify(selectedEmployee)) {
       return;
     }
-
 
     const unsyncCreatedBookingWithEmployeeId = createdUnsyncBooking.find(
       booking => booking.employee.id && booking.employee.id === employee.id,
