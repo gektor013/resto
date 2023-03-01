@@ -1,10 +1,9 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit';
+import {createSlice, createSelector} from '@reduxjs/toolkit';
 
 const initialState = {
   allEmployees: [],
-
   unsyncEmployees: [],
-  deletedEmployees: []
+  deletedEmployees: [],
 };
 
 export const employeesSlice = createSlice({
@@ -12,36 +11,39 @@ export const employeesSlice = createSlice({
   initialState,
   reducers: {
     setAllEmployeesData: (state, action) => {
-      state.allEmployees = action.payload
+      state.allEmployees = action.payload;
     },
     setToUnsynchronized: (state, action) => {
-      state.unsyncEmployees.push(action.payload)
+      state.unsyncEmployees.push(action.payload);
     },
 
     deleteEmployeesData: (state, action) => {
-
       const employeeWithId = state.allEmployees.find(
         employee => employee.id === action.payload,
       );
 
       if (employeeWithId) {
-        state.allEmployees = state.allEmployees.filter(employee => employee.id !== employeeWithId.id)
-        state.deletedEmployees.push(employeeWithId)
+        state.allEmployees = state.allEmployees.filter(
+          employee => employee.id !== employeeWithId.id,
+        );
+        state.deletedEmployees.push(employeeWithId);
       } else {
-        state.unsyncEmployees = state.unsyncEmployees.filter(employee => employee.internalID !== action.payload)
+        state.unsyncEmployees = state.unsyncEmployees.filter(
+          employee => employee.internalID !== action.payload,
+        );
       }
-
     },
 
-    clearDeletedEmployee: (state) => {
+    clearDeletedEmployee: (state, action) => {
+      const employeeWithID = state.deletedEmployees.find(
+        employee => employee.id === action.payload.id,
+      );
 
-      // const employeeWithInternalID = state.unsyncEmployees.find(
-      //   employee => employee.internalID === action.payload.internalID,
-      // );
-
-      // if (employeeWithInternalID) {
-      //   state.unsyncEmployees = state.unsyncEmployees.filter(employee => employee.internalID !== employeeWithInternalID.internalID)
-      // }
+      if (employeeWithID) {
+        state.deletedEmployees = state.deletedEmployees.filter(
+          employee => employee.id !== employeeWithID.id,
+        );
+      }
     },
 
     removeUnsyncEmployee: (state, action) => {
@@ -50,29 +52,29 @@ export const employeesSlice = createSlice({
       );
 
       if (employeeWithInternalID) {
-        state.unsyncEmployees = state.unsyncEmployees.filter(employee => employee.internalID !== employeeWithInternalID.internalID)
+        state.unsyncEmployees = state.unsyncEmployees.filter(
+          employee => employee.internalID !== employeeWithInternalID.internalID,
+        );
       }
-      // state.unsyncEmployees = []
-      // return () => initialState
-    }
-  }
+    },
+  },
 });
 
 const selectEmployees = state => state.employees;
 
 export const allEmployeesCS = createSelector(
   selectEmployees,
-  employees => employees.allEmployees
+  employees => employees.allEmployees,
 );
 
 export const unsyncEmployeesDataCS = createSelector(
   selectEmployees,
-  employees => employees.unsyncEmployees
+  employees => employees.unsyncEmployees,
 );
 
 export const deletedEmployeesCS = createSelector(
   selectEmployees,
-  employees => employees.deletedEmployees
+  employees => employees.deletedEmployees,
 );
 
 export const {

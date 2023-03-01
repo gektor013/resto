@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BottomNavigation } from 'react-native-paper';
+import React, {useState} from 'react';
+import {BottomNavigation} from 'react-native-paper';
 import ActiveBookingsStack from './all-booking-stack/index';
 import WaitingsBookingStack from './waitings-booking-stack';
 import CanceledBookingStack from './canceled-booking-stack';
@@ -24,11 +24,11 @@ const Navigation = () => {
       title: 'Trash',
       focusedIcon: 'book-cancel-outline',
     },
-    {
-      key: 'table',
-      title: 'Tables',
-      focusedIcon: 'table-furniture',
-    },
+    // {
+    //   key: 'table',
+    //   title: 'Tables',
+    //   focusedIcon: 'table-furniture',
+    // },
     // {
     //   key: 'users',
     //   title: 'Users',
@@ -45,7 +45,7 @@ const Navigation = () => {
 
   return (
     <BottomNavigation
-      navigationState={{ index, routes }}
+      navigationState={{index, routes}}
       onIndexChange={setIndex}
       renderScene={renderScene}
     />
