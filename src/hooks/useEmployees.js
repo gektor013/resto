@@ -4,17 +4,14 @@ import {
   setUnsyncEmployeeToUnsyncCreated,
 } from '../store/slice/bookingsSlice';
 import {useDispatch, useSelector} from 'react-redux';
-
 import {
   useCreateEmployeeMutation,
   useDeleteEmployeeMutation,
-  useGetAllEmployeesQuery,
 } from '../store/api/employeeApi';
 import {
   deletedEmployeesCS,
   unsyncEmployeesDataCS,
   removeUnsyncEmployee,
-  setAllEmployeesData,
   clearDeletedEmployee,
 } from '../store/slice/employeesSlice';
 import {isNeedUpdateCS} from '../store/slice/controlSlice';
@@ -56,9 +53,6 @@ const useEmployees = isConnected => {
     [isEdit, isNewBooking],
   );
 
-  console.log('deletedEmployees', deletedEmployees);
-  console.log('unsyncEmployees', unsyncEmployees);
-
   const sendUnsyncCreatedEmployees = async data => {
     await createEmployee(data)
       .unwrap()
@@ -72,7 +66,6 @@ const useEmployees = isConnected => {
   };
 
   const onDeleteEmployees = async data => {
-    console.log('data', data);
     deleteEmployee(data.id)
       .unwrap()
       .then(() => dispatch(clearDeletedEmployee(data)))
@@ -96,7 +89,6 @@ const useEmployees = isConnected => {
   }, [createdUnsyncBookingLength, unsyncEmployees, readyToUpdate]);
 
   useEffect(() => {
-    console.log(deletedEmployeesLength, readyToUpdate, isFormUnUsed);
     if (deletedEmployeesLength && readyToUpdate && isFormUnUsed) {
       onDeleteEmployees(deletedEmployees[0]);
     }
@@ -104,7 +96,6 @@ const useEmployees = isConnected => {
 
   return {
     isEmployeeSynchronaized,
-    // unsyncEmployees, sendUnsyncCreatedEmployees
   };
 };
 
