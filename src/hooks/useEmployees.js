@@ -83,16 +83,25 @@ const useEmployees = isConnected => {
   }, [readyToUpdate, unsyncEmployees]);
 
   useEffect(() => {
-    if (createdUnsyncBookingLength && unsyncEmployeesLength && readyToUpdate) {
+    if (
+      createdUnsyncBookingLength &&
+      !deletedEmployeesLength &&
+      unsyncEmployeesLength &&
+      readyToUpdate
+    ) {
       sendUnsyncCreatedEmployees(unsyncEmployees[0]);
     }
-  }, [createdUnsyncBookingLength, unsyncEmployees, readyToUpdate]);
 
-  useEffect(() => {
     if (deletedEmployeesLength && readyToUpdate && isFormUnUsed) {
       onDeleteEmployees(deletedEmployees[0]);
     }
-  }, [deletedEmployeesLength, readyToUpdate, isFormUnUsed]);
+  }, [
+    createdUnsyncBookingLength,
+    deletedEmployeesLength,
+    unsyncEmployees,
+    readyToUpdate,
+    isFormUnUsed,
+  ]);
 
   return {
     isEmployeeSynchronaized,
