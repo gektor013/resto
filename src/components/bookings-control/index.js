@@ -3,18 +3,23 @@ import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import useBookingControl from '../../hooks/useBookingControl';
-import { setIsNeedUpdate, setSelectedDate } from '../../store/slice/controlSlice';
+import { dateCS, isNeedUpdateCS, setIsNeedUpdate, setSelectedDate } from '../../store/slice/controlSlice';
 import moment from 'moment';
 import { formatDate } from '../../utils/dates';
 
 import { useGetBookingsDatesQuery } from '../../store/api/bookingsApi';
 import DaysCalendar from '../calendar';
+import { bookingsDataCS } from '../../store/slice/bookingDataSlice';
 
 const BookingsControl = ({
   isConnected,
   onHandleOpenModals,
 }) => {
-  const { date: dateString, isNeedUpdate } = useSelector(state => state.control);
+  const dateString = useSelector(dateCS)
+  const isNeedUpdate = useSelector(isNeedUpdateCS)
+  const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
+
+  const disbledCalendar = isEdit || isNewBooking || !isConnected
 
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   const { data: bookingsDates } = useGetBookingsDatesQuery()
@@ -44,8 +49,6 @@ const BookingsControl = ({
     }
   }, [isConnected])
 
-  // console.log(created?.length || edited?.length, 'CREATED || eDIT');
-
   return (
     <>
       <View>
@@ -55,14 +58,14 @@ const BookingsControl = ({
               icon="chevron-left"
               mode="contained"
               compact={true}
-              disabled={!isConnected}
+              disabled={disbledCalendar}
               style={{ marginRight: 5 }}
               onPress={() => dayPlus('minus')}>
             </Button>
             <Button
               icon="calendar"
               mode="contained"
-              disabled={!isConnected}
+              disabled={disbledCalendar}
               onPress={onDatePickerHandler}>
               {formatDate(new Date(dateString))}
             </Button>
@@ -70,7 +73,7 @@ const BookingsControl = ({
               icon="chevron-left"
               mode="contained"
               compact={true}
-              disabled={!isConnected}
+              disabled={disbledCalendar}
               style={{ marginLeft: 5, transform: [{ rotateY: '180deg' }] }}
               onPress={() => dayPlus('plus')}>
             </Button>
@@ -89,6 +92,7 @@ const BookingsControl = ({
           <Button
             icon="plus"
             mode="contained"
+            disabled={isEdit || isNewBooking}
             onPress={() => onHandleOpenModals('date')}>
             New booking
           </Button>
