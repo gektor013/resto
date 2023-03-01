@@ -1,4 +1,4 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import {createSelector, createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   allRooms: [],
@@ -9,11 +9,9 @@ const initialState = {
   tables: {
     createdTables: [],
     editedTables: [],
-    deletedTables: []
-  }
+    deletedTables: [],
+  },
 };
-
-
 
 export const roomsSlice = createSlice({
   name: 'rooms',
@@ -21,10 +19,10 @@ export const roomsSlice = createSlice({
   reducers: {
     // updates the data on the first render
     setAllRoomsData: (state, action) => {
-      state.allRooms = action.payload
+      state.allRooms = action.payload;
     },
     createRoomSlice: (state, action) => {
-      state.createdRooms.push(action.payload)
+      state.createdRooms.push(action.payload);
     },
 
     // searches in synced and unsynced and updates the room data
@@ -38,21 +36,19 @@ export const roomsSlice = createSlice({
       );
 
       if (oneRoomToAllRoomsIndex === -1) {
-
         if (unsyncCreatedRoomIndex === -1) {
-          return
+          return;
         } else {
-          state.createdRooms[unsyncCreatedRoomIndex] = action.payload
+          state.createdRooms[unsyncCreatedRoomIndex] = action.payload;
         }
       } else {
-        state.allRooms[oneRoomToAllRoomsIndex] = action.payload
-        state.editedRooms.push(action.payload)
+        state.allRooms[oneRoomToAllRoomsIndex] = action.payload;
+        state.editedRooms.push(action.payload);
       }
     },
 
     // searches in synced and unsynced and deleted the room data
     deletedRoomsSlice: (state, action) => {
-
       const oneRoomToAllRoomsIndex = state.allRooms.findIndex(
         room => room.id === action.payload.id,
       );
@@ -62,19 +58,22 @@ export const roomsSlice = createSlice({
       );
 
       if (oneRoomToAllRoomsIndex === -1) {
-
         if (unsyncCreatedRoomIndex === -1) {
-          return
+          return;
         } else {
-          state.createdRooms = state.createdRooms.filter(room => room.internalID !== action.payload.internalID)
+          state.createdRooms = state.createdRooms.filter(
+            room => room.internalID !== action.payload.internalID,
+          );
         }
       } else {
-        state.allRooms = state.allRooms.filter(room => room.id !== action.payload.id)
-        state.deletedRooms.push(action.payload)
+        state.allRooms = state.allRooms.filter(
+          room => room.id !== action.payload.id,
+        );
+        state.deletedRooms.push(action.payload);
       }
     },
 
-    // searches in synced and unsynced roms and added the table data 
+    // searches in synced and unsynced roms and added the table data
     setNewTableToRoomSlice: (state, action) => {
       const oneRoomToAllRoomsIndex = state.allRooms.findIndex(
         room => room.id === action.payload.room.id,
@@ -86,180 +85,228 @@ export const roomsSlice = createSlice({
 
       if (oneRoomToAllRoomsIndex === -1) {
         if (unsyncCreatedRoomIndex === -1) {
-          return
+          return;
         } else {
-          state.createdRooms[unsyncCreatedRoomIndex].tables.push(action.payload)
-          state.tables.createdTables.push(action.payload)
+          state.createdRooms[unsyncCreatedRoomIndex].tables.push(
+            action.payload,
+          );
+          state.tables.createdTables.push(action.payload);
         }
-
       } else {
-        state.allRooms[oneRoomToAllRoomsIndex].tables.push(action.payload)
-        state.tables.createdTables.push(action.payload)
+        state.allRooms[oneRoomToAllRoomsIndex].tables.push(action.payload);
+        state.tables.createdTables.push(action.payload);
       }
     },
 
     // searches in synced and unsynced tables and updated the data
     editTableSlice: (state, action) => {
-      const keyName = action.payload?.id ? 'id' : 'internalID'
+      const keyName = action.payload?.id ? 'id' : 'internalID';
 
-      const oneRoomInAllRoomsIndex =
-        state.allRooms.findIndex(room => room.id === action.payload.room.id)
+      const oneRoomInAllRoomsIndex = state.allRooms.findIndex(
+        room => room.id === action.payload.room.id,
+      );
 
-      const oneRoomInCreatedRoomsIndex =
-        state.createdRooms.findIndex(room => room.internalID === action.payload.room.internalID)
+      const oneRoomInCreatedRoomsIndex = state.createdRooms.findIndex(
+        room => room.internalID === action.payload.room.internalID,
+      );
 
       if (oneRoomInAllRoomsIndex !== -1) {
+        console.log('oneRoomInAllRoomsIndex', oneRoomInAllRoomsIndex);
 
-        // find element in room with index 
-        const oneTableOnAllRoomsIndex =
-          state.allRooms[oneRoomInAllRoomsIndex].tables.findIndex(table => table[keyName] === action.payload[keyName])
+        // find element in room with index
+        const oneTableOnAllRoomsIndex = state.allRooms[
+          oneRoomInAllRoomsIndex
+        ].tables.findIndex(table => table[keyName] === action.payload[keyName]);
 
         // find element in editable
-        const oneTableInEditTables =
-          state.tables.editedTables.findIndex(table => table[keyName] === action.payload[keyName])
+        const oneTableInEditTables = state.tables.editedTables.findIndex(
+          table => table[keyName] === action.payload[keyName],
+        );
+        console.log('oneTableOnAllRoomsIndex', oneTableOnAllRoomsIndex);
+        console.log('oneTableInEditTables', oneTableInEditTables);
 
         if (oneTableOnAllRoomsIndex !== -1) {
+          console.log('UPDATE CREATE TABLE');
 
-          state.allRooms[oneRoomInAllRoomsIndex].tables[oneTableOnAllRoomsIndex] = action.payload
+          console.log('update this => ');
+          console.log(
+            state.allRooms[oneRoomInAllRoomsIndex].tables[
+              oneTableOnAllRoomsIndex
+            ],
+          );
+          console.log('with this ==> ');
+          console.log(action.payload);
 
-          if (oneTableInEditTables !== -1) {
-            state.tables.editedTables[oneTableInEditTables] = action.payload
-          }
-          else {
-            state.tables.editedTables.push(action.payload)
-          }
+          state.allRooms[oneRoomInAllRoomsIndex].tables[
+            oneTableOnAllRoomsIndex
+          ] = action.payload;
+        } else if (oneTableInEditTables !== -1) {
+          console.log('UPDATE EDIT TABLE');
 
+          state.tables.editedTables[oneTableInEditTables] = action.payload;
+        } else {
+          console.log('PUSH TO EDIT TABLE');
+
+          state.tables.editedTables.push(action.payload);
         }
       }
 
       if (oneRoomInCreatedRoomsIndex !== -1) {
-        const oneTableOnCreatedRoomsIndex =
-          state.createdRooms[oneRoomInCreatedRoomsIndex].tables.findIndex(table => table.internalID === action.payload.internalID)
+        console.log('oneRoomInCreatedRoomsIndex', oneRoomInCreatedRoomsIndex);
+
+        const oneTableOnCreatedRoomsIndex = state.createdRooms[
+          oneRoomInCreatedRoomsIndex
+        ].tables.findIndex(
+          table => table.internalID === action.payload.internalID,
+        );
 
         if (oneTableOnCreatedRoomsIndex !== -1) {
-          state.createdRooms[oneRoomInCreatedRoomsIndex].tables[oneTableOnCreatedRoomsIndex] = action.payload
+          state.createdRooms[oneRoomInCreatedRoomsIndex].tables[
+            oneTableOnCreatedRoomsIndex
+          ] = action.payload;
         }
       }
     },
 
     // searches in synced and unsynced tables and deleted the data
     deletedTableSlice: (state, action) => {
-      const oneRoomInAllRoomsIndex =
-        state.allRooms.findIndex(room => room.id === action.payload.room.id)
+      const oneRoomInAllRoomsIndex = state.allRooms.findIndex(
+        room => room.id === action.payload.room.id,
+      );
 
-      const oneRoomInCreatedRoomsIndex =
-        state.createdRooms.findIndex(room => room.internalID === action.payload.room.internalID)
+      const oneRoomInCreatedRoomsIndex = state.createdRooms.findIndex(
+        room => room.internalID === action.payload.room.internalID,
+      );
 
       if (oneRoomInAllRoomsIndex !== -1) {
-        const oneTableOnAllRooms = state.allRooms[oneRoomInAllRoomsIndex].tables.find(table => table.id === action.payload.id)
+        const oneTableOnAllRooms = state.allRooms[
+          oneRoomInAllRoomsIndex
+        ].tables.find(table => table.id === action.payload.id);
 
         if (oneTableOnAllRooms) {
-          state.allRooms[oneRoomInAllRoomsIndex].tables = state.allRooms[oneRoomInAllRoomsIndex].tables.filter(table => table.id !== oneTableOnAllRooms.id)
-          state.tables.deletedTables.push(oneTableOnAllRooms)
+          state.allRooms[oneRoomInAllRoomsIndex].tables = state.allRooms[
+            oneRoomInAllRoomsIndex
+          ].tables.filter(table => table.id !== oneTableOnAllRooms.id);
+          state.tables.deletedTables.push(oneTableOnAllRooms);
         } else {
-          return
+          return;
         }
       }
 
-
       if (oneRoomInCreatedRoomsIndex !== -1) {
-        const oneTableOnCreatedRooms =
-          state.createdRooms[oneRoomInCreatedRoomsIndex].tables.find(table => table.internalID === action.payload.internalID)
+        const oneTableOnCreatedRooms = state.createdRooms[
+          oneRoomInCreatedRoomsIndex
+        ].tables.find(table => table.internalID === action.payload.internalID);
 
         if (oneTableOnCreatedRooms) {
           state.createdRooms[oneRoomInCreatedRoomsIndex].tables =
-            state.createdRooms[oneRoomInCreatedRoomsIndex].tables.filter(table => table.internalID !== oneTableOnCreatedRooms.internalID)
+            state.createdRooms[oneRoomInCreatedRoomsIndex].tables.filter(
+              table => table.internalID !== oneTableOnCreatedRooms.internalID,
+            );
         } else {
-          return
+          return;
         }
       }
     },
 
     //updates the table data in the redux when successfully sent to the server
     updateTableDataSlice: (state, action) => {
-      const { internalID, name, id, seatQuantity } = action.payload
+      // createdTables: [],
+      //  editedTables: [],
 
+      const {internalID, name, id, seatQuantity} = action.payload;
 
-      const removeTableFromCreated =
-        state.tables.createdTables.find(table => table.internalID === internalID)
+      const removeTableFromCreated = state.tables.createdTables.find(
+        table => table.internalID === internalID,
+      );
 
-      const searchTableInCreatedRooms =
-        state.createdRooms.findIndex(room => room.internalID === action.payload.room.internalID)
+      const searchTableInCreatedRooms = state.createdRooms.findIndex(
+        room => room.internalID === action.payload.room.internalID,
+      );
 
       const searchUnsyncTableInEditedTables =
-        state.tables.editedTables.findIndex(table => table.internalID === internalID)
+        state.tables.editedTables.findIndex(
+          table => table.internalID === internalID,
+        );
 
       if (removeTableFromCreated) {
-        state.tables.createdTables =
-          state.tables.createdTables.filter(table => table.internalID !== removeTableFromCreated.internalID)
+        state.tables.createdTables = state.tables.createdTables.filter(
+          table => table.internalID !== removeTableFromCreated.internalID,
+        );
       }
 
       if (searchTableInCreatedRooms !== -1) {
-        const oneTableOnCreatedRooms =
-          state.createdRooms[searchTableInCreatedRooms].tables.findIndex(table => table.internalID === internalID)
+        const oneTableOnCreatedRooms = state.createdRooms[
+          searchTableInCreatedRooms
+        ].tables.findIndex(table => table.internalID === internalID);
 
-        state.createdRooms[searchTableInCreatedRooms].tables[oneTableOnCreatedRooms] = { id, name, seatQuantity }
+        state.createdRooms[searchTableInCreatedRooms].tables[
+          oneTableOnCreatedRooms
+        ] = {id, name, seatQuantity};
       }
 
       if (searchUnsyncTableInEditedTables !== -1) {
-        state.tables.editedTables[searchUnsyncTableInEditedTables].id = id
+        state.tables.editedTables[searchUnsyncTableInEditedTables].id = id;
       }
     },
 
     removeTableInDeletedTables: (state, action) => {
-      const findDeletedTablse =
-        state.tables.deletedTables.find(table => table.id === action.payload.id)
+      const findDeletedTablse = state.tables.deletedTables.find(
+        table => table.id === action.payload.id,
+      );
 
       if (findDeletedTablse) {
-        state.tables.deletedTables = state.tables.deletedTables.filter(table => table.id !== findDeletedTablse.id)
+        state.tables.deletedTables = state.tables.deletedTables.filter(
+          table => table.id !== findDeletedTablse.id,
+        );
       }
     },
 
     removeTableInEditTables: (state, action) => {
-      const keyName = action.payload?.id ? 'id' : 'internalID'
+      const keyName = action.payload?.id ? 'id' : 'internalID';
 
-      const findDeletedTablse =
-        state.tables.editedTables.find(table => table[keyName] === action.payload[keyName])
-    }
-
-  }
+      const findDeletedTablse = state.tables.editedTables.find(
+        table => table[keyName] === action.payload[keyName],
+      );
+    },
+  },
 });
 
 const selectRooms = state => state.rooms;
 
 export const allRoomsDataCS = createSelector(
   selectRooms,
-  state => state.allRooms
+  state => state.allRooms,
 );
 
 export const createdRoomsDataCS = createSelector(
   selectRooms,
-  state => state.createdRooms
+  state => state.createdRooms,
 );
 
 export const editedRoomsDataCS = createSelector(
   selectRooms,
-  state => state.editedRooms
+  state => state.editedRooms,
 );
 
 export const deletedRoomsDataCS = createSelector(
   selectRooms,
-  state => state.deletedRooms
+  state => state.deletedRooms,
 );
 
 export const createdTablesDataCS = createSelector(
   selectRooms,
-  state => state.tables.createdTables
+  state => state.tables.createdTables,
 );
 
 export const deletedTablesDataCS = createSelector(
   selectRooms,
-  state => state.tables.deletedTables
+  state => state.tables.deletedTables,
 );
 
 export const editedTablesDataCS = createSelector(
   selectRooms,
-  state => state.tables.editedTables
+  state => state.tables.editedTables,
 );
 
 export const {

@@ -36,8 +36,8 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
   const {isEdit, isNewBooking} = useSelector(bookingsDataCS);
   const editedTables = useSelector(editedTablesDataCS);
 
-  // console.log(unsyncCreatedTables, 'unsyncCreatedTables');
-  // console.log(editedTables, 'editedTables');
+  console.log(unsyncCreatedTables, 'unsyncCreatedTables');
+  console.log(editedTables, 'editedTables');
   // constants
   const isFormUnUsed = useMemo(
     () => !isNewBooking && !isEdit,
@@ -61,12 +61,12 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
   // }
 
   const onCreateTable = async data => {
-    const newData = {
+    const body = {
       ...data,
       room: data.room.id ? `/api/rooms/${data.room.id}` : null,
     };
 
-    await createTable(newData)
+    await createTable(body)
       .unwrap()
       .then(res => {
         if (res) {

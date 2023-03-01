@@ -1,9 +1,9 @@
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import {createSelector, createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   // these bookings show if there is no internet
   todays: {
-    allBooking: [] //0, 1, 2, 3, 4
+    allBooking: [], //0, 1, 2, 3, 4
   },
 
   // created bookings when there is no internet
@@ -16,7 +16,7 @@ const initialState = {
   other: {
     allOtherDayBooking: [],
     allOtherDayWaitingBooking: [],
-    allOtherDayDeletedBookings: []
+    allOtherDayDeletedBookings: [],
   },
 };
 
@@ -25,23 +25,32 @@ export const bookingsSlice = createSlice({
   initialState,
   reducers: {
     updateBookingTable: (state, action) => {
-      const createdBookingIndex =
-        state.unsynchronized.created.findIndex(book => book.table.internalID === action.payload.internalID)
+      const createdBookingIndex = state.unsynchronized.created.findIndex(
+        book =>
+          (book.table.internalID &&
+            book.table.internalID === action.payload.internalID) ||
+          (book.table.id && book.table.id === action.payload.id),
+      );
 
-      const editBookingIndex =
-        state.unsynchronized.edited.findIndex(book => book.table.internalID === action.payload.internalID)
+      const editBookingIndex = state.unsynchronized.edited.findIndex(
+        book =>
+          (book.table.internalID &&
+            book.table.internalID === action.payload.internalID) ||
+          (book.table.id && book.table.id === action.payload.id),
+      );
 
       if (createdBookingIndex !== -1) {
-        state.unsynchronized.created[createdBookingIndex].table.id = action.payload.id
+        state.unsynchronized.created[createdBookingIndex].table.id =
+          action.payload.id;
       }
       if (editBookingIndex !== -1) {
-        state.unsynchronized.edited[editBookingIndex].table.id = action.payload.id
+        state.unsynchronized.edited[editBookingIndex].table.id =
+          action.payload.id;
       }
-
     },
 
     setTodaysAllBookings: (state, action) => {
-      state.todays.allBooking = action.payload
+      state.todays.allBooking = action.payload;
     },
 
     // unsync bookings reducersr
@@ -51,21 +60,27 @@ export const bookingsSlice = createSlice({
       );
 
       if (index === -1) {
-        state.unsynchronized.created = [...state.unsynchronized.created, action.payload]
+        state.unsynchronized.created = [
+          ...state.unsynchronized.created,
+          action.payload,
+        ];
       } else {
-        state.unsynchronized.created[index] = action.payload
+        state.unsynchronized.created[index] = action.payload;
       }
     },
 
     setUnsyncEmployeeToUnsyncCreated: (state, action) => {
       const index = state.unsynchronized.created.findIndex(booking => {
-        return booking.employee.internalID === action.payload.internalID
-      })
+        return booking.employee.internalID === action.payload.internalID;
+      });
 
       if (index === -1) {
-        return
+        return;
       } else {
-        state.unsynchronized.created[index] = { ...state.unsynchronized.created[index], employee: action.payload }
+        state.unsynchronized.created[index] = {
+          ...state.unsynchronized.created[index],
+          employee: action.payload,
+        };
       }
     },
 
@@ -79,7 +94,9 @@ export const bookingsSlice = createSlice({
       );
 
       if (bookingWithInternalID) {
-        state.unsynchronized.created = state.unsynchronized.created.filter(booking => booking.internalID !== bookingWithInternalID.internalID)
+        state.unsynchronized.created = state.unsynchronized.created.filter(
+          booking => booking.internalID !== bookingWithInternalID.internalID,
+        );
       }
       // state.unsynchronized.created = [];
     },
@@ -94,73 +111,67 @@ export const bookingsSlice = createSlice({
       );
 
       if (unsyncCreatedIndex === -1) {
-
         if (unsyncEditedIndex === -1) {
           state.unsynchronized.edited = [
             ...state.unsynchronized.edited,
             action.payload,
           ];
         } else {
-          state.unsynchronized.edited[unsyncEditedIndex] = action.payload
+          state.unsynchronized.edited[unsyncEditedIndex] = action.payload;
         }
-
       } else {
-        state.unsynchronized.created[unsyncCreatedIndex] = action.payload
+        state.unsynchronized.created[unsyncCreatedIndex] = action.payload;
       }
     },
 
     removeUnsynchronizedEditedBookingsById: (state, action) => {
-      state.unsynchronized.edited = state.unsynchronized.edited.filter(booking => booking.id !== action.payload)
+      state.unsynchronized.edited = state.unsynchronized.edited.filter(
+        booking => booking.id !== action.payload,
+      );
     },
 
     clearUnsynchronizedEditedBookings: (state, action) => {
       const updated = state.unsynchronized.edited.filter(
-        booking => booking.internalID !== action.payload.internalID
+        booking => booking.internalID !== action.payload.internalID,
       );
       state.unsynchronized.edited = updated;
     },
 
     // other bookings reducers
     setOtherDayAllBookings: (state, action) => {
-      state.other.allOtherDayBooking = action.payload
+      state.other.allOtherDayBooking = action.payload;
     },
 
     setOtherDayWaitBookings: (state, action) => {
-      state.other.allOtherDayWaitingBooking = action.payload
+      state.other.allOtherDayWaitingBooking = action.payload;
     },
 
     setOtherDayDeletedBookings: (state, action) => {
-      state.other.allOtherDayDeletedBookings = action.payload
+      state.other.allOtherDayDeletedBookings = action.payload;
     },
-
-
-  }
+  },
 });
 
 const selectEmployees = state => state.bookings;
 
 export const todayAllBookingsCS = createSelector(
   selectEmployees,
-  bookings => bookings.todays.allBooking
+  bookings => bookings.todays.allBooking,
 );
 
 export const otherDayBookingsCS = createSelector(
   selectEmployees,
-  bookings => bookings.other.allOtherDayBooking
+  bookings => bookings.other.allOtherDayBooking,
 );
 
 export const createdUnsyncBookingCS = createSelector(
   selectEmployees,
-  bookings => bookings.unsynchronized
+  bookings => bookings.unsynchronized,
 );
-
-
-
 
 export const {
   //today reducers
   setTodaysAllBookings,
-
 
   // unsynchronized reducers
   setUnsynchronizedCreateBookings,
@@ -170,15 +181,12 @@ export const {
   clearUnsynchronizedEditedBookings,
   removeUnsynchronizedEditedBookingsById,
 
-
   // ohter day reducers
   setOtherDayAllBookings,
   setOtherDayWaitBookings,
   setOtherDayDeletedBookings,
 
-
-  updateBookingTable
-
+  updateBookingTable,
 } = bookingsSlice.actions;
 
 export default bookingsSlice.reducer;
