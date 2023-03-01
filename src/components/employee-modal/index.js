@@ -24,7 +24,6 @@ const useEmployees = () => {
   }
 
   const handleDeleteEmployee = async (employee) => {
-    // if (employee?.bookings?.length) return
 
     if (employee.id) {
       dispatch(deleteEmployeesData(employee.id))

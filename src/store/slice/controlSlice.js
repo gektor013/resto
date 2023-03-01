@@ -29,6 +29,11 @@ export const isNeedUpdateCS = createSelector(
   state => state.isNeedUpdate
 );
 
+export const dateCS = createSelector(
+  selectControl,
+  state => state.date
+);
+
 
 export const {
   setSelectedDate,
