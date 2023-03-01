@@ -24,9 +24,9 @@ const useEmployees = () => {
   }
 
   const handleDeleteEmployee = async (employee) => {
-    if (employee?.bookings?.length) return
+    // if (employee?.bookings?.length) return
 
-    else if (employee.id) {
+    if (employee.id) {
       dispatch(deleteEmployeesData(employee.id))
     } else {
       dispatch(deleteEmployeesData(employee.internalID))
@@ -45,7 +45,7 @@ const useEmployees = () => {
 
 
 
-const Employees = ({ isShowInput, setIsShowInput, onCancel, selectedEmployee, setSelectedEmployee }) => {
+const Employees = ({ isShowInput, onCancel, selectedEmployee, setSelectedEmployee }) => {
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const { allEmployees, unsyncEmployees, employeeName, handleDeleteEmployee, setEmployeeToStorage, changeValue } = useEmployees()
