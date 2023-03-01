@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useLazyGetAllRoomsQuery } from "../store/api/roomsApi";
 import { useCreateTableMutation, useDeleteTableMutation, usePatchTableDataMutation } from "../store/api/tablesApi";
 import { useDispatch, useSelector } from "react-redux";
-import { createdTablesDataCS, deletedTablesDataCS, removeTableInDeletedTables, setAllRoomsData, setNewTableToRoomSlice, updateTableDataSlice } from "../store/slice/roomsSlice";
+import { createdTablesDataCS, deletedTablesDataCS, editedTablesDataCS, removeTableInDeletedTables, setAllRoomsData, setNewTableToRoomSlice, updateTableDataSlice } from "../store/slice/roomsSlice";
 import { isNeedUpdateCS } from "../store/slice/controlSlice";
 import { updateBookingTable } from "../store/slice/bookingsSlice";
 import { bookingsDataCS } from "../store/slice/bookingDataSlice";
@@ -22,7 +22,10 @@ const useTableForm = (isEmployeeSynchronaized, isConnected) => {
   const unsyncCreatedTables = useSelector(createdTablesDataCS)
   const deletedTables = useSelector(deletedTablesDataCS)
   const { isEdit, isNewBooking } = useSelector(bookingsDataCS)
+  const editedTables = useSelector(editedTablesDataCS)
 
+  // console.log(unsyncCreatedTables, 'unsyncCreatedTables');
+  // console.log(editedTables, 'editedTables');
   // constants
   const isFormUnUsed = useMemo(() => !isNewBooking && !isEdit, [isEdit, isNewBooking])
   const readyToUpdate = useMemo(() => isConnected && !isNeedUpdate, [isConnected, isNeedUpdate])
@@ -35,10 +38,9 @@ const useTableForm = (isEmployeeSynchronaized, isConnected) => {
   //     }).catch((e) => console.log(e, 'requestNewAllRoomData ERROR'))
   // }
 
-  const onCreatedTableSuccess = (data) => {
-    dispatch(updateBookingTable(data))
-    dispatch(updateTableDataSlice(data))
-  }
+  // const onCreatedTableSuccess = (data) => {
+
+  // }
 
   const onCreateTable = async (data) => {
     const newData = { ...data, room: data.room.id ? `/api/rooms/${data.room.id}` : null };
@@ -47,10 +49,10 @@ const useTableForm = (isEmployeeSynchronaized, isConnected) => {
       .unwrap()
       .then((res) => {
         if (res) {
-          console.log(res, 'RES');
-          onCreatedTableSuccess({ id: res.id, ...data })
-          // requestNewAllRoomData()
-          // navigation.goBack()
+          console.log(res, 'createTable');
+          // onCreatedTableSuccess({ id: res.id, ...data })
+          dispatch(updateBookingTable({ id: res.id, ...data }))
+          dispatch(updateTableDataSlice({ id: res.id, ...data }))
         }
       })
       .catch((e) => console.log(e, 'onCreateTable ERROR'))

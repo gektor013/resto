@@ -30,16 +30,18 @@ const useBookingsData = () => {
   const otherDayBookings = useSelector(otherDayBookingsCS)
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } = useSelector(createdUnsyncBookingCS)
 
+  // console.log(createdUnsyncBooking, 'createdUnsyncBooking');
   const isNeedUpdate = useSelector(isNeedUpdateCS)
 
   const [createBooking] = useCreateBookingMutation('', { skip: !isConnected })
   const [editBookings] = useEditBookingMutation('', { skip: !isConnected })
 
   // Employees HOOK
-  const { unsyncEmployees, isEmployeeSynchronaized } = useEmployees(isConnected)
+  const { isEmployeeSynchronaized } = useEmployees(isConnected)
   // Rooms & tables HOOK
   const { isTableSynchronaized } = useTableForm(isEmployeeSynchronaized, isConnected)
 
+  // console.log(unsyncEmployees, 'unsyncEmployees');
   // get only todays booking, it is necessary for the missing internet
   const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
     skip: !isConnected || isNeedUpdate,
@@ -81,7 +83,9 @@ const useBookingsData = () => {
 
   // send when there is internet
   const sendUnsyncCreatedBookings = async (data) => {
-    if (!data?.employee?.id || !data?.table.id) return
+    console.log();
+    if (!data?.employee?.id || (data?.table && !data?.table?.id)) return
+    // if (data?.table && !data?.table?.id) return
 
     createBooking(data).unwrap()
       .then(res => {
