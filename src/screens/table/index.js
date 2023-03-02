@@ -83,7 +83,10 @@ const TableGroup = () => {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
             {
               oneRoom?.tables.map((item, idx) => {
-                const bgColor = item.id !== undefined && route?.params?.selectTable?.id === item.id ? colors.primary : '#3fab1a'
+                const bgColor = (item.id !== undefined && route?.params?.selectTable?.id === item.id) ||
+                  (item?.internalID && route?.params?.selectTable?.internalID === item.internalID)
+
+                  ? colors.primary : '#3fab1a'
 
                 return (
                   <TouchableOpacity key={item.id || item.internalID}

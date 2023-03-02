@@ -243,7 +243,7 @@ const Row = ({ item, disabled }) => {
               <DataTable.Cell>{phone || ''}</DataTable.Cell>
               <DataTable.Cell>{employee?.name || ''}{createdAt ? moment(createdAt).format('/DD-MM-YY HH:mm') : ''}</DataTable.Cell>
             </DataTable.Row>
-          </Pressable >
+          </Pressable>
         )
       }
 

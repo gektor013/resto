@@ -2,10 +2,10 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   date: '',
-  startTime: '10:00',
-  endTime: '11:15',
+  startTime: '',
+  endTime: '',
   prefixName: 0,
-  name: 'Test',
+  name: '',
   email: null,
   phone: '',
   numberOfGuestsAdult: 0,

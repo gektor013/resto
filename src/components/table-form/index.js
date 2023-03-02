@@ -27,7 +27,6 @@ const TableForm = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const bookingData = useSelector(bookingsDataCS)
-  // console.log(bookingData.table, 'bookingData');
 
   const {
     control,

@@ -93,7 +93,7 @@ const useBookingsData = () => {
 
   // edit bookings
   const onEditBookings = data => {
-    console.log(data, 'Edit Data');
+    if (data.table && !data?.table?.id) return
 
     editBookings(data)
       .unwrap()
