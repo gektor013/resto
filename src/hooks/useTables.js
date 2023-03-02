@@ -38,6 +38,7 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
 
   console.log(unsyncCreatedTables, 'unsyncCreatedTables');
   console.log(editedTables, 'editedTables');
+
   // constants
   const isFormUnUsed = useMemo(
     () => !isNewBooking && !isEdit,
@@ -47,18 +48,19 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
     () => isConnected && !isNeedUpdate,
     [isConnected, isNeedUpdate],
   );
-  // const requestNewAllRoomData = async () => {
-  //   await getAllRooms().unwrap()
-  //     .then(res => {
-  //       if (res) {
-  //         dispatch(setAllRoomsData(res))
-  //       }
-  //     }).catch((e) => console.log(e, 'requestNewAllRoomData ERROR'))
-  // }
 
-  // const onCreatedTableSuccess = (data) => {
+  const requestNewAllRoomData = async () => {
+    await getAllRooms()
+      .unwrap()
+      .then(res => {
+        if (res) {
+          dispatch(setAllRoomsData(res));
+        }
+      })
+      .catch(e => console.log(e, 'requestNewAllRoomData ERROR'));
+  };
 
-  // }
+  const onCreatedTableSuccess = data => {};
 
   const onCreateTable = async data => {
     const body = {
@@ -133,7 +135,9 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
       isEmployeeSynchronaized &&
       readyToUpdate
     ) {
-      setIsTableSynchronaized(true);
+      requestNewAllRoomData().finally(() => {
+        setIsTableSynchronaized(true);
+      });
     }
 
     if (isConnected === false) {

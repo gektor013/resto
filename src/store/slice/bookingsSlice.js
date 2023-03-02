@@ -24,31 +24,6 @@ export const bookingsSlice = createSlice({
   name: 'bookings',
   initialState,
   reducers: {
-    updateBookingTable: (state, action) => {
-      const createdBookingIndex = state.unsynchronized.created.findIndex(
-        book =>
-          (book.table.internalID &&
-            book.table.internalID === action.payload.internalID) ||
-          (book.table.id && book.table.id === action.payload.id),
-      );
-
-      const editBookingIndex = state.unsynchronized.edited.findIndex(
-        book =>
-          (book.table.internalID &&
-            book.table.internalID === action.payload.internalID) ||
-          (book.table.id && book.table.id === action.payload.id),
-      );
-
-      if (createdBookingIndex !== -1) {
-        state.unsynchronized.created[createdBookingIndex].table.id =
-          action.payload.id;
-      }
-      if (editBookingIndex !== -1) {
-        state.unsynchronized.edited[editBookingIndex].table.id =
-          action.payload.id;
-      }
-    },
-
     setTodaysAllBookings: (state, action) => {
       state.todays.allBooking = action.payload;
     },
@@ -148,6 +123,57 @@ export const bookingsSlice = createSlice({
 
     setOtherDayDeletedBookings: (state, action) => {
       state.other.allOtherDayDeletedBookings = action.payload;
+    },
+
+    // tables section
+
+    updateBookingTable: (state, action) => {
+      const actionId = action.payload.id;
+      const actionInternalID = action.payload.internalID;
+      let tableId, tableInternalId;
+
+      [
+        ...state.todays.allBooking,
+        ...state.unsynchronized.created,
+        ...state.unsynchronized.edited,
+        ...state.other.allOtherDayBooking,
+        ...state.other.allOtherDayDeletedBookings,
+        ...state.other.allOtherDayWaitingBooking,
+      ].forEach(booking => {
+        tableId = booking?.table?.id;
+        tableInternalId = booking?.table?.internalID;
+
+        if (tableId && tableId === actionId) {
+          booking.table = action.payload;
+          console.log('update table by id => ', booking);
+        } else if (tableInternalId && tableInternalId === actionInternalID) {
+          booking.table = action.payload;
+          console.log('update table by internalID => ', booking);
+        }
+      });
+
+      // const createdBookingIndex = state.unsynchronized.created.findIndex(
+      //   book =>
+      //     (book.table.internalID &&
+      //       book.table.internalID === action.payload.internalID) ||
+      //     (book.table.id && book.table.id === action.payload.id),
+      // );
+
+      // const editBookingIndex = state.unsynchronized.edited.findIndex(
+      //   book =>
+      //     (book.table.internalID &&
+      //       book.table.internalID === action.payload.internalID) ||
+      //     (book.table.id && book.table.id === action.payload.id),
+      // );
+
+      // if (createdBookingIndex !== -1) {
+      //   state.unsynchronized.created[createdBookingIndex].table.id =
+      //     action.payload.id;
+      // }
+      // if (editBookingIndex !== -1) {
+      //   state.unsynchronized.edited[editBookingIndex].table.id =
+      //     action.payload.id;
+      // }
     },
   },
 });

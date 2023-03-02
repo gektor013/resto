@@ -110,9 +110,16 @@ export const roomsSlice = createSlice({
         room => room.internalID === action.payload.room.internalID,
       );
 
-      if (oneRoomInAllRoomsIndex !== -1) {
-        console.log('oneRoomInAllRoomsIndex', oneRoomInAllRoomsIndex);
+      state.tables.createdTables.forEach((table, index) => {
+        if (
+          table.internalID &&
+          table.internalID === action.payload.internalID
+        ) {
+          state.tables.createdTables[index] = action.payload;
+        }
+      });
 
+      if (oneRoomInAllRoomsIndex !== -1) {
         // find element in room with index
         const oneTableOnAllRoomsIndex = state.allRooms[
           oneRoomInAllRoomsIndex
@@ -122,38 +129,19 @@ export const roomsSlice = createSlice({
         const oneTableInEditTables = state.tables.editedTables.findIndex(
           table => table[keyName] === action.payload[keyName],
         );
-        console.log('oneTableOnAllRoomsIndex', oneTableOnAllRoomsIndex);
-        console.log('oneTableInEditTables', oneTableInEditTables);
 
         if (oneTableOnAllRoomsIndex !== -1) {
-          console.log('UPDATE CREATE TABLE');
-
-          console.log('update this => ');
-          console.log(
-            state.allRooms[oneRoomInAllRoomsIndex].tables[
-              oneTableOnAllRoomsIndex
-            ],
-          );
-          console.log('with this ==> ');
-          console.log(action.payload);
-
           state.allRooms[oneRoomInAllRoomsIndex].tables[
             oneTableOnAllRoomsIndex
           ] = action.payload;
         } else if (oneTableInEditTables !== -1) {
-          console.log('UPDATE EDIT TABLE');
-
           state.tables.editedTables[oneTableInEditTables] = action.payload;
         } else {
-          console.log('PUSH TO EDIT TABLE');
-
           state.tables.editedTables.push(action.payload);
         }
       }
 
       if (oneRoomInCreatedRoomsIndex !== -1) {
-        console.log('oneRoomInCreatedRoomsIndex', oneRoomInCreatedRoomsIndex);
-
         const oneTableOnCreatedRoomsIndex = state.createdRooms[
           oneRoomInCreatedRoomsIndex
         ].tables.findIndex(

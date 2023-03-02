@@ -1,12 +1,17 @@
-import React, { useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
+import React, {useMemo} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {useForm, Controller} from 'react-hook-form';
+import {TextInput, HelperText, Button, useTheme} from 'react-native-paper';
 
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { deletedTableSlice, editTableSlice, setNewTableToRoomSlice } from '../../store/slice/roomsSlice';
-import { useDispatch } from 'react-redux';
-import { createUnicId } from '../../utils/helpers';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  deletedTableSlice,
+  editTableSlice,
+  setNewTableToRoomSlice,
+} from '../../store/slice/roomsSlice';
+import {useDispatch} from 'react-redux';
+import {createUnicId} from '../../utils/helpers';
+import {updateBookingTable} from '../../store/slice/bookingsSlice';
 
 const MIN_NAME_LENGTH = 1;
 
@@ -16,50 +21,50 @@ const ERROR_MESSAGES = {
 };
 
 const TableForm = () => {
-  const { colors } = useTheme();
-  const route = useRoute()
-  const dispatch = useDispatch()
-  const navigation = useNavigation()
+  const {colors} = useTheme();
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: {errors, isValid},
   } = useForm({
     defaultValues: useMemo(() => {
-      return { ...route.params }
+      return {...route.params};
     }, [route]),
     mode: 'onChange',
   });
 
-  const handleCreateTable = async (data) => {
+  const handleCreateTable = async data => {
     if (!data?.id && !data?.internalID) {
-      dispatch(setNewTableToRoomSlice({ ...data, internalID: createUnicId() }))
-      navigation.goBack()
+      dispatch(setNewTableToRoomSlice({...data, internalID: createUnicId()}));
+      navigation.goBack();
     } else {
-      dispatch(editTableSlice(data))
-      navigation.goBack()
+      dispatch(editTableSlice(data));
+      dispatch(updateBookingTable(data));
+      navigation.goBack();
     }
-  }
+  };
 
   const handleTableDelete = () => {
-    dispatch(deletedTableSlice(route?.params))
-    navigation.goBack()
-  }
+    dispatch(deletedTableSlice(route?.params));
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.mb150}>
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: ERROR_MESSAGES.REQUIRED },
+          required: {value: true, message: ERROR_MESSAGES.REQUIRED},
           minLength: {
             value: MIN_NAME_LENGTH,
             message: ERROR_MESSAGES.NAME_INVALID,
           },
-
         }}
-        render={({ field: { onChange, onBlur, value } }) => (
+        render={({field: {onChange, onBlur, value}}) => (
           <TextInput
             mode="outlined"
             label="name"
@@ -72,8 +77,7 @@ const TableForm = () => {
             onChangeText={value => onChange(value)}
             error={errors.name && true}
           />
-        )
-        }
+        )}
         name="name"
       />
       <HelperText type="error">{errors.name?.message}</HelperText>
@@ -81,9 +85,9 @@ const TableForm = () => {
       <Controller
         control={control}
         rules={{
-          required: { value: true, message: ERROR_MESSAGES.REQUIRED },
+          required: {value: true, message: ERROR_MESSAGES.REQUIRED},
         }}
-        render={({ field: { onChange, onBlur, value } }) => (
+        render={({field: {onChange, onBlur, value}}) => (
           <TextInput
             mode="outlined"
             label="seat quantity"
@@ -113,8 +117,7 @@ const TableForm = () => {
         <Button
           style={styles.mv25p}
           mode="contained"
-          onPress={() => navigate.goBack()}
-        >
+          onPress={() => navigate.goBack()}>
           Cancel
         </Button>
 
@@ -122,14 +125,12 @@ const TableForm = () => {
         <Button
           style={styles.mv25p}
           mode="contained"
-          onPress={handleTableDelete}
-        >
+          onPress={handleTableDelete}>
           Delete
         </Button>
         {/* )} */}
       </View>
     </View>
-
   );
 };
 
