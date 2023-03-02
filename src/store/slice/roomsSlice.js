@@ -1,4 +1,4 @@
-import {createSelector, createSlice} from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   allRooms: [],
@@ -44,6 +44,19 @@ export const roomsSlice = createSlice({
       } else {
         state.allRooms[oneRoomToAllRoomsIndex] = action.payload;
         state.editedRooms.push(action.payload);
+      }
+    },
+
+    updateRoomSlice: (state, action) => {
+      const searchRoomInCreadetRooms = state.createdRooms.find(
+        room => room.internalID === action.payload.internalID)
+
+      // set room id
+      if (searchRoomInCreadetRooms) {
+        state.createdRooms = state.createdRooms.filter(room =>
+          room.internalID !== action.payload.internalID)
+
+        state.allRooms.push(action.payload)
       }
     },
 
@@ -202,7 +215,7 @@ export const roomsSlice = createSlice({
       // createdTables: [],
       //  editedTables: [],
 
-      const {internalID, name, id, seatQuantity} = action.payload;
+      const { internalID, name, id, seatQuantity } = action.payload;
 
       const removeTableFromCreated = state.tables.createdTables.find(
         table => table.internalID === internalID,
@@ -230,7 +243,7 @@ export const roomsSlice = createSlice({
 
         state.createdRooms[searchTableInCreatedRooms].tables[
           oneTableOnCreatedRooms
-        ] = {id, name, seatQuantity};
+        ] = { id, name, seatQuantity };
       }
 
       if (searchUnsyncTableInEditedTables !== -1) {
@@ -301,6 +314,7 @@ export const {
   setAllRoomsData,
   createRoomSlice,
   editedRoomsSlice,
+  updateRoomSlice,
   deletedRoomsSlice,
   setNewTableToRoomSlice,
   editTableSlice,

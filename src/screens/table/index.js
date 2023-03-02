@@ -1,16 +1,14 @@
-import { StyleSheet, TouchableOpacity, Text, View, ScrollView } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+import { StyleSheet, TouchableOpacity, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Button, SegmentedButtons, Surface, useTheme } from 'react-native-paper';
-import { useState } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback } from 'react';
 import { useGetAllRoomsQuery } from '../../store/api/roomsApi';
 import { useNetInfo } from '@react-native-community/netinfo';
 import LoadingScreen from '../loading';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBookingData } from '../../store/slice/bookingDataSlice';
-import { allRoomsDataCS, createdRoomsDataCS, editedRoomsDataCS } from '../../store/slice/roomsSlice';
+import { allRoomsDataCS, createdRoomsDataCS } from '../../store/slice/roomsSlice';
 
 const TableGroup = () => {
   const [value, setValue] = useState(1);
@@ -128,7 +126,6 @@ const TableScreen = ({ navigation }) => {
           icon="plus"
           style={{ marginRight: 10 }}
           mode="contained"
-          disabled={isConnected === false}
           onPress={() => navigation.navigate('roomForm')}>
           New room
         </Button>

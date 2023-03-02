@@ -1,11 +1,11 @@
-import {useEffect, useState, useMemo} from 'react';
-import {useLazyGetAllRoomsQuery} from '../store/api/roomsApi';
+import { useEffect, useState, useMemo } from 'react';
+import { useLazyGetAllRoomsQuery } from '../store/api/roomsApi';
 import {
   useCreateTableMutation,
   useDeleteTableMutation,
   usePatchTableDataMutation,
 } from '../store/api/tablesApi';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   createdTablesDataCS,
   deletedTablesDataCS,
@@ -15,9 +15,9 @@ import {
   setNewTableToRoomSlice,
   updateTableDataSlice,
 } from '../store/slice/roomsSlice';
-import {isNeedUpdateCS} from '../store/slice/controlSlice';
-import {updateBookingTable} from '../store/slice/bookingsSlice';
-import {bookingsDataCS} from '../store/slice/bookingDataSlice';
+import { isNeedUpdateCS } from '../store/slice/controlSlice';
+import { updateBookingTable } from '../store/slice/bookingsSlice';
+import { bookingsDataCS } from '../store/slice/bookingDataSlice';
 
 const useTables = (isEmployeeSynchronaized, isConnected) => {
   const [isTableSynchronaized, setIsTableSynchronaized] = useState(false);
@@ -33,11 +33,11 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
   const isNeedUpdate = useSelector(isNeedUpdateCS);
   const unsyncCreatedTables = useSelector(createdTablesDataCS);
   const deletedTables = useSelector(deletedTablesDataCS);
-  const {isEdit, isNewBooking} = useSelector(bookingsDataCS);
+  const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
   const editedTables = useSelector(editedTablesDataCS);
 
-  console.log(unsyncCreatedTables, 'unsyncCreatedTables');
-  console.log(editedTables, 'editedTables');
+  // console.log(unsyncCreatedTables, 'unsyncCreatedTables');
+  // console.log(editedTables, 'editedTables');
 
   // constants
   const isFormUnUsed = useMemo(
@@ -60,8 +60,6 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
       .catch(e => console.log(e, 'requestNewAllRoomData ERROR'));
   };
 
-  const onCreatedTableSuccess = data => {};
-
   const onCreateTable = async data => {
     const body = {
       ...data,
@@ -72,10 +70,9 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
       .unwrap()
       .then(res => {
         if (res) {
-          console.log(res, 'createTable');
-          // onCreatedTableSuccess({ id: res.id, ...data })
-          dispatch(updateBookingTable({id: res.id, ...data}));
-          dispatch(updateTableDataSlice({id: res.id, ...data}));
+          // console.log(res, 'createTable');
+          dispatch(updateBookingTable({ id: res.id, ...data }));
+          dispatch(updateTableDataSlice({ id: res.id, ...data }));
         }
       })
       .catch(e => console.log(e, 'onCreateTable ERROR'));
