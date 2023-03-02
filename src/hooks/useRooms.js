@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { useCreateRoomMutation, useDeleteRoomMutation, usePatchRoomDataMutation } from '../store/api/roomsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { createdRoomsDataCS, editedRoomsDataCS, createRoomSlice, deletedRoomsSlice, deletedRoomsDataCS, updateRoomSlice } from '../store/slice/roomsSlice';
@@ -15,8 +14,6 @@ const useRoom = (isTableSynchronaized, isConnected) => {
   const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
   const isNeedUpdate = useSelector(isNeedUpdateCS);
 
-
-  // const navigate = useNavigation()
   const dispatch = useDispatch()
 
   const isFormUnUsed = useMemo(

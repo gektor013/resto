@@ -37,15 +37,12 @@ const useBookingsData = () => {
   const { date: dateString } = useSelector(state => state.control);
   const formatDate = formatDateParams(new Date(dateString));
 
-  // console.log(bookingData[0], 'bookingsData');
-
   // booking selector
   const todayAllBookings = useSelector(todayAllBookingsCS);
   const otherDayBookings = useSelector(otherDayBookingsCS);
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } =
     useSelector(createdUnsyncBookingCS);
 
-  // console.log(createdUnsyncBooking, 'createdUnsyncBooking');
   const isNeedUpdate = useSelector(isNeedUpdateCS);
 
   const [createBooking] = useCreateBookingMutation('', { skip: !isConnected });
@@ -96,7 +93,6 @@ const useBookingsData = () => {
 
   // edit bookings
   const onEditBookings = data => {
-    if (!data?.table?.id) return;
 
     editBookings(data)
       .unwrap()

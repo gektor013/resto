@@ -5,7 +5,6 @@ import { View, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import LoadingScreen from '../loading';
 import ModaLayout from '../../layout/modal-layout';
 import BookingTable from '../../components/booking-table.js';
 import TimeModal from '../../components/booking-modals/time';
@@ -26,7 +25,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
   const { isConnected } = useNetInfo();
   const { colors } = useTheme();
   const dispatch = useDispatch();
-  const { bookingData, otherDayBookingFetch } = useBookingsData()
+  const { bookingData } = useBookingsData()
   const { modalsState, onHandleOpenModals, cancelModal } = useModalsControl()
   const { dateModal, timeModal, numberGuestModal, nameGuestModal } = modalsState;
   const bookingState = useSelector(state => state.bookingData)
@@ -61,11 +60,10 @@ const ActiveBookingsScreen = ({ navigation }) => {
             isConnected={isConnected}
             onHandleOpenModals={onHandleOpenModals}
           />
-          {otherDayBookingFetch ? <LoadingScreen /> :
-            <BookingTable
-              bookingsData={bookingData}
-              cancel={false}
-            />}
+          <BookingTable
+            bookingsData={bookingData}
+            cancel={false}
+          />
         </View>
       </SafeAreaView>
 
