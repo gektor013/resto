@@ -93,6 +93,7 @@ const useBookingsData = () => {
 
   // edit bookings
   const onEditBookings = data => {
+    console.log(data, 'Edit Data');
 
     editBookings(data)
       .unwrap()

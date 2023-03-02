@@ -104,17 +104,13 @@ const RoomForm = () => {
         >
           Cancel
         </Button>
-
-        {route.params && isConnected && (
-          <Button
-            style={styles.mv25p}
-            mode="contained"
-            disabled={route?.params?.tables?.length !== 0}
-            onPress={handleDeleteRoom}
-          >
-            Delete
-          </Button>
-        )}
+        <Button
+          style={styles.mv25p}
+          mode="contained"
+          onPress={handleDeleteRoom}
+        >
+          Delete
+        </Button>
       </View>
     </View>
   );

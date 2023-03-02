@@ -1,4 +1,4 @@
-import {createSelector, createSlice} from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   // these bookings show if there is no internet
@@ -151,30 +151,9 @@ export const bookingsSlice = createSlice({
           console.log('update table by internalID => ', booking);
         }
       });
-
-      // const createdBookingIndex = state.unsynchronized.created.findIndex(
-      //   book =>
-      //     (book.table.internalID &&
-      //       book.table.internalID === action.payload.internalID) ||
-      //     (book.table.id && book.table.id === action.payload.id),
-      // );
-
-      // const editBookingIndex = state.unsynchronized.edited.findIndex(
-      //   book =>
-      //     (book.table.internalID &&
-      //       book.table.internalID === action.payload.internalID) ||
-      //     (book.table.id && book.table.id === action.payload.id),
-      // );
-
-      // if (createdBookingIndex !== -1) {
-      //   state.unsynchronized.created[createdBookingIndex].table.id =
-      //     action.payload.id;
-      // }
-      // if (editBookingIndex !== -1) {
-      //   state.unsynchronized.edited[editBookingIndex].table.id =
-      //     action.payload.id;
-      // }
     },
+
+    // removeTable
   },
 });
 

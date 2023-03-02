@@ -36,8 +36,6 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
   const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
   const editedTables = useSelector(editedTablesDataCS);
 
-  // console.log(unsyncCreatedTables, 'unsyncCreatedTables');
-  // console.log(editedTables, 'editedTables');
 
   // constants
   const isFormUnUsed = useMemo(
@@ -70,7 +68,6 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
       .unwrap()
       .then(res => {
         if (res) {
-          // console.log(res, 'createTable');
           dispatch(updateBookingTable({ id: res.id, ...data }));
           dispatch(updateTableDataSlice({ id: res.id, ...data }));
         }
@@ -94,7 +91,10 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
     // console.log(data, 'data');
     await deleteTable(data.id)
       .unwrap()
-      .then(() => dispatch(removeTableInDeletedTables(data)))
+      .then(() => {
+        dispatch(removeTableInDeletedTables(data))
+        // dispatch(updateBookingTable(data))
+      })
       .catch(e => console.log(e, 'onDeleteTable ERROR'));
   };
 

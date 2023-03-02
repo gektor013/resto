@@ -14,6 +14,8 @@ const useRoom = (isTableSynchronaized, isConnected) => {
   const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
   const isNeedUpdate = useSelector(isNeedUpdateCS);
 
+  // console.log(unsyncDeletedRooms, 'unsyncDeletedRooms');
+
   const dispatch = useDispatch()
 
   const isFormUnUsed = useMemo(
@@ -48,16 +50,17 @@ const useRoom = (isTableSynchronaized, isConnected) => {
       .catch((e) => console.log(e, 'handleCreateRoom ERROR'))
   }
 
-  const onEditRooms = async () => {
-    Array.from(unsyncEditedRooms, (room) => {
-      patchRoomData(room).unwrap()
-        .then((res) => {
-          // if (res) {
-          //   // navigate.goBack()
-          // }
-        })
-        .catch((e) => console.log(e, 'patchRoomData ERROR'))
-    })
+  const onEditRooms = async (data) => {
+    if (!data.id) return
+    const body = { id: data.id, name: data.name }
+
+    patchRoomData(body).unwrap()
+      .then((res) => {
+        if (res) {
+          dispatch(updateRoomSlice(data))
+        }
+      })
+      .catch((e) => console.log(e, 'patchRoomData ERROR'))
   }
 
   const onDeleteRooms = async () => {
@@ -71,14 +74,25 @@ const useRoom = (isTableSynchronaized, isConnected) => {
   useEffect(() => {
     if (
       unsyncCreatedRooms?.length &&
+      !unsyncEditedRooms?.length &&
       isFormUnUsed &&
       readyToUpdate &&
       isTableSynchronaized
     ) {
       onCreatesRooms(unsyncCreatedRooms[0]);
     }
+
+    if (
+      unsyncEditedRooms?.length &&
+      isFormUnUsed &&
+      readyToUpdate &&
+      isTableSynchronaized
+    ) {
+      onEditRooms(unsyncEditedRooms[0])
+    }
   }, [
     unsyncCreatedRooms,
+    unsyncEditedRooms,
     isFormUnUsed,
     readyToUpdate,
     isTableSynchronaized,
@@ -103,6 +117,10 @@ const useRoom = (isTableSynchronaized, isConnected) => {
     isTableSynchronaized,
     readyToUpdate,
   ]);
+
+  useEffect(() => {
+
+  }, [])
 
 
   return {
