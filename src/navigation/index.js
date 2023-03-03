@@ -27,23 +27,13 @@ const Navigation = () => {
       title: 'Trash',
       focusedIcon: 'book-cancel-outline',
     },
-    // {
-    //   key: 'table',
-    //   title: 'Tables',
-    //   focusedIcon: 'table-furniture',
-    // },
-    // {
-    //   key: 'users',
-    //   title: 'Users',
-    //   focusedIcon: 'account-cog-outline',
-    // },
   ]);
   const renderScene = BottomNavigation.SceneMap({
     all_bookings: ActiveBookingsStack,
     waitings: WaitingsBookingStack,
     canceled: CanceledBookingStack,
     table: TableStack,
-    // users: UserStack,
+
   });
 
   return (

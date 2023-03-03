@@ -128,18 +128,16 @@ const TableForm = () => {
         <Button
           style={styles.mv25p}
           mode="contained"
-          onPress={() => navigate.goBack()}>
+          onPress={() => navigation.goBack()}>
           Cancel
         </Button>
 
-        {/* {route?.params?.id && ( */}
         <Button
           style={styles.mv25p}
           mode="contained"
           onPress={handleTableDelete}>
           Delete
         </Button>
-        {/* )} */}
       </View>
     </View>
   );

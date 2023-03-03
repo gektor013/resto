@@ -4,8 +4,8 @@ import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux';
 import SwipeableFlatList from 'react-native-swipeable-list';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Button, DataTable, Text, useTheme, } from 'react-native-paper';
-import { StyleSheet, View, TouchableOpacity, Pressable } from 'react-native'
+import { Button, DataTable, useTheme, } from 'react-native-paper';
+import { StyleSheet, View, TouchableOpacity, Pressable, Text } from 'react-native'
 
 import { setEditBookingData } from '../../store/slice/bookingDataSlice';
 import { setUnsynchronizedEditedBookings, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
@@ -149,60 +149,25 @@ const Row = ({ item, disabled }) => {
           <View style={{ backgroundColor: colors.surface }}>
             <DataTable.Row
               disabled={disabled}
+              style={{ paddingVertical: 5 }}
             >
-              <DataTable.Cell >
-                <TouchableOpacity onPress={() => onHandleOpenModals('time')} style={{ alignItems: 'center' }}>
-                  <View style={styles.editContainer}>
-                    <Text >
-                      {bookingState.startTime}-{bookingState.endTime}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+              <DataTable.Cell style={styles.editContainer} onPress={() => onHandleOpenModals('time')}>
+                {bookingState.startTime}-{bookingState.endTime}
               </DataTable.Cell>
-              <DataTable.Cell>
-                <TouchableOpacity onPress={() => onHandleOpenModals('guest')} style={{ alignItems: 'center' }}>
-                  <View style={styles.editContainer}>
-                    <Text >
-                      {bookingState.numberOfGuestsAdult}+{bookingState.numberOfGuestsChild}+{bookingState.numberOfGuestsBaby}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+              <DataTable.Cell style={styles.editContainer} onPress={() => onHandleOpenModals('guest')}>
+                {bookingState.numberOfGuestsAdult}+{bookingState.numberOfGuestsChild}+{bookingState.numberOfGuestsBaby}
               </DataTable.Cell>
-              <DataTable.Cell>
-                <TouchableOpacity onPress={() => onHandleOpenModals('name')} style={{ alignItems: 'center' }}>
-                  <View style={styles.editContainer}>
-                    <Text >
-                      {definitionPrefixName(bookingState.prefixName)} {bookingState.name}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+              <DataTable.Cell style={styles.editContainer} onPress={() => onHandleOpenModals('name')}>
+                {definitionPrefixName(bookingState.prefixName)} {bookingState.name}
               </DataTable.Cell>
-              <DataTable.Cell>
-                <TouchableOpacity onPress={() => navigation.navigate('tablesScreen', { selectTable: bookingState.table, editTable: true })} style={{ alignItems: 'center' }}>
-                  <View style={styles.editContainer}>
-                    <Text >
-                      {`${findRoom(bookingState.table?.id)?.name || 'Room'} ${bookingState.table?.name || ''}`}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+              <DataTable.Cell style={styles.editContainer} onPress={() => navigation.navigate('tablesScreen', { selectTable: bookingState.table, editTable: true })}>
+                {`${findRoom(bookingState?.table?.id)?.name || 'Room'} ${bookingState.table?.name || ''}`}
               </DataTable.Cell>
-              <DataTable.Cell>
-                <TouchableOpacity onPress={() => onHandleOpenModals('comment')} style={{ alignItems: 'center' }}>
-                  <View style={styles.editContainer}>
-                    <Text >
-                      {bookingState.commentByAdminForAdmin || 'Comment'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+              <DataTable.Cell onPress={() => onHandleOpenModals('comment')} style={styles.editContainer}>
+                {bookingState.commentByAdminForAdmin || 'Comment'}
               </DataTable.Cell>
-              <DataTable.Cell>
-                <TouchableOpacity onPress={() => onHandleOpenModals('phone')} style={{ alignItems: 'center' }}>
-                  <View style={styles.editContainer}>
-                    <Text >
-                      {bookingState.phone || 'Phone'}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+              <DataTable.Cell style={styles.editContainer} onPress={() => onHandleOpenModals('phone')}>
+                {bookingState.phone || 'Phone'}
               </DataTable.Cell>
             </DataTable.Row>
 
@@ -348,8 +313,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'gray',
     borderRadius: 10,
-    paddingVertical: 5,
-    paddingHorizontal: 5
+    marginRight: 10,
+    paddingLeft: 10
+    // borderWidth: 1,
+    // borderColor: 'gray',
+    // borderRadius: 10,
+    // paddingVertical: 5,
+    // paddingHorizontal: 5,
+    // flexShrink: 0,
+    // overflow: 'hidden'
   },
   text: {
     textAlign: 'center',
@@ -378,94 +350,3 @@ const styles = StyleSheet.create({
     maxWidth: "15%"
   }
 });
-
-
-// <View key={id} style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
-    //   <DataTable.Row
-    //     disabled={disabled}
-    //     // onPress={() => onBookingPressHandler(item)}
-    //     style={{ backgroundColor: getRowColorByStatus(status) }}
-    //   >
-    //     <DataTable.Cell >
-    //       <View style={id === 677 ? styles.editContainer : null}>
-    //         <Text >
-    //           {startTime}-{endTime}
-    //         </Text>
-    //       </View>
-    //     </DataTable.Cell>
-    //     <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
-    //     <DataTable.Cell>{definitionPrefixName(prefixName)} {name}</DataTable.Cell>
-    //     <DataTable.Cell>{`${table?.room?.name} ${table?.name}`}</DataTable.Cell>
-    //     <DataTable.Cell>{commentByAdminForAdmin}</DataTable.Cell>
-    //     <DataTable.Cell>{phone}</DataTable.Cell>
-    //     <DataTable.Cell>{employee?.name}/{moment(createdAt).format('DD-MM-YY HH:mm')}</DataTable.Cell>
-    //   </DataTable.Row>
-    //   {
-    //     id === 677 && (
-    //       <View style={{ flexDirection: 'row', marginVertical: 10 }}>
-    //         <Button
-    //           mode="contained"
-    //           // compact={true}
-    //           // disabled={!isConnected}
-    //           style={{ marginRight: 5, flex: 1 }}
-    //         // onPress={() => dayPlus('minus')}
-    //         >
-    //           Save
-    //         </Button>
-
-    //         <Button
-    //           mode="contained"
-    //           // compact={true}
-    //           // disabled={!isConnected}
-    //           style={{ flex: 1 }}
-    //         // onPress={() => dayPlus('minus')}
-    //         >
-    //           Cancel
-    //         </Button>
-    //       </View>
-    //     )
-    //   }
-    // </View >
-
-
- // if (booking.id) {
-    //   const syncDeleted = allOtherDayDeletedBookings.find(elem => elem.id === booking.id)
-    //   const syncToday = allBooking.find(elem => elem.id === booking.id)
-
-    //   const copyUpdateBooking = JSON.parse(JSON.stringify(updateBooking))
-    //   delete copyUpdateBooking.internalID
-    //   delete copyUpdateBooking.unsync
-
-    //   console.log(copyUpdateBooking, 'copyUpdateBooking');
-
-    //   if (syncDeleted) {
-    //     const stringSyncDeleted = JSON.stringify(syncDeleted)
-    //     const stringUpdateBooking = JSON.stringify(copyUpdateBooking)
-
-    //     if (stringSyncDeleted === stringUpdateBooking) {
-    //       console.log('REMOVE SYNC DELTED');
-
-    //       dispatch(removeUnsynchronizedEditedBookingsById(booking.id))
-    //     } else {
-    //       dispatch(setUnsynchronizedEditedBookings(updateBooking))
-    //     }
-    //   }
-
-    //   else if (syncToday) {
-    //     const stringSyncToday = JSON.stringify(syncToday)
-    //     const stringUpdateBooking = JSON.stringify(copyUpdateBooking)
-
-    //     console.log(stringSyncToday, 'stringSyncToday', stringUpdateBooking, 'stringUpdateBooking');
-    //     if (stringSyncToday === stringUpdateBooking) {
-    //       console.log('REMOVE SYNC TODAY');
-    //       dispatch(removeUnsynchronizedEditedBookingsById(booking.id))
-    //     } else {
-    //       console.log('ELSE');
-    //       dispatch(setUnsynchronizedEditedBookings(updateBooking))
-    //     }
-    //   }
-
-    // } else {
-    //   // if have intenalID
-    //   dispatch(setUnsynchronizedCreateBookings(updateBooking))
-    // }
