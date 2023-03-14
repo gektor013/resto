@@ -80,13 +80,14 @@ const ActiveBookingsScreen = ({ navigation }) => {
       />
       <ModaLayout
         visible={timeModal}
+        containerStyle={styles.timeModalContainer}
         onCancel={() => cancelModal('time')}
         title={'Time'}
         onSave={() => {
           cancelModal('time', false)
           onHandleOpenModals('guest');
         }}
-        disabled={(bookingState.startTime?.length < 5 || bookingState.endTime?.length < 5)}
+        disabled={(bookingState.startTime?.length < 5)}
       >
         <TimeModal />
       </ModaLayout>
@@ -129,6 +130,10 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  timeModalContainer: {
+    maxWidth: '50%',
+    marginLeft: '25%'
   },
 });
 

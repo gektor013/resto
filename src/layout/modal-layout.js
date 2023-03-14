@@ -1,41 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Dialog, Portal, Button } from 'react-native-paper';
-import { useSelector } from 'react-redux';
 
 
-const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false, addCallBack, disabled }) => {
-  // const state = useSelector(state => state.bookingData)
-  // const [disabled, setDisabled] = useState(disabledField)
-
-  // const isDisabled = () => {
-  //   if (title === 'Time') {
-  //     if (state?.startTime?.length === 5 && state?.endTime?.length === 5) {
-  //       setDisabled(false)
-  //     } else {
-  //       setDisabled(true)
-  //     }
-  //   }
-  //   if (title === 'Number of guest'
-  //     || title === 'Enter comment'
-  //     || title === 'Enter Phone'
-  //   ) {
-  //     setDisabled(false)
-  //   }
-  //   if (title === 'Enter name') {
-  //     if (state.name !== '') {
-  //       setDisabled(false)
-  //     }
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   isDisabled()
-  // }, [title, state])
+const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false, addCallBack, disabled, containerStyle }) => {
 
   return (
     <Portal>
-      <Dialog visible={visible} onDismiss={onCancel}>
+      <Dialog style={{ ...containerStyle }} visible={visible} onDismiss={onCancel}>
         <View style={styles.titleContainer}>
           <Dialog.Title>{title}</Dialog.Title>
           {

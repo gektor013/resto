@@ -1,31 +1,31 @@
-import React, { useMemo } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
-import { TextInput, HelperText, Button, useTheme } from 'react-native-paper';
+import React, { useMemo } from 'react'
+import { View, StyleSheet, Alert } from 'react-native'
+import { useForm, Controller } from 'react-hook-form'
+import { TextInput, HelperText, Button, useTheme } from 'react-native-paper'
 
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native'
 import {
   deletedTableSlice,
   editTableSlice,
   setNewTableToRoomSlice,
-} from '../../store/slice/roomsSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { createUnicId } from '../../utils/helpers';
-import { updateBookingTable } from '../../store/slice/bookingsSlice';
-import { bookingsDataCS } from '../../store/slice/bookingDataSlice';
+} from '../../store/slice/roomsSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { createUnicId } from '../../utils/helpers'
+import { updateBookingTable } from '../../store/slice/bookingsSlice'
+import { bookingsDataCS } from '../../store/slice/bookingDataSlice'
 
-const MIN_NAME_LENGTH = 1;
+const MIN_NAME_LENGTH = 1
 
 const ERROR_MESSAGES = {
   REQUIRED: 'This field is required',
   NAME_INVALID: 'Invalid name',
-};
+}
 
 const TableForm = () => {
-  const { colors } = useTheme();
-  const route = useRoute();
-  const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const { colors } = useTheme()
+  const route = useRoute()
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
   const bookingData = useSelector(bookingsDataCS)
 
   const {
@@ -34,35 +34,37 @@ const TableForm = () => {
     formState: { errors, isValid },
   } = useForm({
     defaultValues: useMemo(() => {
-      return { ...route.params };
+      return { ...route.params }
     }, [route]),
     mode: 'onChange',
   });
 
   const handleCreateTable = async data => {
     if (!data?.id && !data?.internalID) {
-      dispatch(setNewTableToRoomSlice({ ...data, internalID: createUnicId() }));
-      navigation.goBack();
+      dispatch(setNewTableToRoomSlice({ ...data, internalID: createUnicId() }))
+      navigation.goBack()
     } else {
-      dispatch(editTableSlice(data));
-      dispatch(updateBookingTable(data));
-      navigation.goBack();
+      dispatch(editTableSlice(data))
+      dispatch(updateBookingTable(data))
+      navigation.goBack()
     }
-  };
+  }
 
   const handleTableDelete = () => {
-    const bookingTbaleIdOrInternalID = bookingData?.table?.internalID || bookingData?.table?.id
+    const bookingTbaleIdOrInternalID =
+      bookingData?.table?.internalID || bookingData?.table?.id
     const paramsIdOrInternalId = route?.params?.internalID || route?.params?.id
 
     if (bookingTbaleIdOrInternalID === paramsIdOrInternalId) {
       Alert.alert(
-        "Attention!",
-        "Can't delete the table because it's pinned to the current booking!")
+        'Attention!',
+        "Can't delete the table because it's pinned to the current booking!",
+      )
     } else {
-      dispatch(deletedTableSlice(route?.params));
-      navigation.goBack();
+      dispatch(deletedTableSlice(route?.params))
+      navigation.goBack()
     }
-  };
+  }
 
   return (
     <View style={styles.mb150}>
@@ -140,8 +142,8 @@ const TableForm = () => {
         </Button>
       </View>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   mv5p: {
@@ -153,6 +155,6 @@ const styles = StyleSheet.create({
   mb150: {
     marginBottom: 150,
   },
-});
+})
 
-export default TableForm;
+export default TableForm
