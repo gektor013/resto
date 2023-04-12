@@ -25,6 +25,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
   const dispatch = useDispatch()
   const bookingState = useSelector(state => state.bookingData)
   const isNewOrEdit = bookingState.isNewBooking || bookingState.isEdit
+  const [deleteModal, setDeleteModal] = useState(false)
 
   const handleChancheBookingStatus = (booking, status) => {
     const updateBooking = {
@@ -42,72 +43,97 @@ const BookingTable = ({ bookingsData, cancel }) => {
     }
   };
 
+  const onOpenModal = (booking) => {
+    if (booking?.status === 1) return
+    setDeleteModal(prev => !prev)
+  }
+
   const QuickActions = (_, booking) => {
     return (
-      <View style={styles.quickActionContainer}>
-        <View style={{ ...styles.actionsContainer, width: !cancel ? 300 : 100 }}>
-          {route.name !== 'cancelBookings' ? (
-            <>
-              <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
-                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 4)}>
-                  <Text>{route.name === 'waitBookings' ? 'Approve' : 'Arrived'}</Text>
+      <>
+        <View style={styles.quickActionContainer}>
+          <View style={{ ...styles.actionsContainer, width: !cancel ? 300 : 100 }}>
+            {route.name !== 'cancelBookings' ? (
+              <>
+                <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
+                  <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 4)}>
+                    <Text>{route.name === 'waitBookings' ? 'Approve' : 'Arrived'}</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
+                  <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 5)}>
+                    <Text>Delete</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
+                  <TouchableOpacity
+                    onPress={() => onOpenModal(booking)}
+                  // onPress={() => handleChancheBookingStatus(booking, 1)}
+                  >
+                    <Text>Cancel</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : (
+              <View style={{ ...styles.action, flex: 2, backgroundColor: '#94a3b8' }}>
+                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 2)}>
+                  <Text>Restore</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
-                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 5)}>
-                  <Text>Delete</Text>
-                </TouchableOpacity>
-              </View>
-              <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
-                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 1)}>
-                  <Text>Cancel</Text>
-                </TouchableOpacity>
-              </View>
-            </>
-          ) : (
-            <View style={{ ...styles.action, flex: 2, backgroundColor: '#94a3b8' }}>
-              <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 2)}>
-                <Text>Restore</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+            )}
+          </View>
         </View>
-      </View>
+        <ModaLayout
+          visible={deleteModal}
+          containerStyle={styles.deleteModalContainer}
+          onCancel={onOpenModal}
+          title={'Are you sure you want to delete booking?'}
+          onSave={() => {
+            handleChancheBookingStatus(booking, 1),
+              onOpenModal()
+          }}
+        >
+        </ModaLayout>
+      </>
     );
   };
 
   return bookingsData?.length || bookingState.isNewBooking ? (
-    <DataTable style={styles.tableContainer}>
-      <DataTable.Header>
-        <DataTable.Title>Zeit</DataTable.Title>
-        <DataTable.Title>Pax</DataTable.Title>
-        <DataTable.Title>Name</DataTable.Title>
-        <DataTable.Title>Tisch</DataTable.Title>
-        <DataTable.Title>Notizen</DataTable.Title>
-        <DataTable.Title>Telefon</DataTable.Title>
-        {
-          isNewOrEdit ? null :
-            <DataTable.Title>Erstellt</DataTable.Title>
-        }
-      </DataTable.Header>
-      <SwipeableFlatList
-        keyExtractor={item => item.id ? item.id : item.internalID}
-        data={isNewOrEdit ?
-          [bookingState] : bookingsData}
-        renderItem={({ item }) => {
-          return (
-            <Row
-              item={item}
-              key={item.id}
-            />
-          )
-        }}
-        maxSwipeDistance={!cancel ? 300 : 100}
-        renderQuickActions={({ index, item }) => (isNewOrEdit ? null : QuickActions(index, item))}
-        contentContainerStyle={styles.swipeContainer}
-        shouldBounceOnMount={false}
-      />
-    </DataTable>
+    <>
+      <DataTable style={styles.tableContainer}>
+        <DataTable.Header>
+          <DataTable.Title>Zeit</DataTable.Title>
+          <DataTable.Title>Pax</DataTable.Title>
+          <DataTable.Title>Name</DataTable.Title>
+          <DataTable.Title>Tisch</DataTable.Title>
+          <DataTable.Title>Notizen</DataTable.Title>
+          <DataTable.Title>Telefon</DataTable.Title>
+          {
+            isNewOrEdit ? null :
+              <DataTable.Title>Erstellt</DataTable.Title>
+          }
+        </DataTable.Header>
+        <SwipeableFlatList
+          keyExtractor={item => item.id ? item.id : item.internalID}
+          data={isNewOrEdit ?
+            [bookingState] : bookingsData}
+          renderItem={({ item }) => {
+            return (
+              <Row
+                item={item}
+                key={item.id}
+              />
+            )
+          }}
+
+          maxSwipeDistance={!cancel ? 300 : 100}
+          renderQuickActions={({ index, item }) => (isNewOrEdit ? null : QuickActions(index, item))}
+          contentContainerStyle={styles.swipeContainer}
+          shouldBounceOnMount={true}
+        />
+      </DataTable>
+
+    </>
   )
     : (
       <Text style={styles.text} variant="headlineLarge">
@@ -348,5 +374,9 @@ const styles = StyleSheet.create({
   },
   maxW15: {
     maxWidth: "15%"
-  }
+  },
+  deleteModalContainer: {
+    maxWidth: '50%',
+    marginLeft: '25%'
+  },
 });

@@ -5,7 +5,7 @@ import store, { persistor } from './src/store';
 import { PersistGate } from 'redux-persist/integration/react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {
-  MD3DarkTheme as DefaultTheme,
+  MD3LightTheme as DefaultTheme,
   Provider as PaperProvider,
   useTheme,
 } from 'react-native-paper';
@@ -19,13 +19,15 @@ const theme = {
   version: 3,
 };
 
+
+
 const App: () => Node = () => {
   const { colors } = useTheme();
   return (
     <ReduxProvider store={store}>
       <PersistGate loading={<Loading />} persistor={persistor}>
         <SafeAreaProvider
-          style={{ minHeight: '100%', backgroundColor: colors.onBackground }}>
+          style={{ minHeight: '100%' }}>
           <PaperProvider
             theme={theme}
             settings={{ icon: props => <MaterialCommunityIcons {...props} /> }}>

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View } from 'react-native';
 
 import { Calendar } from 'react-native-calendars';
@@ -9,8 +9,6 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
   const [selectedDays, setSelectedDays] = useState(currentDate);
   const { colors } = useTheme();
 
-
-  // console.log(currentDate);
   const dayPress = useCallback((day) => {
     setSelectedDays(day.dateString);
   }, []);
@@ -137,7 +135,7 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
             mode="contained"
             onPress={onHandleSave}
           >
-            Save
+            Ok
           </Button>
         </View>
       </Modal>

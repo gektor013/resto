@@ -3,7 +3,7 @@ import { createSelector, createSlice } from '@reduxjs/toolkit';
 const initialState = {
   date: '',
   startTime: '',
-  endTime: '',
+  // endTime: '',
   prefixName: 0,
   name: '',
   email: null,

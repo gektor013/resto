@@ -94,6 +94,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
 
       <ModaLayout
         visible={numberGuestModal}
+        containerStyle={styles.timeModalContainer}
         onCancel={() => cancelModal('guest')}
         title={'Number of guest'}
         onSave={() => {
@@ -106,6 +107,7 @@ const ActiveBookingsScreen = ({ navigation }) => {
 
       <ModaLayout
         visible={nameGuestModal}
+        containerStyle={styles.timeModalContainer}
         onCancel={() => cancelModal('name')}
         disabled={bookingState.name === ''}
         title={'Enter name'}
