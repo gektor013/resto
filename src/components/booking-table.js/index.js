@@ -26,11 +26,20 @@ const BookingTable = ({ bookingsData, cancel }) => {
   const bookingState = useSelector(state => state.bookingData)
   const isNewOrEdit = bookingState.isNewBooking || bookingState.isEdit
   const [deleteModal, setDeleteModal] = useState(false)
+  const [checkBooking, setCheckBooking] = useState({})
 
   const handleChancheBookingStatus = (booking, status) => {
+    let checkStatus = status
+
+    if (booking.status === status) {
+      checkStatus = 2
+    }
+
+    setCheckBooking({ id: booking?.id ? booking?.id : booking.internalID, status: checkStatus })
+
     const updateBooking = {
       ...booking,
-      status,
+      status: checkStatus,
       internalID: booking?.internalID ? booking?.internalID : uuid.v4(),
       unsync: true
     }
@@ -61,14 +70,13 @@ const BookingTable = ({ bookingsData, cancel }) => {
                   </TouchableOpacity>
                 </View>
                 <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
-                  <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 5)}>
+                  <TouchableOpacity onPress={() => onOpenModal(booking)}>
                     <Text>Delete</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
                   <TouchableOpacity
-                    onPress={() => onOpenModal(booking)}
-                  // onPress={() => handleChancheBookingStatus(booking, 1)}
+                    onPress={() => handleChancheBookingStatus(booking, 1)}
                   >
                     <Text>Cancel</Text>
                   </TouchableOpacity>
@@ -89,8 +97,8 @@ const BookingTable = ({ bookingsData, cancel }) => {
           onCancel={onOpenModal}
           title={'Are you sure you want to delete booking?'}
           onSave={() => {
-            handleChancheBookingStatus(booking, 1),
-              onOpenModal()
+            handleChancheBookingStatus(booking, 5)
+            onOpenModal()
           }}
         >
         </ModaLayout>
@@ -122,6 +130,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
               <Row
                 item={item}
                 key={item.id}
+                checkBooking={checkBooking}
               />
             )
           }}
@@ -142,7 +151,7 @@ const BookingTable = ({ bookingsData, cancel }) => {
     );
 }
 
-const Row = ({ item, disabled }) => {
+const Row = ({ item, disabled, checkBooking }) => {
   const {
     name,
     phone,
@@ -158,6 +167,7 @@ const Row = ({ item, disabled }) => {
     numberOfGuestsChild,
     commentByAdminForAdmin,
   } = item;
+
   const { colors } = useTheme();
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -224,7 +234,7 @@ const Row = ({ item, disabled }) => {
             style={{ backgroundColor: item.unsync ? '#ebab3e' : colors.surface }}>
             <DataTable.Row
               disabled={disabled}
-              style={{ backgroundColor: getRowColorByStatus(status) }}
+              style={{ backgroundColor: item.id === checkBooking?.id ? getRowColorByStatus(checkBooking.status) : getRowColorByStatus(status) }}
             >
               <DataTable.Cell>{startTime}-{endTime}</DataTable.Cell>
               <DataTable.Cell>{numberOfGuestsAdult}+{numberOfGuestsChild}+{numberOfGuestsBaby}</DataTable.Cell>
@@ -333,7 +343,6 @@ const styles = StyleSheet.create({
   },
   swipeContainer: {
     flexGrow: 1,
-    // backgroundColor: darkColors.background,
   },
   editContainer: {
     borderWidth: 1,
@@ -341,13 +350,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginRight: 10,
     paddingLeft: 10
-    // borderWidth: 1,
-    // borderColor: 'gray',
-    // borderRadius: 10,
-    // paddingVertical: 5,
-    // paddingHorizontal: 5,
-    // flexShrink: 0,
-    // overflow: 'hidden'
   },
   text: {
     textAlign: 'center',
