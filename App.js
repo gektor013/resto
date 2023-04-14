@@ -12,6 +12,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Loading from './src/components/loading';
 import Protector from './src/protector';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const theme = {
   ...DefaultTheme,
@@ -24,18 +25,20 @@ const theme = {
 const App: () => Node = () => {
   const { colors } = useTheme();
   return (
-    <ReduxProvider store={store}>
-      <PersistGate loading={<Loading />} persistor={persistor}>
-        <SafeAreaProvider
-          style={{ minHeight: '100%' }}>
-          <PaperProvider
-            theme={theme}
-            settings={{ icon: props => <MaterialCommunityIcons {...props} /> }}>
-            <Protector />
-          </PaperProvider>
-        </SafeAreaProvider>
-      </PersistGate>
-    </ReduxProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ReduxProvider store={store}>
+        <PersistGate loading={<Loading />} persistor={persistor}>
+          <SafeAreaProvider
+            style={{ minHeight: '100%' }}>
+            <PaperProvider
+              theme={theme}
+              settings={{ icon: props => <MaterialCommunityIcons {...props} /> }}>
+              <Protector />
+            </PaperProvider>
+          </SafeAreaProvider>
+        </PersistGate>
+      </ReduxProvider>
+    </GestureHandlerRootView>
   );
 };
 

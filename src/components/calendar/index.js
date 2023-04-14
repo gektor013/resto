@@ -13,32 +13,33 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
     setSelectedDays(day.dateString);
   }, []);
 
+  const today = moment(new Date()).format('YYYY-MM-DD')
+
   const marked = useMemo(() => {
-    const today = new Date();
-    const currentMonth = today.getMonth();
     const previousDays = {};
     const result = {}
 
     const firstDayThisMonth = new Date();
     firstDayThisMonth.setDate(1);
-    const indexFirstDayOnThisMonth = firstDayThisMonth.getDay() - 1 // Set the date to the first day of the current month
 
+    let currentDate = new Date();
+    let i = 1;
 
-    for (let i = indexFirstDayOnThisMonth; i < today.getDate() + indexFirstDayOnThisMonth; i++) {
-      const previousDay = new Date(today.getFullYear(), currentMonth, i);
-      const dateString = previousDay.toISOString().slice(0, 10);
-      previousDays[dateString] = {
+    while (moment(currentDate).format('YYYY-MM-DD') <= today) {
+      previousDays[moment(currentDate).format('YYYY-MM-DD')] = {
         customStyles: {
           container: {
             backgroundColor: '#dbd6d6de',
           },
           text: {
             color: '#a8a3a3de',
-          }
-        }
-      }
-    };
+          },
+        },
+      };
 
+      currentDate.setDate(i);
+      i++;
+    }
 
     markedDays?.length && markedDays?.forEach(date => {
       result, result[date] = {
@@ -52,6 +53,7 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
         }
       }
     })
+
 
     return {
       ...previousDays, ...result, [selectedDays]: {

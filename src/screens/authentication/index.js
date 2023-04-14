@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {View, StyleSheet} from 'react-native';
+import React, { useEffect } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet } from 'react-native';
 import {
   Text,
   TextInput,
@@ -8,11 +8,11 @@ import {
   Button,
   useTheme,
 } from 'react-native-paper';
-import {useDispatch} from 'react-redux';
-import {useSigninUserMutation} from '../../store/api/authenticationApi';
-import {login} from '../../store/slice/authenticationSlice';
-import {useForm, Controller} from 'react-hook-form';
-import {useNetInfo} from '@react-native-community/netinfo';
+import { useDispatch } from 'react-redux';
+import { useSigninUserMutation } from '../../store/api/authenticationApi';
+import { login } from '../../store/slice/authenticationSlice';
+import { useForm, Controller } from 'react-hook-form';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const initialInputData = {
   username: 'admin_default',
@@ -24,20 +24,20 @@ const ERROR_MESSAGES = {
 };
 
 const AuthenticationScreen = () => {
-  const [signinUser, {data, isLoading, isError, isSuccess}] =
+  const [signinUser, { data, isLoading, isError, isSuccess }] =
     useSigninUserMutation();
   const {
     control,
     handleSubmit,
     formState,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     defaultValues: initialInputData,
     mode: 'onChange',
   });
   const dispatch = useDispatch();
-  const {isConnected} = useNetInfo();
-  const {colors} = useTheme();
+  const { isConnected } = useNetInfo();
+  const { colors } = useTheme();
 
   const onSubmitPressHandler = data => {
     signinUser(data);
@@ -69,9 +69,9 @@ const AuthenticationScreen = () => {
           <Controller
             control={control}
             rules={{
-              required: {value: true, message: ERROR_MESSAGES.REQUIRED},
+              required: { value: true, message: ERROR_MESSAGES.REQUIRED },
             }}
-            render={({field: {onChange, onBlur, value}}) => (
+            render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 mode="outlined"
                 label="username"
@@ -89,9 +89,9 @@ const AuthenticationScreen = () => {
           <Controller
             control={control}
             rules={{
-              required: {value: true, message: ERROR_MESSAGES.REQUIRED},
+              required: { value: true, message: ERROR_MESSAGES.REQUIRED },
             }}
-            render={({field: {onChange, onBlur, value}}) => (
+            render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 mode="outlined"
                 secureTextEntry={true}

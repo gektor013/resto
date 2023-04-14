@@ -18,13 +18,11 @@ const BookingsControl = ({
   const dateString = useSelector(dateCS)
   const isNeedUpdate = useSelector(isNeedUpdateCS)
   const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
-
-  const disbledCalendar = isEdit || isNewBooking || !isConnected
+  // const disbledCalendar = isEdit || isNewBooking || !isConnected
 
   const { isDatePickerOpen, onChange, onDatePickerHandler } = useBookingControl()
   const { data: bookingsDates } = useGetBookingsDatesQuery()
   const dispatch = useDispatch()
-
 
   const dayPlus = (type) => {
     const plusDay = moment(new Date(dateString).setDate(new Date(dateString).getDate() + 1)).toString()
@@ -58,14 +56,14 @@ const BookingsControl = ({
               icon="chevron-left"
               mode="contained"
               compact={true}
-              disabled={disbledCalendar}
+              // disabled={disbledCalendar}
               style={{ marginRight: 5 }}
               onPress={() => dayPlus('minus')}>
             </Button>
             <Button
               icon="calendar"
               mode="contained"
-              disabled={disbledCalendar}
+              // disabled={disbledCalendar}
               onPress={onDatePickerHandler}>
               {formatDate(new Date(dateString))}
             </Button>
@@ -73,7 +71,7 @@ const BookingsControl = ({
               icon="chevron-left"
               mode="contained"
               compact={true}
-              disabled={disbledCalendar}
+              // disabled={disbledCalendar}
               style={{ marginLeft: 5, transform: [{ rotateY: '180deg' }] }}
               onPress={() => dayPlus('plus')}>
             </Button>

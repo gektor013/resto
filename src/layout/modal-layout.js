@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import { Dialog, Portal, Button } from 'react-native-paper';
 
 
-const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false, addCallBack, disabled, containerStyle }) => {
+const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false, addCallBack, disabled, containerStyle, saveTitle = 'Save' }) => {
 
   return (
     <Portal>
@@ -39,9 +39,9 @@ const ModaLayout = ({ children, visible, onCancel, onSave, title, addBtn = false
                 mode="contained"
                 onPress={onSave}
                 disabled={disabled}
-              // disabled={errors?.startTime || errors?.endTime}
+                buttonColor={saveTitle === 'Delete' ? '#ef4747' : '#674fa6'}
               >
-                Save
+                {saveTitle}
               </Button>
             </View>
           </>

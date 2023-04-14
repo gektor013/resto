@@ -5940,11 +5940,6 @@ react-native-swipe-gestures@^1.0.5:
   resolved "https://registry.yarnpkg.com/react-native-swipe-gestures/-/react-native-swipe-gestures-1.0.5.tgz#a172cb0f3e7478ccd681fd36b8bfbcdd098bde7c"
   integrity sha512-Ns7Bn9H/Tyw278+5SQx9oAblDZ7JixyzeOczcBK8dipQk2pD7Djkcfnf1nB/8RErAmMLL9iXgW0QHqiII8AhKw==
 
-react-native-swipeable-list@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-swipeable-list/-/react-native-swipeable-list-0.1.2.tgz#829b89fb08e978c47383395d315f102be855e7da"
-  integrity sha512-FDeFLByUep3m3xuwS/ZkktxL7Xzg90XnKoo+KLTF04jiddyVZQMnXTHG8O4pyiEtg/swcBlT6XUktV+/KTVNXQ==
-
 react-native-uuid@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.1.tgz#ed4e2dfb1683eddb66967eb5dca140dfe1abddb9"

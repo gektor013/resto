@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { formatDateParams } from '../utils/dates';
+import { formatDateParams, getFotmatedDate } from '../utils/dates';
 import {
   clearUnsynchronizedCreateBookings,
   clearUnsynchronizedEditedBookings,
@@ -25,7 +25,7 @@ import { useGetAllEmployeesQuery } from '../store/api/employeeApi';
 import { setAllEmployeesData } from '../store/slice/employeesSlice';
 import useEmployees from './useEmployees';
 import useTables from './useTables';
-import { isNeedUpdateCS } from '../store/slice/controlSlice';
+import { dateCS, isNeedUpdateCS } from '../store/slice/controlSlice';
 import useRooms from './useRooms';
 
 const useBookingsData = () => {
@@ -34,8 +34,9 @@ const useBookingsData = () => {
   const { isConnected } = useNetInfo();
 
   //date selector
-  const { date: dateString } = useSelector(state => state.control);
+  const dateString = useSelector(dateCS);
   const formatDate = formatDateParams(new Date(dateString));
+  const getBookingFarmatedDate = getFotmatedDate(new Date(dateString))
 
   // booking selector
   const todayAllBookings = useSelector(todayAllBookingsCS);
@@ -50,6 +51,7 @@ const useBookingsData = () => {
 
   // Employees HOOK
   const { isEmployeeSynchronaized } = useEmployees(isConnected);
+
   // Rooms & tables HOOK
   const { isTableSynchronaized } = useTables(
     isEmployeeSynchronaized,
@@ -125,11 +127,6 @@ const useBookingsData = () => {
       .finally(() => dispatch(resetBookingData()));
   };
 
-  // useEffect(() => {
-  //   if (createdUnsyncBooking?.length && unsyncEmployees?.length && isConnected && !isNeedUpdate) {
-  //     sendUnsyncCreatedEmployees(unsyncEmployees[0])
-  //   }
-  // }, [unsyncEmployees, isConnected, isNeedUpdate])
 
   useEffect(() => {
     if (
@@ -182,12 +179,14 @@ const useBookingsData = () => {
     if (isConnected === true && !isNeedUpdate) {
       setBookingsData([...otherDayBookings]);
 
-      // setBookingsData([...createdUnsyncBooking, ...editUnsyncBookings, ...otherDayBookings])
     } else if (isConnected === false) {
       const unsyncCreated = createdUnsyncBooking.filter(
-        elem => elem.status !== 5,
+        booking => booking.status !== 5 && booking?.date === getBookingFarmatedDate,
       );
-      const unsyncEdited = editUnsyncBookings.filter(elem => elem.status !== 5);
+
+      const unsyncEdited = editUnsyncBookings.filter(
+        booking => booking.status !== 5 &&
+          booking?.date === getBookingFarmatedDate);
 
       const syncTodayAllBooking = todayAllBookings
         ?.map(syncToday => {
@@ -199,7 +198,10 @@ const useBookingsData = () => {
             return syncToday;
           }
         })
-        .filter(elem => elem !== undefined);
+        .filter(
+          booking => booking?.date === getBookingFarmatedDate
+            &&
+            booking !== undefined)
 
       setBookingsData([
         ...unsyncCreated,
@@ -214,6 +216,7 @@ const useBookingsData = () => {
     otherDayBookings,
     todayAllBookings,
     isNeedUpdate,
+    getBookingFarmatedDate
   ]);
 
   return {

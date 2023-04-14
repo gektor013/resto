@@ -1,15 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo,useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { TextInput, HelperText, Button, useTheme, } from 'react-native-paper';
-import { useRoute } from '@react-navigation/native';
-
-import { useNavigation } from '@react-navigation/native';
-import { useNetInfo } from '@react-native-community/netinfo';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { createRoomSlice, deletedRoomsSlice, editedRoomsSlice } from '../../store/slice/roomsSlice';
 import { createUnicId } from '../../utils/helpers';
-import { useCallback } from 'react';
 
 const MIN_NAME_LENGTH = 1;
 
@@ -24,7 +20,6 @@ const initialRoomState = {
 };
 
 const RoomForm = () => {
-  const { isConnected } = useNetInfo()
   const { colors } = useTheme();
   const route = useRoute()
   const navigate = useNavigation()
