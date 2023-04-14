@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {Alert} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
-import {useDispatch, useSelector} from 'react-redux';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {Button, Surface, TextInput, useTheme} from 'react-native-paper';
-import {setBookingData} from '../../store/slice/bookingDataSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Surface, TextInput, useTheme } from 'react-native-paper';
+import { setBookingData } from '../../store/slice/bookingDataSlice';
 import {
   setToUnsynchronized,
   deleteEmployeesData,
   unsyncEmployeesDataCS,
   allEmployeesCS,
 } from '../../store/slice/employeesSlice';
-import {createdUnsyncBookingCS} from '../../store/slice/bookingsSlice';
+import { createdUnsyncBookingCS } from '../../store/slice/bookingsSlice';
 
 const initialState = {
   name: '',
@@ -20,7 +20,7 @@ const initialState = {
 const useEmployees = () => {
   const [employeeName, setEmployeeName] = useState(initialState);
   // const { allEmployees, unsyncEmployees } = useSelector(state => state.employees)
-  const {created: createdUnsyncBooking, edited: editUnsyncBookings} =
+  const { created: createdUnsyncBooking, edited: editUnsyncBookings } =
     useSelector(createdUnsyncBookingCS);
   const unsyncEmployees = useSelector(unsyncEmployeesDataCS);
   const allEmployees = useSelector(allEmployeesCS);
@@ -28,7 +28,7 @@ const useEmployees = () => {
   // const [deleteEmployee] = useDeleteEmployeeMutation()
 
   const changeValue = value => {
-    setEmployeeName({name: value});
+    setEmployeeName({ name: value });
   };
 
   const handleDeleteEmployee = async (employee, selectedEmployee) => {
@@ -100,7 +100,7 @@ const Employees = ({
   selectedEmployee,
   setSelectedEmployee,
 }) => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const dispatch = useDispatch();
   const {
     allEmployees,
@@ -113,7 +113,7 @@ const Employees = ({
 
   const onSelectedEmployee = employee => {
     setSelectedEmployee(employee);
-    dispatch(setBookingData({id: 'employee', data: employee}));
+    dispatch(setBookingData({ id: 'employee', data: employee }));
   };
 
   // useEffect(() => {
@@ -138,7 +138,7 @@ const Employees = ({
               />
               <View style={styles.btnContainer}>
                 <Button
-                  style={{...styles.btn, marginRight: 10}}
+                  style={{ ...styles.btn, marginRight: 10 }}
                   mode="contained"
                   onPress={onCancel}>
                   Cancel
@@ -154,7 +154,7 @@ const Employees = ({
               </View>
             </View>
           ) : null}
-          <View style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 15}}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 15 }}>
             {[...allEmployees, ...unsyncEmployees]?.map(employee => (
               <TouchableOpacity
                 key={employee.id || employee.internalID}

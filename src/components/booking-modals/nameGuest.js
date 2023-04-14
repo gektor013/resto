@@ -1,13 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, TextInput, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { setBookingData } from '../../store/slice/bookingDataSlice';
+import { useEffect } from 'react';
 
 const NameGuest = () => {
   const { colors } = useTheme();
   const dispatch = useDispatch()
+  const ref = useRef()
+
   const [nameError, setNameError] = useState(false)
   const { prefixName, name } = useSelector(state => state.bookingData)
 
@@ -21,6 +24,14 @@ const NameGuest = () => {
       setNameError(true)
     }
   }
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      ref.current.focus();
+    }, 200);
+
+    return () => clearTimeout(timeOut);
+  }, []);
 
   return (
     <View style={styles.modal}>
@@ -66,6 +77,7 @@ const NameGuest = () => {
         <View style={styles.inputContainer}>
           <View style={styles.inputGroupContainer}>
             <TextInput
+              ref={ref}
               mode="outlined"
               label="Guest name"
               value={name}

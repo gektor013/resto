@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {formatDateParams} from '../utils/dates';
+import { useEffect, useState } from 'react';
+import { formatDateParams } from '../utils/dates';
 import {
   clearUnsynchronizedCreateBookings,
   clearUnsynchronizedEditedBookings,
@@ -15,52 +15,55 @@ import {
   useGetAllBookingByParamsQuery,
   useGetTodayBookingByParamsQuery,
 } from '../store/api/bookingsApi';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNetInfo} from '@react-native-community/netinfo';
-import {statusForActivePage} from '../constants';
-import {useGetAllRoomsQuery} from '../store/api/roomsApi';
-import {setAllRoomsData} from '../store/slice/roomsSlice';
-import {resetBookingData} from '../store/slice/bookingDataSlice';
-import {useGetAllEmployeesQuery} from '../store/api/employeeApi';
-import {setAllEmployeesData} from '../store/slice/employeesSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { statusForActivePage } from '../constants';
+import { useGetAllRoomsQuery } from '../store/api/roomsApi';
+import { setAllRoomsData } from '../store/slice/roomsSlice';
+import { resetBookingData } from '../store/slice/bookingDataSlice';
+import { useGetAllEmployeesQuery } from '../store/api/employeeApi';
+import { setAllEmployeesData } from '../store/slice/employeesSlice';
 import useEmployees from './useEmployees';
 import useTables from './useTables';
-import {isNeedUpdateCS} from '../store/slice/controlSlice';
+import { isNeedUpdateCS } from '../store/slice/controlSlice';
+import useRooms from './useRooms';
 
 const useBookingsData = () => {
   const [bookingData, setBookingsData] = useState([]);
   const dispatch = useDispatch();
-  const {isConnected} = useNetInfo();
+  const { isConnected } = useNetInfo();
 
   //date selector
-  const {date: dateString} = useSelector(state => state.control);
+  const { date: dateString } = useSelector(state => state.control);
   const formatDate = formatDateParams(new Date(dateString));
-
-  // console.log(bookingData[0], 'bookingsData');
 
   // booking selector
   const todayAllBookings = useSelector(todayAllBookingsCS);
   const otherDayBookings = useSelector(otherDayBookingsCS);
-  const {created: createdUnsyncBooking, edited: editUnsyncBookings} =
+  const { created: createdUnsyncBooking, edited: editUnsyncBookings } =
     useSelector(createdUnsyncBookingCS);
 
-  // console.log(createdUnsyncBooking, 'createdUnsyncBooking');
   const isNeedUpdate = useSelector(isNeedUpdateCS);
 
-  const [createBooking] = useCreateBookingMutation('', {skip: !isConnected});
-  const [editBookings] = useEditBookingMutation('', {skip: !isConnected});
+  const [createBooking] = useCreateBookingMutation('', { skip: !isConnected });
+  const [editBookings] = useEditBookingMutation('', { skip: !isConnected });
 
   // Employees HOOK
-  const {isEmployeeSynchronaized} = useEmployees(isConnected);
+  const { isEmployeeSynchronaized } = useEmployees(isConnected);
   // Rooms & tables HOOK
-  const {isTableSynchronaized} = useTables(
+  const { isTableSynchronaized } = useTables(
     isEmployeeSynchronaized,
     isConnected,
   );
 
+  const { isRoomSynchronaized } = useRooms(
+    isTableSynchronaized,
+    isConnected,
+  )
+
   // console.log(unsyncEmployees, 'unsyncEmployees');
   // get only todays booking, it is necessary for the missing internet
-  const {data: getTodayBookingsData} = useGetTodayBookingByParamsQuery(
+  const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(
     `${statusForActivePage}&date=${formatDate}`,
     {
       skip: !isConnected || isNeedUpdate,
@@ -70,7 +73,7 @@ const useBookingsData = () => {
   );
 
   // get all booking by date and query params
-  const {data: getOtherDayBookingsData, isFetching: otherDayBookingFetch} =
+  const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } =
     useGetAllBookingByParamsQuery(`${statusForActivePage}&date=${formatDate}`, {
       skip: !isConnected || isNeedUpdate,
       refetchOnReconnect: true,
@@ -79,18 +82,18 @@ const useBookingsData = () => {
     });
 
   // get all rooms data in first render
-  const {data: roomsData} = useGetAllRoomsQuery('', {
+  const { data: roomsData } = useGetAllRoomsQuery('', {
     skip: !isConnected,
   });
 
   // get all employees data in first render
-  const {data: employeesData} = useGetAllEmployeesQuery('', {
+  const { data: employeesData } = useGetAllEmployeesQuery('', {
     skip: !isConnected,
   });
 
   // edit bookings
   const onEditBookings = data => {
-    if (!data?.table.id) return;
+    if (data.table && !data?.table?.id) return
 
     editBookings(data)
       .unwrap()
@@ -105,16 +108,14 @@ const useBookingsData = () => {
 
   // send when there is internet
   const sendUnsyncCreatedBookings = async data => {
-    console.log();
     if (!data?.employee?.id || (data?.table && !data?.table?.id)) return;
-    // if (data?.table && !data?.table?.id) return
 
     createBooking(data)
       .unwrap()
       .then(res => {
         if (res) {
           dispatch(
-            clearUnsynchronizedCreateBookings({internalID: data.internalID}),
+            clearUnsynchronizedCreateBookings({ internalID: data.internalID }),
           );
         }
       })
@@ -133,25 +134,25 @@ const useBookingsData = () => {
   useEffect(() => {
     if (
       createdUnsyncBooking?.length &&
-      isTableSynchronaized &&
+      isRoomSynchronaized &&
       isConnected &&
       !isNeedUpdate
     ) {
       sendUnsyncCreatedBookings(createdUnsyncBooking[0]);
     }
-  }, [createdUnsyncBooking, isConnected, isNeedUpdate, isTableSynchronaized]);
+  }, [createdUnsyncBooking, isConnected, isNeedUpdate, isRoomSynchronaized]);
 
   // send when there is internet
   useEffect(() => {
     if (
       editUnsyncBookings?.length &&
-      isTableSynchronaized &&
+      isRoomSynchronaized &&
       isConnected &&
       !isNeedUpdate
     ) {
       onEditBookings(editUnsyncBookings[0]);
     }
-  }, [editUnsyncBookings, isConnected, isNeedUpdate, isTableSynchronaized]);
+  }, [editUnsyncBookings, isConnected, isNeedUpdate, isRoomSynchronaized]);
 
   // first render we send to persist actual rooms & employe data
   useEffect(() => {

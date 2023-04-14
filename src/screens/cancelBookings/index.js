@@ -29,7 +29,7 @@ const DeletedBookingsScreen = ({ navigation }) => {
       <View
         style={{ ...styles.container, backgroundColor: colors.background }}
       >
-        {deletedIsFetch ? <LoadingScreen /> : <BookingTable bookingsData={deletedData} cancel={true} />}
+        <BookingTable bookingsData={deletedData} cancel={true} />
       </View>
     </SafeAreaView>
   )

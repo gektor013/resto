@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native'
 import { TextInput, useTheme, IconButton } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import { setBookingData } from '../../store/slice/bookingDataSlice';
 const NumberGuset = () => {
   const { colors } = useTheme();
   const dispatch = useDispatch()
+  const ref = useRef()
   const { numberOfGuestsAdult, numberOfGuestsChild, numberOfGuestsBaby } = useSelector(state => state.bookingData)
 
   const handleChangeNumberGuest = (guest, quantity, action) => {
@@ -16,6 +17,14 @@ const NumberGuset = () => {
       return dispatch(setBookingData({ id: guest, data: quantity - 1 }))
     }
   }
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      ref.current.focus();
+    }, 200);
+
+    return () => clearTimeout(timeOut);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -29,6 +38,7 @@ const NumberGuset = () => {
               onPress={() => handleChangeNumberGuest('numberOfGuestsAdult', numberOfGuestsAdult, 'minus')}
             />
             <TextInput
+              ref={ref}
               mode="outlined"
               label="Adult"
               keyboardType="number-pad"

@@ -1,18 +1,19 @@
 import { useState } from 'react'
 import { useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { resetBookingData } from '../store/slice/bookingDataSlice';
+import { resetBookingData, bookingsDataCS } from '../store/slice/bookingDataSlice';
 import { setUnsynchronizedCreateBookings, setUnsynchronizedEditedBookings } from '../store/slice/bookingsSlice';
 import { useNavigation } from '@react-navigation/native';
 import { createUnicId } from '../utils/helpers';
+import { allRoomsDataCS } from '../store/slice/roomsSlice';
 
 const useBookingForm = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch()
   const { colors } = useTheme();
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-  const bookingState = useSelector(state => state.bookingData)
-  const { rooms: roomsData } = useSelector(state => state.rooms)
+  const bookingState = useSelector(bookingsDataCS)
+  const roomsData = useSelector(allRoomsDataCS)
 
   const findRoom = (tableId) => {
     return roomsData?.find(item => item.tables.some((table) => table.id === tableId))
@@ -35,11 +36,6 @@ const useBookingForm = () => {
     dispatch(resetBookingData())
   }
 
-  // const onCancelPressHandler = () => {
-  //   dispatch(resetBookingData())
-  //   navigation.goBack()
-  // }
-
   return {
     colors,
     bookingState,
@@ -47,7 +43,6 @@ const useBookingForm = () => {
     findRoom,
     onSubmitWithMode,
     setIsDatePickerOpen,
-    // onCancelPressHandler,
   }
 }
 
