@@ -78,28 +78,3 @@ const useModalsControl = () => {
 
 
 export default useModalsControl;
-
-
- // const [dateModal, setDateModal] = useState(false);
-  // const [timeModal, setTimeModal] = useState(false);
-  // const [numberGuestModal, setNumberGuestModal] = useState(false)
-  // const [nameGuestModal, setNameGuestModal] = useState(false)
-
-  // const onHandleOpenModals = useCallback((setterType) => {
-  //   switch (setterType) {
-  //     case 'date':
-  //       setDateModal(prev => !prev)
-  //       break;
-  //     case 'time':
-  //       setTimeModal(true);
-  //       break;
-  //     case 'guest':
-  //       setNumberGuestModal(true);
-  //       break;
-  //     case 'name':
-  //       setNameGuestModal(true);
-  //       break;
-  //     default:
-  //       return;
-  //   }
-  // }, []);

@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRoute } from '@react-navigation/native';
 import { Animated, StyleSheet, Text, View, I18nManager } from 'react-native';
 import { RectButton, Swipeable } from 'react-native-gesture-handler';
+import { Button } from 'react-native-paper';
 
 const GmailStyleSwipeableRow = ({ children, handleChancheBookingStatus, isNewOrEdit, onDelete }) => {
   const route = useRoute()
   let _swipeableRow;
+  let toggled = useRef(false);
+
+  const handleToggleBody = () => {
+    toggled.current = !toggled.current;
+  }
 
   const handleSwipeOpen = (e) => {
+    handleToggleBody()
     if (e === 'left') {
       close()
       handleChancheBookingStatus(4)
@@ -16,14 +23,20 @@ const GmailStyleSwipeableRow = ({ children, handleChancheBookingStatus, isNewOrE
 
   const renderLeftActions = () => {
     return (
-      <RectButton style={[styles.leftAction]} onPress={close}>
-        <Text>{route.name === 'waitBookings' ? 'Approve' : 'Arrived'}</Text>
+      <RectButton enabled={false} style={[styles.leftAction]}>
+        <Button
+          elevation={10}
+          mode="contained"
+          buttonColor='#1c813f'
+          loading={toggled.current}
+        >
+          Approve
+        </Button>
       </RectButton>
     );
   };
 
   const renderRightAction = (text, color, status) => {
-
     const onPress = () => {
       if (status === 5) {
         return onDelete()
@@ -33,6 +46,7 @@ const GmailStyleSwipeableRow = ({ children, handleChancheBookingStatus, isNewOrE
     return (
       <Animated.View style={{ flex: 1, transform: [{ translateX: 0 }] }}>
         <RectButton
+
           style={[styles.rightAction, { backgroundColor: color }]}
           onPress={onPress}>
           <Text style={styles.actionText}>{text}</Text>
@@ -64,6 +78,8 @@ const GmailStyleSwipeableRow = ({ children, handleChancheBookingStatus, isNewOrE
     _swipeableRow.close();
   };
 
+  useEffect(() => { handleToggleBody() }, [])
+
   return (
     <Swipeable
       ref={updateRef}
@@ -75,6 +91,7 @@ const GmailStyleSwipeableRow = ({ children, handleChancheBookingStatus, isNewOrE
       renderLeftActions={isNewOrEdit || route.name === 'cancelBookings' ? null : renderLeftActions}
       renderRightActions={isNewOrEdit ? null : renderRightActions}
       onSwipeableOpen={handleSwipeOpen}
+      onSwipeableClose={handleToggleBody}
     >
       {children}
     </Swipeable>
@@ -87,7 +104,7 @@ export default GmailStyleSwipeableRow
 const styles = StyleSheet.create({
   leftAction: {
     flex: 1,
-    backgroundColor: '#388e3c',
+    backgroundColor: '#1c813f',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: I18nManager.isRTL ? 'row' : 'row-reverse',

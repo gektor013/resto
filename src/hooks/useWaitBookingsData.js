@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useNetInfo } from '@react-native-community/netinfo';
-import { statusForWaitPage } from '../constants';
 import { useGetAllBookingByParamsQuery } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOtherDayWaitBookings } from '../store/slice/bookingsSlice';

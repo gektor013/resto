@@ -6,6 +6,7 @@ import { bookingsDataCS } from '../store/slice/bookingDataSlice';
 import { isNeedUpdateCS } from '../store/slice/controlSlice';
 
 const useRoom = (isTableSynchronaized, isConnected) => {
+  const dispatch = useDispatch()
   const [isRoomSynchronaized, setIsRoomSynchronaized] = useState(false);
 
   const unsyncCreatedRooms = useSelector(createdRoomsDataCS)
@@ -14,9 +15,6 @@ const useRoom = (isTableSynchronaized, isConnected) => {
   const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
   const isNeedUpdate = useSelector(isNeedUpdateCS);
 
-  // console.log(unsyncDeletedRooms, 'unsyncDeletedRooms');
-
-  const dispatch = useDispatch()
 
   const isFormUnUsed = useMemo(
     () => !isNewBooking && !isEdit,
@@ -117,11 +115,6 @@ const useRoom = (isTableSynchronaized, isConnected) => {
     isTableSynchronaized,
     readyToUpdate,
   ]);
-
-  useEffect(() => {
-
-  }, [])
-
 
   return {
     isRoomSynchronaized
