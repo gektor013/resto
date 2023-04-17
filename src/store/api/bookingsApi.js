@@ -23,7 +23,7 @@ export const bookingsApi = createApi({
             { type: 'Bookings', id: 'LIST' },
             { type: 'Bookings', id: 'PARTIAL-BOOKINGS' },
           ],
-      forceRefetch: true
+      forceRefetch: true,
     }),
     getBookingsByPeriod: builder.query({
       query: () => ({
@@ -36,7 +36,7 @@ export const bookingsApi = createApi({
       query: () => ({
         url: '/bookings/upcoming-dates'
       }),
-      providesTags: ['BookingDates']
+      providesTags: ['BookingDates'],
     }),
 
     getTodayBookingByParams: builder.query({

@@ -15,8 +15,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { useNetInfo } from '@react-native-community/netinfo';
 
 const initialInputData = {
-  username: 'admin_default',
-  password: '2a0d2m2i78ndiFF87_e5f0t9',
+  username: '',
+  password: '',
 };
 
 const ERROR_MESSAGES = {

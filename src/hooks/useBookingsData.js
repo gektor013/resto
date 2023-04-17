@@ -14,7 +14,6 @@ import {
   useEditBookingMutation,
   useGetAllBookingByParamsQuery,
   useGetBookingsByPeriodQuery,
-  useGetTodayBookingByParamsQuery,
 } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';

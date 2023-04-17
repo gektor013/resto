@@ -6,6 +6,8 @@ import { setUnsynchronizedCreateBookings, setUnsynchronizedEditedBookings } from
 import { useNavigation } from '@react-navigation/native';
 import { createUnicId } from '../utils/helpers';
 import { allRoomsDataCS } from '../store/slice/roomsSlice';
+import { setOneDate } from '../store/slice/bookingDatesSlice';
+import moment from 'moment';
 
 const useBookingForm = () => {
   const navigation = useNavigation();
@@ -28,6 +30,8 @@ const useBookingForm = () => {
         { ...bookingState, internalID, unsync: true, table: createDataTable }
       ))
     } else {
+      dispatch(setOneDate(moment(bookingState.date).format('YYYY-MM-DD')))
+
       dispatch(setUnsynchronizedCreateBookings(
         { ...bookingState, internalID, unsync: true, table: createDataTable }
       ))

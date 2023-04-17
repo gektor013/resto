@@ -4,9 +4,12 @@ import { View } from 'react-native';
 
 import { Calendar } from 'react-native-calendars';
 import { Button, Modal, Portal, useTheme } from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import { bookingDatesCS } from '../../store/slice/bookingDatesSlice';
 
-const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, minDate }) => {
+const DaysCalendar = ({ isVisible, onDismiss, currentDate, onSave, minDate, mainCalendar }) => {
   const [selectedDays, setSelectedDays] = useState(currentDate);
+  const bookingDates = useSelector(bookingDatesCS)
   const { colors } = useTheme();
 
   const dayPress = useCallback((day) => {
@@ -41,7 +44,7 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
       i++;
     }
 
-    markedDays?.length && markedDays?.forEach(date => {
+    bookingDates?.length && bookingDates?.forEach(date => {
       result, result[date] = {
         customStyles: {
           container: {
@@ -54,9 +57,8 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
       }
     })
 
-
     return {
-      ...previousDays, ...result, [selectedDays]: {
+      ...result, ...previousDays, [selectedDays]: {
         selected: true,
         disableTouchEvent: true,
         selectedColor: '#312d81',
@@ -75,7 +77,7 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
         selectedTextColor: 'white'
       },
     }
-  }, [selectedDays, markedDays]);
+  }, [selectedDays, bookingDates]);
 
   const handleDismiss = () => {
     onDismiss()
@@ -99,16 +101,7 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
           minDate={minDate}
           current={currentDate}
           onDayPress={dayPress}
-          markedDates={markedDays?.length ? marked
-            : {
-              [selectedDays]: {
-                selected: true,
-                disableTouchEvent: true,
-                selectedColor: '#312d81',
-                selectedTextColor: colors.onBackground
-              }
-            }
-          }
+          markedDates={mainCalendar && marked}
           firstDay={1}
 
           theme={{

@@ -7,7 +7,7 @@ import { Button } from 'react-native-paper';
 const GmailStyleSwipeableRow = ({ children, handleChancheBookingStatus, isNewOrEdit, onDelete }) => {
   const route = useRoute()
   let _swipeableRow;
-  let toggled = useRef(false);
+  let toggled = useRef(true);
 
   const handleToggleBody = () => {
     toggled.current = !toggled.current;
