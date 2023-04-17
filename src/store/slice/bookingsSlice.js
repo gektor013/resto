@@ -1,138 +1,10 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
-const init = [
-  {
-    "id": 877,
-    "date": "14 Apr 2023",
-    "startTime": "11:00",
-    "endTime": "12:00",
-    "prefixName": 0,
-    "name": "Тест1",
-    "phone": "",
-    "numberOfGuests": "",
-    "numberOfGuestsAdult": 9,
-    "numberOfGuestsChild": 0,
-    "numberOfGuestsBaby": 0,
-    "status": 2,
-    "commentByGuest": "",
-    "commentByAdminForGuest": "",
-    "commentByAdminForAdmin": "",
-    "uuid": "4cdfebb3-edf9-4cdf-b066-f9114caa7ba4",
-    "createdAt": "2023-04-13T14:00:08+00:00",
-    "employee": { "id": 709, "name": "Uh" }
-  },
-  {
-    "id": 878,
-    "date": "15 Apr 2023",
-    "startTime": "12:22",
-    "prefixName": 0,
-    "name": "Test 2",
-    "phone": "",
-    "numberOfGuests": "",
-    "numberOfGuestsAdult": 0,
-    "numberOfGuestsChild": 0,
-    "numberOfGuestsBaby": 0,
-    "status": 4,
-    "commentByGuest": "",
-    "commentByAdminForGuest": "",
-    "commentByAdminForAdmin": "",
-    "uuid": "0a7d9822-99a9-4d5b-afa8-c8b49da5f287",
-    "createdAt": "2023-04-13T14:20:00+00:00",
-    "table": {
-      "id": 18,
-      "name": "6c",
-      "seatQuantity": "14",
-      "room": {
-        "id": 70,
-        "name": "Alex",
-        "createdAt": "2023-03-16T09:12:49+00:00",
-        "updatedAt": "2023-03-16T09:12:49+00:00",
-        "createdBy": "/api/users/1"
-      },
-      "createdAt": "2023-02-14T09:07:12+00:00",
-      "updatedAt": "2023-03-16T09:12:49+00:00",
-      "createdBy": "/api/users/1",
-      "updatedBy": "/api/users/1"
-    },
-    "employee": { "id": 698, "name": "Sergey" }
-  },
-  {
-    "id": 879,
-    "date": "16 Apr 2023",
-    "startTime": "12:22",
-    "prefixName": 0,
-    "name": "Test 3",
-    "phone": "",
-    "numberOfGuests": "",
-    "numberOfGuestsAdult": 0,
-    "numberOfGuestsChild": 0,
-    "numberOfGuestsBaby": 0,
-    "status": 4,
-    "commentByGuest": "",
-    "commentByAdminForGuest": "",
-    "commentByAdminForAdmin": "",
-    "uuid": "0a7d9822-99a9-4d5b-afa8-c8b49da5f287",
-    "createdAt": "2023-04-13T14:20:00+00:00",
-    "table": {
-      "id": 18,
-      "name": "6c",
-      "seatQuantity": "14",
-      "room": {
-        "id": 70,
-        "name": "Alex",
-        "createdAt": "2023-03-16T09:12:49+00:00",
-        "updatedAt": "2023-03-16T09:12:49+00:00",
-        "createdBy": "/api/users/1"
-      },
-      "createdAt": "2023-02-14T09:07:12+00:00",
-      "updatedAt": "2023-03-16T09:12:49+00:00",
-      "createdBy": "/api/users/1",
-      "updatedBy": "/api/users/1"
-    },
-    "employee": { "id": 698, "name": "Sergey" }
-  },
-  {
-    "id": 880,
-    "date": "16 Apr 2023",
-    "startTime": "12:22",
-    "prefixName": 0,
-    "name": "Test 3",
-    "phone": "",
-    "numberOfGuests": "",
-    "numberOfGuestsAdult": 0,
-    "numberOfGuestsChild": 0,
-    "numberOfGuestsBaby": 0,
-    "status": 4,
-    "commentByGuest": "",
-    "commentByAdminForGuest": "",
-    "commentByAdminForAdmin": "",
-    "uuid": "0a7d9822-99a9-4d5b-afa8-c8b49da5f287",
-    "createdAt": "2023-04-13T14:20:00+00:00",
-    "table": {
-      "id": 18,
-      "name": "6c",
-      "seatQuantity": "14",
-      "room": {
-        "id": 70,
-        "name": "Alex",
-        "createdAt": "2023-03-16T09:12:49+00:00",
-        "updatedAt": "2023-03-16T09:12:49+00:00",
-        "createdBy": "/api/users/1"
-      },
-      "createdAt": "2023-02-14T09:07:12+00:00",
-      "updatedAt": "2023-03-16T09:12:49+00:00",
-      "createdBy": "/api/users/1",
-      "updatedBy": "/api/users/1"
-    },
-    "employee": { "id": 698, "name": "Sergey" }
-  }
-]
-
 
 const initialState = {
   // these bookings show if there is no internet
   todays: {
-    allBooking: init, //0, 1, 2, 3, 4
+    allBooking: [], //0, 1, 2, 3, 4
   },
 
   // created bookings when there is no internet
@@ -153,7 +25,7 @@ export const bookingsSlice = createSlice({
   name: 'bookings',
   initialState,
   reducers: {
-    setTodaysAllBookings: (state, action) => {
+    setAllBookingsByPeriod: (state, action) => {
       state.todays.allBooking = action.payload;
     },
 
@@ -274,10 +146,8 @@ export const bookingsSlice = createSlice({
 
         if (tableId && tableId === actionId) {
           booking.table = action.payload;
-          console.log('update table by id => ', booking);
         } else if (tableInternalId && tableInternalId === actionInternalID) {
           booking.table = action.payload;
-          console.log('update table by internalID => ', booking);
         }
       });
     },
@@ -305,7 +175,7 @@ export const createdUnsyncBookingCS = createSelector(
 
 export const {
   //today reducers
-  setTodaysAllBookings,
+  setAllBookingsByPeriod,
 
   // unsynchronized reducers
   setUnsynchronizedCreateBookings,

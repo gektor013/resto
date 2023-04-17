@@ -6,13 +6,14 @@ import {
   createdUnsyncBookingCS,
   otherDayBookingsCS,
   setOtherDayAllBookings,
-  setTodaysAllBookings,
+  setAllBookingsByPeriod,
   todayAllBookingsCS,
 } from '../store/slice/bookingsSlice';
 import {
   useCreateBookingMutation,
   useEditBookingMutation,
   useGetAllBookingByParamsQuery,
+  useGetBookingsByPeriodQuery,
   useGetTodayBookingByParamsQuery,
 } from '../store/api/bookingsApi';
 import { useDispatch, useSelector } from 'react-redux';
@@ -63,16 +64,14 @@ const useBookingsData = () => {
     isConnected,
   )
 
-  // console.log(unsyncEmployees, 'unsyncEmployees');
   // get only todays booking, it is necessary for the missing internet
-  const { data: getTodayBookingsData } = useGetTodayBookingByParamsQuery(
-    `${statusForActivePage}&date=${formatDate}`,
-    {
-      skip: !isConnected || isNeedUpdate,
-      refetchOnReconnect: true,
-      pollingInterval: 300000,
-    },
-  );
+  const { data: getBookingsByPeriodData } = useGetBookingsByPeriodQuery('', {
+    skip: !isConnected || isNeedUpdate,
+    refetchOnReconnect: true,
+    pollingInterval: 300000,
+    refetchOnMountOrArgChange: true,
+  })
+
 
   // get all booking by date and query params
   const { data: getOtherDayBookingsData, isFetching: otherDayBookingFetch } =
@@ -163,10 +162,10 @@ const useBookingsData = () => {
   }, [roomsData, employeesData]);
 
   useEffect(() => {
-    if (getTodayBookingsData instanceof Array) {
-      dispatch(setTodaysAllBookings(getTodayBookingsData));
+    if (getBookingsByPeriodData instanceof Array) {
+      dispatch(setAllBookingsByPeriod(getBookingsByPeriodData));
     }
-  }, [getTodayBookingsData]);
+  }, [getBookingsByPeriodData]);
 
   useEffect(() => {
     if (getOtherDayBookingsData) {
