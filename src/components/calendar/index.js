@@ -101,7 +101,14 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, onSave, minDate, main
           minDate={minDate}
           current={currentDate}
           onDayPress={dayPress}
-          markedDates={mainCalendar && marked}
+          markedDates={mainCalendar ? marked : {
+            [selectedDays]: {
+              selected: true,
+              disableTouchEvent: true,
+              selectedColor: '#312d81',
+              selectedTextColor: 'white'
+            },
+          }}
           firstDay={1}
 
           theme={{
