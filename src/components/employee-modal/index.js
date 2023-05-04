@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import { Alert } from 'react-native';
 import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,13 +19,12 @@ const initialState = {
 };
 const useEmployees = () => {
   const [employeeName, setEmployeeName] = useState(initialState);
-  // const { allEmployees, unsyncEmployees } = useSelector(state => state.employees)
   const { created: createdUnsyncBooking, edited: editUnsyncBookings } =
     useSelector(createdUnsyncBookingCS);
+    
   const unsyncEmployees = useSelector(unsyncEmployeesDataCS);
   const allEmployees = useSelector(allEmployeesCS);
   const dispatch = useDispatch();
-  // const [deleteEmployee] = useDeleteEmployeeMutation()
 
   const changeValue = value => {
     setEmployeeName({ name: value });

@@ -45,7 +45,6 @@ const useCancelBookingsData = () => {
       const deletedUnsync = edited?.filter(elem => elem?.status === 5)
       const createdUnsync = created?.filter(elem => elem?.status === 5)
 
-      // console.log(deletedUnsync, 'deletedUnsync');
       return setDeletedData([...deletedUnsync, ...createdUnsync, ...listDeleteSync])
     }
   }, [allOtherDayDeletedBookings, created, edited, isConnected])

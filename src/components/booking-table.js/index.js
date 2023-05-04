@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import moment from 'moment';
 import uuid from 'react-native-uuid';
 import { useDispatch, useSelector } from 'react-redux';
-import SwipeableFlatList from 'react-native-swipeable-list';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { FlatList } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 import { Button, DataTable, useTheme, } from 'react-native-paper';
-import { StyleSheet, View, TouchableOpacity, Pressable, Text } from 'react-native'
+import { StyleSheet, View, Pressable, Text } from 'react-native'
 
 import { setEditBookingData } from '../../store/slice/bookingDataSlice';
 import { setUnsynchronizedEditedBookings, setUnsynchronizedCreateBookings } from '../../store/slice/bookingsSlice';
@@ -19,9 +19,10 @@ import NumberGuset from '../booking-modals/numberGuest';
 import ComentAndPhone from '../booking-modals/comentAndPhone';
 import useModalsControl from '../../hooks/useModalsControl';
 import useBookingForm from '../../hooks/useBookingForm';
+import SwipeableRow from './swipeLayout';
 
-const BookingTable = ({ bookingsData, cancel }) => {
-  const route = useRoute()
+
+const BookingTable = ({ bookingsData }) => {
   const dispatch = useDispatch()
   const bookingState = useSelector(state => state.bookingData)
   const isNewOrEdit = bookingState.isNewBooking || bookingState.isEdit
@@ -57,55 +58,6 @@ const BookingTable = ({ bookingsData, cancel }) => {
     setDeleteModal(prev => !prev)
   }
 
-  const QuickActions = (_, booking) => {
-    return (
-      <>
-        <View style={styles.quickActionContainer}>
-          <View style={{ ...styles.actionsContainer, width: !cancel ? 300 : 100 }}>
-            {route.name !== 'cancelBookings' ? (
-              <>
-                <View style={{ ...styles.action, backgroundColor: '#1c813f', }}>
-                  <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 4)}>
-                    <Text>{route.name === 'waitBookings' ? 'Approve' : 'Arrived'}</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={{ ...styles.action, backgroundColor: '#94a3b8' }}>
-                  <TouchableOpacity onPress={() => onOpenModal(booking)}>
-                    <Text>Delete</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={{ ...styles.action, backgroundColor: '#ef4747', }}>
-                  <TouchableOpacity
-                    onPress={() => handleChancheBookingStatus(booking, 1)}
-                  >
-                    <Text>Cancel</Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            ) : (
-              <View style={{ ...styles.action, flex: 2, backgroundColor: '#94a3b8' }}>
-                <TouchableOpacity onPress={() => handleChancheBookingStatus(booking, 2)}>
-                  <Text>Restore</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        </View>
-        <ModaLayout
-          visible={deleteModal}
-          containerStyle={styles.deleteModalContainer}
-          onCancel={onOpenModal}
-          title={'Are you sure you want to delete booking?'}
-          onSave={() => {
-            handleChancheBookingStatus(booking, 5)
-            onOpenModal()
-          }}
-        >
-        </ModaLayout>
-      </>
-    );
-  };
-
   return bookingsData?.length || bookingState.isNewBooking ? (
     <>
       <DataTable style={styles.tableContainer}>
@@ -121,27 +73,39 @@ const BookingTable = ({ bookingsData, cancel }) => {
               <DataTable.Title>Erstellt</DataTable.Title>
           }
         </DataTable.Header>
-        <SwipeableFlatList
-          keyExtractor={item => item.id ? item.id : item.internalID}
+        <FlatList
           data={isNewOrEdit ?
             [bookingState] : bookingsData}
-          renderItem={({ item }) => {
-            return (
-              <Row
-                item={item}
-                key={item.id}
-                checkBooking={checkBooking}
-              />
-            )
-          }}
-
-          maxSwipeDistance={!cancel ? 300 : 100}
-          renderQuickActions={({ index, item }) => (isNewOrEdit ? null : QuickActions(index, item))}
-          contentContainerStyle={styles.swipeContainer}
-          shouldBounceOnMount={true}
+          renderItem={({ item }) => (
+            <SwipeableRow
+              isNewOrEdit={isNewOrEdit}
+              handleChancheBookingStatus={(status) => handleChancheBookingStatus(item, status)}
+              onDelete={onOpenModal}
+            >
+              <>
+                <Row
+                  item={item}
+                  key={item.id}
+                  checkBooking={checkBooking}
+                />
+                <ModaLayout
+                  visible={deleteModal}
+                  onCancel={onOpenModal}
+                  containerStyle={styles.deleteModalContainer}
+                  saveTitle='Delete'
+                  title={'Are you sure you want to delete booking?'}
+                  onSave={() => {
+                    handleChancheBookingStatus(item, 5)
+                    onOpenModal()
+                  }}
+                >
+                </ModaLayout>
+              </>
+            </SwipeableRow>
+          )}
+          keyExtractor={item => item.id ? item.id : item.internalID}
         />
       </DataTable>
-
     </>
   )
     : (

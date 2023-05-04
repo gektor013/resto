@@ -1,5 +1,6 @@
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 
+
 const initialState = {
   // these bookings show if there is no internet
   todays: {
@@ -24,7 +25,7 @@ export const bookingsSlice = createSlice({
   name: 'bookings',
   initialState,
   reducers: {
-    setTodaysAllBookings: (state, action) => {
+    setAllBookingsByPeriod: (state, action) => {
       state.todays.allBooking = action.payload;
     },
 
@@ -145,10 +146,8 @@ export const bookingsSlice = createSlice({
 
         if (tableId && tableId === actionId) {
           booking.table = action.payload;
-          console.log('update table by id => ', booking);
         } else if (tableInternalId && tableInternalId === actionInternalID) {
           booking.table = action.payload;
-          console.log('update table by internalID => ', booking);
         }
       });
     },
@@ -176,7 +175,7 @@ export const createdUnsyncBookingCS = createSelector(
 
 export const {
   //today reducers
-  setTodaysAllBookings,
+  setAllBookingsByPeriod,
 
   // unsynchronized reducers
   setUnsynchronizedCreateBookings,

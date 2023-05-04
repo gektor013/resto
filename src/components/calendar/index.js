@@ -4,43 +4,47 @@ import { View } from 'react-native';
 
 import { Calendar } from 'react-native-calendars';
 import { Button, Modal, Portal, useTheme } from 'react-native-paper';
+import { useSelector } from 'react-redux';
+import { bookingDatesCS } from '../../store/slice/bookingDatesSlice';
 
-const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, minDate }) => {
+const DaysCalendar = ({ isVisible, onDismiss, currentDate, onSave, minDate, mainCalendar }) => {
   const [selectedDays, setSelectedDays] = useState(currentDate);
+  const bookingDates = useSelector(bookingDatesCS)
   const { colors } = useTheme();
 
   const dayPress = useCallback((day) => {
     setSelectedDays(day.dateString);
   }, []);
 
+  const today = moment(new Date()).format('YYYY-MM-DD')
+
   const marked = useMemo(() => {
-    const today = new Date();
-    const currentMonth = today.getMonth();
     const previousDays = {};
     const result = {}
 
     const firstDayThisMonth = new Date();
     firstDayThisMonth.setDate(1);
-    const indexFirstDayOnThisMonth = firstDayThisMonth.getDay() - 1 // Set the date to the first day of the current month
 
+    let currentDate = new Date();
+    let i = 1;
 
-    for (let i = indexFirstDayOnThisMonth; i < today.getDate() + indexFirstDayOnThisMonth; i++) {
-      const previousDay = new Date(today.getFullYear(), currentMonth, i);
-      const dateString = previousDay.toISOString().slice(0, 10);
-      previousDays[dateString] = {
+    while (moment(currentDate).format('YYYY-MM-DD') <= today) {
+      previousDays[moment(currentDate).format('YYYY-MM-DD')] = {
         customStyles: {
           container: {
             backgroundColor: '#dbd6d6de',
           },
           text: {
             color: '#a8a3a3de',
-          }
-        }
-      }
-    };
+          },
+        },
+      };
 
+      currentDate.setDate(i);
+      i++;
+    }
 
-    markedDays?.length && markedDays?.forEach(date => {
+    bookingDates?.length && bookingDates?.forEach(date => {
       result, result[date] = {
         customStyles: {
           container: {
@@ -54,7 +58,7 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
     })
 
     return {
-      ...previousDays, ...result, [selectedDays]: {
+      ...result, ...previousDays, [selectedDays]: {
         selected: true,
         disableTouchEvent: true,
         selectedColor: '#312d81',
@@ -73,7 +77,7 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
         selectedTextColor: 'white'
       },
     }
-  }, [selectedDays, markedDays]);
+  }, [selectedDays, bookingDates]);
 
   const handleDismiss = () => {
     onDismiss()
@@ -97,16 +101,14 @@ const DaysCalendar = ({ isVisible, onDismiss, currentDate, markedDays, onSave, m
           minDate={minDate}
           current={currentDate}
           onDayPress={dayPress}
-          markedDates={markedDays?.length ? marked
-            : {
-              [selectedDays]: {
-                selected: true,
-                disableTouchEvent: true,
-                selectedColor: '#312d81',
-                selectedTextColor: colors.onBackground
-              }
-            }
-          }
+          markedDates={mainCalendar ? marked : {
+            [selectedDays]: {
+              selected: true,
+              disableTouchEvent: true,
+              selectedColor: '#312d81',
+              selectedTextColor: 'white'
+            },
+          }}
           firstDay={1}
 
           theme={{

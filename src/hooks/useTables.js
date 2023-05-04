@@ -3,16 +3,13 @@ import { useLazyGetAllRoomsQuery } from '../store/api/roomsApi';
 import {
   useCreateTableMutation,
   useDeleteTableMutation,
-  usePatchTableDataMutation,
 } from '../store/api/tablesApi';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createdTablesDataCS,
   deletedTablesDataCS,
-  editedTablesDataCS,
   removeTableInDeletedTables,
   setAllRoomsData,
-  setNewTableToRoomSlice,
   updateTableDataSlice,
 } from '../store/slice/roomsSlice';
 import { isNeedUpdateCS } from '../store/slice/controlSlice';
@@ -23,10 +20,8 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
   const [isTableSynchronaized, setIsTableSynchronaized] = useState(false);
   const dispatch = useDispatch();
 
-  // const { data: roomsData } = useGetAllRoomsQuery();
   const [createTable] = useCreateTableMutation();
   const [getAllRooms] = useLazyGetAllRoomsQuery();
-  const [patchTableData] = usePatchTableDataMutation();
   const [deleteTable] = useDeleteTableMutation();
 
   // create selector
@@ -34,8 +29,6 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
   const unsyncCreatedTables = useSelector(createdTablesDataCS);
   const deletedTables = useSelector(deletedTablesDataCS);
   const { isEdit, isNewBooking } = useSelector(bookingsDataCS);
-  const editedTables = useSelector(editedTablesDataCS);
-
 
   // constants
   const isFormUnUsed = useMemo(
@@ -75,25 +68,11 @@ const useTables = (isEmployeeSynchronaized, isConnected) => {
       .catch(e => console.log(e, 'onCreateTable ERROR'));
   };
 
-  const onEditTable = async () => {
-    await patchTableData(newData)
-      .unwrap()
-      .then(res => {
-        if (res) {
-          // requestNewAllRoomData()
-          // navigation.goBack()
-        }
-      })
-      .catch(e => console.log(e, 'patchTableData ERROR'));
-  };
-
   const onDeleteTable = async data => {
-    // console.log(data, 'data');
     await deleteTable(data.id)
       .unwrap()
       .then(() => {
         dispatch(removeTableInDeletedTables(data))
-        // dispatch(updateBookingTable(data))
       })
       .catch(e => console.log(e, 'onDeleteTable ERROR'));
   };

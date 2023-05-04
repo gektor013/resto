@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 function getFotmatedDate(date) {
-  return moment(date).format('DD MMM Y');
+  return moment(date).format('DD MMM YYYY');
 }
 
 function formatDateParams(date) {

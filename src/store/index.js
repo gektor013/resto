@@ -27,13 +27,15 @@ import controlSlice from './slice/controlSlice';
 import bookingData from './slice/bookingDataSlice';
 import roomsSlice from './slice/roomsSlice';
 import employeesSlice from './slice/employeesSlice';
+import datesSlice from './slice/bookingDatesSlice';
+
 
 const storage = new MMKVLoader().initialize();
 
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['authentication'],
+  whitelist: ['authentication', 'employees', 'bookings', 'dates'],
   // whitelist: ['authentication', 'bookings', 'rooms', 'employees'],
   blacklist: ['control'],
 };
@@ -52,6 +54,7 @@ const reducers = combineReducers({
   control: controlSlice,
   rooms: roomsSlice,
   employees: employeesSlice,
+  dates: datesSlice,
   bookingData,
 });
 

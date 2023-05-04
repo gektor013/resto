@@ -1,11 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from './config';
-// import { formatDateParams } from '../../utils/dates';
 
 export const bookingsApi = createApi({
   reducerPath: 'bookingsApi',
   baseQuery: baseQuery,
-  tagTypes: ['Bookings', 'TodayBookings', 'BookingDates'],
+  tagTypes: ['Bookings', 'TodayBookings', 'BookingDates', 'BookingByPeriod'],
   refetchOnReconnect: true,
   refetchOnFocus: true,
   endpoints: builder => ({
@@ -24,14 +23,20 @@ export const bookingsApi = createApi({
             { type: 'Bookings', id: 'LIST' },
             { type: 'Bookings', id: 'PARTIAL-BOOKINGS' },
           ],
+      forceRefetch: true,
+    }),
+    getBookingsByPeriod: builder.query({
+      query: () => ({
+        url: '/bookings/period',
+      }),
+      providesTags: ['BookingByPeriod'],
       forceRefetch: true
     }),
-
     getBookingsDates: builder.query({
       query: () => ({
         url: '/bookings/upcoming-dates'
       }),
-      providesTags: ['BookingDates']
+      providesTags: ['BookingDates'],
     }),
 
     getTodayBookingByParams: builder.query({
@@ -52,7 +57,7 @@ export const bookingsApi = createApi({
         method: 'post',
         body,
       }),
-      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }, { type: 'BookingDates' }],
+      invalidatesTags: [{ type: 'Bookings', id: 'LIST' }, { type: 'TodayBookings' }, { type: 'BookingDates' }, { type: 'BookingByPeriod' }],
     }),
     editBooking: builder.mutation({
       query: body => ({
@@ -76,4 +81,4 @@ export const bookingsApi = createApi({
   }),
 });
 
-export const { useGetAllBookingByParamsQuery, useGetBookingsDatesQuery, useGetTodayBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation, usePatchBookingsMutation } = bookingsApi;
+export const { useGetAllBookingByParamsQuery, useGetBookingsDatesQuery, useGetBookingsByPeriodQuery, useGetTodayBookingByParamsQuery, useCreateBookingMutation, useEditBookingMutation, usePatchBookingsMutation } = bookingsApi;
